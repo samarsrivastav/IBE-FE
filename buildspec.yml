@@ -2,25 +2,21 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 18
     commands:
-      - echo "Installing dependencies..."
-      - npm install
+      - npm ci
 
   build:
     commands:
-      - echo "Building the React app..."
-      - npm run build
+      - npm run build:dev 
 
   post_build:
     commands:
       - echo "Deploying to S3..."
       - aws s3 sync dist/ s3://gen-win-frontend --delete
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id ID1234 --paths "/*"
 
 artifacts:
   files:
     - "**/*"
-  base-directory: build
+  base-directory: dist/ # This ensures CodeBuild uploads files from the correct folder
