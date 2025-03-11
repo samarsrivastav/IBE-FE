@@ -14,7 +14,7 @@ phases:
       - echo "Deploying to S3..."
       - aws s3 sync dist/ s3://gen-win-frontend --delete
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id ID1234 --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
 
 artifacts:
   files:
