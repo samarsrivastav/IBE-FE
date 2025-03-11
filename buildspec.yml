@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Installing dependencies..."
+      - npm install
+
+  build:
+    commands:
+      - echo "Building the React app..."
+      - npm run build
+
+  post_build:
+    commands:
+      - echo "Deploying to S3..."
+      - aws s3 sync build/ s3://gen-win-frontend --delete
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: build
