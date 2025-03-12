@@ -57,16 +57,19 @@ phases:
       - echo "Setting build environment based on branch..."
       - if [ "$BRANCH_NAME" = "dev" ]; then echo "BUILD_ENV=dev" > build_env.sh; fi
       - if [ "$BRANCH_NAME" = "qa" ]; then echo "BUILD_ENV=qa" > build_env.sh; fi
-      - if [ ! -f build_env.sh ]; then echo "Unknown branch: $BRANCH_NAME. Defaulting to dev"; echo "BUILD_ENV=dev" > build_env.sh; fi
+      - if [ ! -f build_env.sh ]; then echo "Unknown branch:. Defaulting to dev"; echo "BUILD_ENV=dev" > build_env.sh; fi
       - source build_env.sh
       - echo "BUILD_ENV is set to $BUILD_ENV"
 
   build:
     commands:
-      - echo "Running build for environment: $BUILD_ENV"
+      - echo $BUILD_ENV
       - npm run build:$BUILD_ENV
+      # Create the appropriate folder structure
+      - mkdir -p $BUILD_ENV
+      - cp -r dist/* $BUILD_ENV/
 
 artifacts:
   files:
     - "**/*"
-  base-directory: dist/
+  base-directory: .
