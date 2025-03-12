@@ -5,22 +5,24 @@ phases:
     commands:
       - npm ci
 
-  build:
-    commands:
-    - set -e # Stop script on any error
-    - echo "Branch detected:"
-    - echo $CODEBUILD_SOURCE_VERSION
+build:
+  commands:
+    - echo "Branch detection..."
+    - echo "CODEBUILD_SOURCE_VERSION: $CODEBUILD_SOURCE_VERSION"
+    - echo "CODEBUILD_WEBHOOK_HEAD_REF: $CODEBUILD_WEBHOOK_HEAD_REF"
+    - BRANCH_NAME=$(echo ${CODEBUILD_WEBHOOK_HEAD_REF:-$CODEBUILD_SOURCE_VERSION} | sed 's|refs/heads/||')
+    - echo "Resolved branch: $BRANCH_NAME"
     - |
-      if [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/dev" ]]; then
+      if [[ "$BRANCH_NAME" == "dev" ]]; then
         echo "Building for dev branch..."
         npm run build:dev
         export S3_FOLDER="dev"
-      elif [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/qa" ]]; then
+      elif [[ "$BRANCH_NAME" == "qa" ]]; then
         echo "Building for qa branch..."
         npm run build:qa
         export S3_FOLDER="qa"
       else
-        echo "Unknown branch: $CODEBUILD_SOURCE_VERSION"
+        echo "Unknown branch: $BRANCH_NAME"
         exit 1
       fi
     - echo "Build completed. Verifying dist/ folder..."
