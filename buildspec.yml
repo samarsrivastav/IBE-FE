@@ -7,28 +7,16 @@ phases:
 
   build:
     commands:
-      - |
-        if [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/dev" ]]; then
-          echo "Building for dev branch..."
-          npm run build:dev
-          export S3_FOLDER="dev"
-        elif [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/qa" ]]; then
-          echo "Building for qa branch..."
-          npm run build:qa
-          export S3_FOLDER="qa"
-        else
-          echo "Unknown branch. Exiting..."
-          exit 1
-        fi
+      - npm run build:qa 
 
   post_build:
     commands:
-      - echo "Deploying to S3 in folder $S3_FOLDER..."
-      - aws s3 sync dist/ s3://gen-win-frontend-bucket/$S3_FOLDER/ --delete
+      - echo "Deploying to S3..."
+      - aws s3 sync dist/ s3://genwin-frontend-qa-bucket --delete
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id E30EGNMUWCAXNR --paths "/*"
 
 artifacts:
   files:
     - "**/*"
-  base-directory: dist/ # This ensures CodeBuild uploads files from the correct folder
+  base-directory: dist/ 
