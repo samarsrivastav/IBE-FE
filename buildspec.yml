@@ -12,7 +12,7 @@ phases:
   post_build:
     commands:
       - echo "Deploying to S3..."
-      - aws s3 sync dist/ s3://gen-win-frontend --delete
+      - aws s3 sync dist/ s3://gen-win-frontend-bucket --delete
       - echo "Invalidating CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
 
