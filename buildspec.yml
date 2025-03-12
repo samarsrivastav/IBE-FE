@@ -1,43 +1,40 @@
 version: 0.2
 
-env:
-  variables:
-    DEFAULT_ENV: "dev"
-  shell: bash
-
 phases:
   install:
     commands:
       - npm ci
 
-  pre_build:
-    commands:
-      - echo "Detecting branch name..."
-      - |
-        if [ ! -z "$CODEBUILD_WEBHOOK_HEAD_REF" ]; then
-          BRANCH_NAME=$(echo "$CODEBUILD_WEBHOOK_HEAD_REF" | sed 's|refs/heads/||')
-        elif [[ "$CODEBUILD_SOURCE_VERSION" == refs/heads/* ]]; then
-          BRANCH_NAME=$(echo "$CODEBUILD_SOURCE_VERSION" | sed 's|refs/heads/||')
-        else
-          BRANCH_NAME=${ENVIRONMENT:-"dev"}
-        fi
-      - echo $BRANCH_NAME
-
-      - if [ "$BRANCH_NAME" = "dev" ]; then echo "BUILD_ENV=dev" > build_env.sh; fi
-      - if [ "$BRANCH_NAME" = "qa" ]; then echo "BUILD_ENV=qa" > build_env.sh; fi
-      - if [ ! -f build_env.sh ]; then echo "BUILD_ENV=dev" > build_env.sh; fi
-      - source build_env.sh
-      - echo "BUILD_ENV is set to $BUILD_ENV"
-
   build:
     commands:
-      - echo $BUILD_ENV
-      - npm run build:$BUILD_ENV
-      - mkdir -p output/$BUILD_ENV
-      - cp -r dist/* output/$BUILD_ENV/
+    - set -e # Stop script on any error
+    - echo "Branch detected:"
+    - echo $CODEBUILD_SOURCE_VERSION
+    - |
+      if [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/dev" ]]; then
+        echo "Building for dev branch..."
+        npm run build:dev
+        export S3_FOLDER="dev"
+      elif [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/qa" ]]; then
+        echo "Building for qa branch..."
+        npm run build:qa
+        export S3_FOLDER="qa"
+      else
+        echo "Unknown branch: $CODEBUILD_SOURCE_VERSION"
+        exit 1
+      fi
+    - echo "Build completed. Verifying dist/ folder..."
+    - ls -la dist/ || { echo "dist/ folder not found!"; exit 1; }
+
+  post_build:
+    commands:
+      - echo "Deploying to S3 in folder $S3_FOLDER..."
+      - export S3_FOLDER  # Ensure it's set
+      - aws s3 sync dist/ s3://gen-win-frontend-bucket/$S3_FOLDER/ --delete
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
 
 artifacts:
   files:
     - "**/*"
-  base-directory: output/
-  discard-paths: no
+  base-directory: dist/
