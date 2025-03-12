@@ -7,6 +7,7 @@ phases:
 
   build:
     commands:
+      - echo "Branch detected: $CODEBUILD_SOURCE_VERSION"
       - |
         if [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/dev" ]]; then
           echo "Building for dev branch..."
@@ -17,9 +18,11 @@ phases:
           npm run build:qa
           export S3_FOLDER="qa"
         else
-          echo "Unknown branch. Exiting..."
+          echo "Unknown branch: $CODEBUILD_SOURCE_VERSION"
           exit 1
         fi
+      - echo "Build completed. Verifying dist/ folder..."
+      - ls -la dist/ || { echo "dist/ folder not found!"; exit 1; }
 
   post_build:
     commands:
@@ -31,4 +34,4 @@ phases:
 artifacts:
   files:
     - "**/*"
-  base-directory: dist/ # This ensures CodeBuild uploads files from the correct folder
+  base-directory: dist/
