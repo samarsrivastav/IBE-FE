@@ -5,29 +5,27 @@ phases:
     commands:
       - npm ci
 
+  pre_build:
+    commands:
+      - echo "Extracting branch name..."
+      - BRANCH_NAME=$(echo $CODEBUILD_SOURCE_VERSION | sed 's|refs/heads/||')
+      - echo "Branch detected: $BRANCH_NAME"
+      - if [[ "$BRANCH_NAME" == "dev" ]]; then export BUILD_ENV="dev"; fi
+      - if [[ "$BRANCH_NAME" == "qa" ]]; then export BUILD_ENV="qa"; fi
+      - if [[ -z "$BUILD_ENV" ]]; then echo "Unknown branch. Exiting..."; exit 1; fi
+      - echo "BUILD_ENV set to: $BUILD_ENV"
+
   build:
     commands:
-      - echo "Branch detected: $CODEBUILD_SOURCE_VERSION"
-      - |
-        if [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/dev" ]]; then
-          echo "Building for dev branch..."
-          npm run build:dev
-          export S3_FOLDER="dev"
-        elif [[ "$CODEBUILD_SOURCE_VERSION" == "refs/heads/qa" ]]; then
-          echo "Building for qa branch..."
-          npm run build:qa
-          export S3_FOLDER="qa"
-        else
-          echo "Unknown branch: $CODEBUILD_SOURCE_VERSION"
-          exit 1
-        fi
+      - echo "Building for $BUILD_ENV..."
+      - npm run build:$BUILD_ENV
       - echo "Build completed. Verifying dist/ folder..."
-      - ls -la dist/ || { echo "dist/ folder not found!"; exit 1; }
+      - if [ ! -d "dist" ]; then echo "dist/ folder not found! Build failed."; exit 1; fi
 
   post_build:
     commands:
-      - echo "Deploying to S3 in folder $S3_FOLDER..."
-      - aws s3 sync dist/ s3://gen-win-frontend-bucket/$S3_FOLDER/ --delete
+      - echo "Deploying to S3 in folder $BUILD_ENV..."
+      - aws s3 sync dist/ s3://gen-win-frontend-bucket/$BUILD_ENV/ --delete
       - echo "Invalidating CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
 
