@@ -2,6 +2,10 @@ version: 0.2
 
 env:
   shell: bash
+  variables:
+    # Define environment mappings here for easier maintenance
+    DEV_BRANCH: "dev"
+    QA_BRANCH: "qa"
 
 phases:
   install:
@@ -14,14 +18,15 @@ phases:
       - BRANCH_NAME=$(echo "$CODEBUILD_SOURCE_VERSION" | sed 's|refs/heads/||')
       - echo "Branch detected: $BRANCH_NAME"
       - |
-        if [[ "$BRANCH_NAME" == "dev" ]]; then
-          echo "BUILD_ENV=dev" >> build_env.sh;
-        elif [[ "$BRANCH_NAME" == "qa" ]]; then
-          echo "BUILD_ENV=qa" >> build_env.sh;
-        else
-          echo "Unknown branch. Exiting...";
-          exit 1;
-        fi
+        case "$BRANCH_NAME" in
+          "$DEV_BRANCH") echo "BUILD_ENV=dev" > build_env.sh ;;
+          "$QA_BRANCH") echo "BUILD_ENV=qa" > build_env.sh ;;
+          *)
+            echo "Unsupported branch: $BRANCH_NAME"
+            echo "Only $DEV_BRANCH and $QA_BRANCH branches are supported"
+            exit 1
+            ;;
+        esac
       - source build_env.sh
       - echo "BUILD_ENV is set to $BUILD_ENV"
 
