@@ -7,7 +7,7 @@ export const Home = () => {
     <div>
       <h1>Environment: {env.environment}</h1>
       {welcomeString}
-      <p>Testing cicd pipeline-dev</p>
+      <p>Testing cicd pipeline</p>
     </div>
   )
 }
