@@ -13,14 +13,14 @@ phases:
       - echo "Extracting branch name..."
       - BRANCH_NAME=$(echo "$CODEBUILD_SOURCE_VERSION" | sed 's|refs/heads/||')
       - echo "Branch detected: $BRANCH_NAME"
-      - |
+      - >
         if [[ "$BRANCH_NAME" == "dev" ]]; then
-          echo "BUILD_ENV=dev" >> $CODEBUILD_ENV_VAR
+          echo "BUILD_ENV=dev" >> $CODEBUILD_ENV_VAR;
         elif [[ "$BRANCH_NAME" == "qa" ]]; then
-          echo "BUILD_ENV=qa" >> $CODEBUILD_ENV_VAR
+          echo "BUILD_ENV=qa" >> $CODEBUILD_ENV_VAR;
         else
-          echo "Unknown branch. Exiting..."
-          exit 1
+          echo "Unknown branch. Exiting...";
+          exit 1;
         fi
       - source $CODEBUILD_ENV_VAR
       - echo "BUILD_ENV is set to $BUILD_ENV"
