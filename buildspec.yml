@@ -5,34 +5,14 @@ phases:
     commands:
       - npm ci
 
-build:
-  commands:
-    - echo "Branch detection..."
-    - echo "CODEBUILD_SOURCE_VERSION: $CODEBUILD_SOURCE_VERSION"
-    - echo "CODEBUILD_WEBHOOK_HEAD_REF: $CODEBUILD_WEBHOOK_HEAD_REF"
-    - BRANCH_NAME=$(echo ${CODEBUILD_WEBHOOK_HEAD_REF:-$CODEBUILD_SOURCE_VERSION} | sed 's|refs/heads/||')
-    - echo "Resolved branch: $BRANCH_NAME"
-    - |
-      if [[ "$BRANCH_NAME" == "dev" ]]; then
-        echo "Building for dev branch..."
-        npm run build:dev
-        export S3_FOLDER="dev"
-      elif [[ "$BRANCH_NAME" == "qa" ]]; then
-        echo "Building for qa branch..."
-        npm run build:qa
-        export S3_FOLDER="qa"
-      else
-        echo "Unknown branch: $BRANCH_NAME"
-        exit 1
-      fi
-    - echo "Build completed. Verifying dist/ folder..."
-    - ls -la dist/ || { echo "dist/ folder not found!"; exit 1; }
+  build:
+    commands:
+      - npm run build:dev 
 
   post_build:
     commands:
-      - echo "Deploying to S3 in folder $S3_FOLDER..."
-      - export S3_FOLDER  # Ensure it's set
-      - aws s3 sync dist/ s3://gen-win-frontend-bucket/$S3_FOLDER/ --delete
+      - echo "Deploying to S3..."
+      - aws s3 sync dist/ s3://gen-win-frontend --delete
       - echo "Invalidating CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
 
