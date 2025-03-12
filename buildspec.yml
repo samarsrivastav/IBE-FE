@@ -1,11 +1,9 @@
 version: 0.2
 
 env:
-  shell: bash
   variables:
-    # Define environment mappings here for easier maintenance
-    DEV_BRANCH: "dev"
-    QA_BRANCH: "qa"
+    DEFAULT_ENV: "dev"
+  shell: bash
 
 phases:
   install:
@@ -14,19 +12,52 @@ phases:
 
   pre_build:
     commands:
-      - echo "Extracting branch name..."
-      - BRANCH_NAME=$(echo "$CODEBUILD_SOURCE_VERSION" | sed 's|refs/heads/||')
-      - echo "Branch detected: $BRANCH_NAME"
+      - echo "Attempting to detect branch name..."
+      # Check for CodePipeline execution ID
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
+      # Try to get branch information from CodePipeline metadata
       - |
-        case "$BRANCH_NAME" in
-          "$DEV_BRANCH") echo "BUILD_ENV=dev" > build_env.sh ;;
-          "$QA_BRANCH") echo "BUILD_ENV=qa" > build_env.sh ;;
-          *)
-            echo "Unsupported branch: $BRANCH_NAME"
-            echo "Only $DEV_BRANCH and $QA_BRANCH branches are supported"
-            exit 1
-            ;;
-        esac
+        if [ ! -z "$CODEBUILD_WEBHOOK_HEAD_REF" ]; then
+          # If triggered by webhook directly
+          BRANCH_NAME=$(echo "$CODEBUILD_WEBHOOK_HEAD_REF" | sed 's|refs/heads/||')
+          echo $BRANCH_NAME
+        elif [ ! -z "$CODEBUILD_INITIATOR" ] && [[ "$CODEBUILD_INITIATOR" == *"codepipeline"* ]]; then
+          # If triggered by CodePipeline, we need to set a default or use AWS CLI to query pipeline execution
+          echo "CodePipeline detected"
+          # Option 1: Use AWS CLI to fetch the source revision (requires AWS CLI and permissions)
+          if [ -n "$AWS_REGION" ] && [ -n "$CODEBUILD_BUILD_ARN" ]; then
+            PIPELINE_NAME=$(echo $CODEBUILD_INITIATOR | sed 's/codepipeline\///')
+            echo "Pipeline name: $PIPELINE_NAME"
+            # Install AWS CLI if not available
+            which aws || pip install awscli
+            # Get latest execution ID
+            EXECUTION_ID=$(aws codepipeline list-pipeline-executions --pipeline-name $PIPELINE_NAME --region $AWS_REGION --query 'pipelineExecutionSummaries[0].pipelineExecutionId' --output text)
+            echo "Latest execution ID: $EXECUTION_ID"
+            # Get source revision
+            if [ -n "$EXECUTION_ID" ]; then
+              SOURCE_REVISION=$(aws codepipeline get-pipeline-execution --pipeline-name $PIPELINE_NAME --pipeline-execution-id $EXECUTION_ID --region $AWS_REGION --query 'pipelineExecution.artifactRevisions[0].revisionId' --output text)
+              if [[ "$SOURCE_REVISION" == *"dev"* ]]; then
+                BRANCH_NAME="dev"
+              elif [[ "$SOURCE_REVISION" == *"qa"* ]]; then
+                BRANCH_NAME="qa"
+              else
+                BRANCH_NAME="$SOURCE_REVISION"
+              fi
+              echo $BRANCH_NAME
+            fi
+          fi
+        fi
+      - |
+        # Use environment variable if branch detection failed
+        if [ -z "$BRANCH_NAME" ]; then
+          echo "Cannot detect branch automatically. Using environment variable."
+          BRANCH_NAME=${ENVIRONMENT:-"dev"}  # Default to dev
+          echo "Using branch: $BRANCH_NAME"
+        fi
+      - echo "Setting build environment based on branch..."
+      - if [ "$BRANCH_NAME" = "dev" ]; then echo "BUILD_ENV=dev" > build_env.sh; fi
+      - if [ "$BRANCH_NAME" = "qa" ]; then echo "BUILD_ENV=qa" > build_env.sh; fi
+      - if [ ! -f build_env.sh ]; then echo "Unknown branch: $BRANCH_NAME. Defaulting to dev"; echo "BUILD_ENV=dev" > build_env.sh; fi
       - source build_env.sh
       - echo "BUILD_ENV is set to $BUILD_ENV"
 
