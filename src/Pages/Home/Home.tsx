@@ -6,7 +6,7 @@ export const Home = () => {
   return (
 
     <div>
-      <h1>Environment: {env.environment}</h1>
+      <h1>Environment : {env.environment}</h1>
       {welcomeString}
       <p>Testing cicd pipeline-dev</p>
       <CurrencyDisplay/>
