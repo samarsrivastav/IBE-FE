@@ -6,4 +6,4 @@ export type Messages = {
       [key: string]: string;
     };
   };
-export const messages:Messages = { en, es,fr };
+export const messages:Messages = { en, es, fr };

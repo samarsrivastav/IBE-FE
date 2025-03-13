@@ -1,16 +1,26 @@
 import { AppBar, Box, Button, Container, IconButton, MenuItem, Select, Toolbar, Typography } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Redux/store"; 
+import { setCurrency } from "../../Redux/slice/currencySlice";
+import { fetchExchangeRates } from "../../Redux/thunk/exchangeRateThunk";
 
 interface NavbarProps {
-    locale: string;
-    setLocale: (locale: string) => void;
+  locale: string;
+  setLocale: (locale: string) => void;
 }
 export const Navbar=({ locale, setLocale }:NavbarProps) =>{
   const [menuOpen, setMenuOpen] = useState(false);
   const intl = useIntl();
+
+  const dispatch = useDispatch<AppDispatch>();
+  
+    useEffect(() => {
+      dispatch(fetchExchangeRates()); // Fetch exchange rates on component mount
+    }, [dispatch]);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "white", boxShadow: "none", borderBottom: "1px solid #ddd" }}>
@@ -31,9 +41,10 @@ export const Navbar=({ locale, setLocale }:NavbarProps) =>{
               <MenuItem value="en">{intl.formatMessage({ id: "english" })}</MenuItem>
               <MenuItem value="es">{intl.formatMessage({ id: "spanish" })}</MenuItem>
             </Select>
-            <Select defaultValue="usd" sx={{ color: "#10072C" }}>
+            <Select defaultValue="usd" sx={{ color: "#10072C" }} onChange={(e) => dispatch(setCurrency(e.target.value))}>
               <MenuItem value="usd">{intl.formatMessage({ id: "usd" })}</MenuItem>
               <MenuItem value="eur">{intl.formatMessage({ id: "eur" })}</MenuItem>
+              <MenuItem value="inr">{intl.formatMessage({ id: "inr" })}</MenuItem>
             </Select>
             <Button variant="contained" sx={{ backgroundColor: "#10072C", color: "white" }}>
               {intl.formatMessage({ id: "login" })}
@@ -57,9 +68,10 @@ export const Navbar=({ locale, setLocale }:NavbarProps) =>{
               <MenuItem value="en">{intl.formatMessage({ id: "english" })}</MenuItem>
               <MenuItem value="es">{intl.formatMessage({ id: "spanish" })}</MenuItem>
             </Select>
-            <Select defaultValue="usd" sx={{ color: "#10072C" }}>
+            <Select defaultValue="usd" sx={{ color: "#10072C" }} onChange={(e) => dispatch(setCurrency(e.target.value))}>
               <MenuItem value="usd">{intl.formatMessage({ id: "usd" })}</MenuItem>
               <MenuItem value="eur">{intl.formatMessage({ id: "eur" })}</MenuItem>
+              <MenuItem value="inr">{intl.formatMessage({ id: "inr" })}</MenuItem>
             </Select>
             <Button variant="contained" sx={{ backgroundColor: "#10072C", color: "white" }}>
               {intl.formatMessage({ id: "login" })}
@@ -69,4 +81,4 @@ export const Navbar=({ locale, setLocale }:NavbarProps) =>{
       </Container>
     </AppBar>
   );
-}
+};
