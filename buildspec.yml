@@ -7,16 +7,16 @@ phases:
 
   build:
     commands:
-      - npm run build:dev 
+      - npm run build:qa 
 
   post_build:
     commands:
       - echo "Deploying to S3..."
-      - aws s3 sync dist/ s3://gen-win-frontend --delete
+      - aws s3 sync dist/ s3://genwin-frontend-qa-bucket --delete
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id E30EGNMUWCAXNR --paths "/*"
 
 artifacts:
   files:
     - "**/*"
-  base-directory: dist/ # This ensures CodeBuild uploads files from the correct folder
+  base-directory: dist/ 
