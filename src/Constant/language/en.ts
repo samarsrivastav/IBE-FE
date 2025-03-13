@@ -7,5 +7,6 @@ export default {
   english: "English",
   spanish: "Spanish",
   usd: "$ USD",
-  eur: "€ EUR"
+  eur: "€ EUR",
+  inr: "₹ INR"
 };
