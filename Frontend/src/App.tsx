@@ -6,18 +6,26 @@ import { Checkout } from "./Pages/Checkout/Checkout";
 import { Footer } from "./Component/Footer/Footer";
 import { Navbar } from "./Component/Navbar/Navbar";
 import { useState } from "react";
-import {  messages } from "./Constant/language/i18n";
+import { messages } from "./Constant/language/i18n";
+
 function App() {
   const [locale, setLocale] = useState<string>("en");
+  
   return (
     <IntlProvider locale={locale} messages={messages[locale]}>
       <BrowserRouter>
-      <Navbar locale={locale} setLocale={setLocale} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/checkout" element={<Checkout />} />
-        </Routes>
-        <Footer />
+        <div className="app-container">
+          <Navbar locale={locale} setLocale={setLocale} />
+          
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Routes>
+          </main>
+          
+          <Footer />
+        </div>
       </BrowserRouter>
     </IntlProvider>
   );

@@ -4,6 +4,7 @@ import tempSliceReducer from './slice/tempSlice'
 export const store = configureStore({
   reducer: {
     'tempSlice': tempSliceReducer,
+    
   },
 })
 
