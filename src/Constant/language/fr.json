@@ -1,9 +1,0 @@
-{
-  "app.greeting": "Bonjour!",
-  "app.welcome": "Bienvenue dans notre application",
-  "nav.home": "Accueil",
-  "nav.about": "À propos",
-  "nav.contact": "Contact",
-  "app.languageSwitcher": "Changer de langue",
-  "button.submit": "Soumettre"
-}
