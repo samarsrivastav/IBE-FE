@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm ci
+
+  build:
+    commands:
+      - npm run build:dev 
+
+  post_build:
+    commands:
+      - echo "Deploying to S3..."
+      - aws s3 sync dist/ s3://gen-win-frontend-bucket --delete
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: dist/
