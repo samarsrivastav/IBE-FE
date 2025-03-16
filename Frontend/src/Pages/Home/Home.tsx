@@ -3,18 +3,20 @@ import env from "../../Config/envConfig";
 import HomePage from "../../Component/HomePage/HomePage";
 import { CurrencyDisplay } from "../../Component/CurrencyDisplay/CurrencyDisplay";
 import "./Home.scss";
+import { useIntl } from "react-intl";
 
 export const Home = () => {
+  const intl = useIntl();
   const welcomeString = useSelector((state: any) => state.tempSlice.value);
   return (
     <div className="home-container">
-      <h1 className="home-container__header">Welcome to Kickdrum</h1>
+      <h1 className="home-container__header">{intl.formatMessage({ id: "Welcome" })}</h1>
       <div className="home-container__environment-info">
-        <h2>Environment: {env.environment}</h2>
+        <h2>{intl.formatMessage({id:"Environment"})}: {env.environment}</h2>
       </div>
 
       <div className="home-container__welcome-content">
-        {welcomeString && <p className="welcome-message">{welcomeString}</p>}
+        {welcomeString && <p className="welcome-message">{intl.formatMessage({id:welcomeString})}</p>}
       </div>
       <div className="home-container__actions">
         <button

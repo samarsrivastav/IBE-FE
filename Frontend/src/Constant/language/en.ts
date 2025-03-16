@@ -8,5 +8,10 @@ export default {
   spanish: "Spanish",
   usd: "$ USD",
   eur: "€ EUR",
-  inr: "₹ INR"
+  inr: "₹ INR",
+  Welcome: "Welcome to Kickdrum",
+  Environment: "Environment",
+  Hello_World: "Hello World",
+  Properties: "Properties",
+  Health: "Health",
 };

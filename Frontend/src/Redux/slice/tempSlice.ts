@@ -6,7 +6,7 @@ export interface tempState {
 }
 
 const initialState: tempState = {
-  value: "Hello World",
+  value: "Hello_World",
 }
 
 export const tempSlice = createSlice({
