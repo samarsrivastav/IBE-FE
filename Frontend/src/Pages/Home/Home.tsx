@@ -1,63 +1,43 @@
+import { useSelector } from "react-redux";
+import env from "../../Config/envConfig";
+import HomePage from "../../Component/HomePage/HomePage";
+import { CurrencyDisplay } from "../../Component/CurrencyDisplay/CurrencyDisplay";
+import "./Home.scss";
 
-import { useSelector } from "react-redux"
-import env from "../../Config/envConfig"
-import HomePage from "../../Component/HomePage/HomePage"
-import { CurrencyDisplay } from "../../Component/CurrencyDisplay/CurrencyDisplay"
 export const Home = () => {
-  const welcomeString = useSelector((state: any) => state.tempSlice.value)
+  const welcomeString = useSelector((state: any) => state.tempSlice.value);
   return (
-    <div className="home-container" style={{ 
-      padding: "2rem",
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem"
-    }}>
-      <h1>Welcome to Kickdrum</h1>
-      <div className="environment-info">
+    <div className="home-container">
+      <h1 className="home-container__header">Welcome to Kickdrum</h1>
+      <div className="home-container__environment-info">
         <h2>Environment: {env.environment}</h2>
       </div>
-      
-      <div className="welcome-content">
+
+      <div className="home-container__welcome-content">
         {welcomeString && <p className="welcome-message">{welcomeString}</p>}
-        <p>Testing cicd pipeline</p>
       </div>
-      
-      <div className="actions">
-        <button 
+      <div className="home-container__actions">
+        <button
           onClick={() => console.log("Action button clicked")}
-          style={{
-            backgroundColor: "#10072C",
-            color: "white",
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
+          className="home-container__actions__button"
         >
           Get Started
         </button>
-        
+
         {/* Debug button - remove in production */}
-        {(env.environment === "dev"  || env.environment === "qa" )&& (
-          <button 
-            onClick={() => {throw new Error("This is your first error!");}}
-            style={{
-              backgroundColor: "red",
-              color: "white",
-              padding: "10px 20px",
-              marginLeft: "10px",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer"
+        {env.environment != "prod" && (
+          <button
+            onClick={() => {
+              throw new Error("This is your first error!");
             }}
+            className="home-container__actions__button home-container__actions__button--debug"
           >
             Break the world
           </button>
         )}
-
-        <CurrencyDisplay/>
-        <HomePage />
-      </div>    
+      </div>
+      <CurrencyDisplay />
+      <HomePage />
     </div>
-  )
-}
+  );
+};
