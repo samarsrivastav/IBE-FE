@@ -1,0 +1,134 @@
+// General Navbar styles
+.navbar { 
+  color: #10072C;
+  background-color: white !important;
+  box-shadow: none !important;
+  padding: 0.8rem 2rem;
+  
+  &__toolbar {
+    color: #10072C;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  // Logo and Title styles
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #10072c;
+
+    &__title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    &__subtitle {
+      font-weight: medium;
+      font-size: 1.3rem;
+    }
+  }
+
+  // Desktop menu styles
+  &__desktopMenu {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 40%;
+    gap: 16px;
+
+    &__menuItem {
+      font-weight: bold;
+      color: #10072c;
+    }
+
+    &__language {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &__icon {
+        color: #10072c;
+      }
+
+      &__select {
+        border: none;
+        background: none;
+        box-shadow: none;
+        font-weight: bold;
+        color: #271a4d;
+        min-width: 50px;
+        padding: 0;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    &__select {
+      border: none;
+      background: none;
+      box-shadow: none;
+      font-weight: bold;
+      color: #271a4d;
+      min-width: 50px;
+      padding: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &__loginButton {
+      background-color: #2a1e4f !important;
+      color: white;
+
+      &:hover {
+        background-color: #8b7cf3;
+      }
+    }
+  }
+
+  // Mobile menu styles
+  &__mobileMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+
+    &__menuItem {
+      font-weight: bold;
+      color: #10072c;
+    }
+
+    &__select {
+      border: none;
+      background: none;
+      box-shadow: none;
+      font-weight: bold;
+      color: #271a4d;
+      min-width: 50px;
+      padding: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &__loginButton {
+      background-color: #2a1e4f !important;
+      color: white;
+
+      &:hover {
+        background-color: #8b7cf3;
+      }
+    }
+  }
+
+  &__menuIcon {
+    color: #10072c;
+  }
+}
