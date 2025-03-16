@@ -11,7 +11,7 @@ phases:
     commands:
       - echo "Executing Terraform commands..."
       - ls -la
-      - cd infrastructure
+      - cd Terraform
       - echo "Current directory : $(pwd)"
       - ls -la
       - terraform init -input=false -no-color
