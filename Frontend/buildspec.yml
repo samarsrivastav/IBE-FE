@@ -1,22 +1,17 @@
 version: 0.2
-
 phases:
   install:
     commands:
-      - npm ci
-
+      - cd Frontend
+      - npm install
+  pre_build:
+    commands:
+      - aws ssm get-parameter --name "/genwin/frontend/env/sentry" --with-decryption --query "Parameter.Value" --output text > .env.sentry-build-plugin
   build:
     commands:
-      - npm run build:dev 
-
-  post_build:
-    commands:
-      - echo "Deploying to S3..."
-      - aws s3 sync dist/ s3://gen-win-frontend-bucket --delete
-      - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id EDTP3BU2RQEB --paths "/*"
-
+      - npm run build
+      - ls -a
 artifacts:
   files:
     - "**/*"
-  base-directory: dist/
+  base-directory: Frontend/dist
