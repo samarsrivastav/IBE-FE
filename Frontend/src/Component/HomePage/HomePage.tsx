@@ -23,10 +23,10 @@ const HomePage = () => {
       <h1>{intl.formatMessage({id:"Properties"})}</h1>
       {properties && 
         <ul>
-          <li>Property Id: {properties.property_id}</li> 
-          <li>Property Name: {properties.property_name}</li>
-          <li>Property Address: {properties.property_address}</li>
-          <li>Contact Number: {properties.contact_number}</li>
+          <li><h2>Property Id: {properties.property_id}</h2></li> 
+          <li><h2>Property Name: {properties.property_name}</h2></li>
+          <li><h2>Property Address: {properties.property_address}</h2></li>
+          <li><h2>Contact Number: {properties.contact_number}</h2></li>
         </ul>
       }
 
