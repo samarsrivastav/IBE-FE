@@ -15,7 +15,6 @@ phases:
       - echo "Current directory : $(pwd)"
       - ls -la
       - terraform init -input=false -no-color
-      -  aws ssm get-parameter --name "/genwin/frontend/env/sentry" --with-decryption --query "Parameter.Value" --output text > .env.sentry-build-plugin
   build:
     commands:
       - echo "Running Terraform Plan..."
