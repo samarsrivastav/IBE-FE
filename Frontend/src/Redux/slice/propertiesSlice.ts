@@ -1,9 +1,10 @@
 // propertiesSlice.ts
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchProperties } from '../thunk/propertiesThunk';
+import { getProperty } from '../../types';
 
 const initialState = {
-  properties: [] as any[],
+  property: {} as getProperty ,
   loading: false,
   error: null as string | null, 
 };
@@ -19,7 +20,7 @@ const propertiesSlice = createSlice({
       })
       .addCase(fetchProperties.fulfilled, (state, action) => {
         state.loading = false;
-        state.properties = action.payload;
+        state.property = action.payload;
       })
       .addCase(fetchProperties.rejected, (state, action) => {
         state.loading = false;

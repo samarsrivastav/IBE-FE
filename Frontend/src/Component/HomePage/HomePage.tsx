@@ -8,7 +8,8 @@ import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const dispatch: AppDispatch = useDispatch();
-  const properties = useSelector((state: RootState) => state.properties);
+  const properties = useSelector((state: RootState) => state.properties.property.getProperty);
+  console.log(JSON.stringify(properties));
   const health = useSelector((state: RootState) => state.health);
   console.log(health);
 
@@ -20,14 +21,14 @@ const HomePage = () => {
   return (
     <div>
       <h1>{intl.formatMessage({id:"Properties"})}</h1>
-      <ul>
-        {properties.properties.map((property) => (
-          <li key={property.id}>
-            <h2>{property.name}</h2>
-            <p>{property.address}</p>
-          </li>
-        ))}
-      </ul>
+      {properties && 
+        <ul>
+          <li>Property Id: {properties.property_id}</li> 
+          <li>Property Name: {properties.property_name}</li>
+          <li>Property Address: {properties.property_address}</li>
+          <li>Contact Number: {properties.contact_number}</li>
+        </ul>
+      }
 
       <h1>{intl.formatMessage({id:"Health"})}</h1>
 
