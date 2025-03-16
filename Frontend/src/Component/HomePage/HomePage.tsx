@@ -4,6 +4,7 @@ import { fetchProperties } from '../../Redux/thunk/propertiesThunk';
 import { fetchHealth } from '../../Redux/thunk/healthThunk';
 import { AppDispatch, RootState } from '../../Redux/store';
 import { useIntl } from 'react-intl';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -32,6 +33,7 @@ const HomePage = () => {
 
       <p>Status: {health.health.status}</p>
       <p>Message: {JSON.stringify(health.health.details)}</p>
+      <Link to='/checkout'><button>Go to checkout Page</button></Link>
     </div>
   );
 };

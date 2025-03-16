@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { IntlProvider } from "react-intl";
 import "./App.scss";
 import { Home } from "./Pages/Home/Home";
@@ -13,7 +13,7 @@ function App() {
   
   return (
     <IntlProvider locale={locale} messages={messages[locale]}>
-      <BrowserRouter>
+      <HashRouter>
         <div className="app-container">
           <Navbar locale={locale} setLocale={setLocale} />
           
@@ -26,7 +26,7 @@ function App() {
           
           <Footer />
         </div>
-      </BrowserRouter>
+      </HashRouter>
     </IntlProvider>
   );
 }
