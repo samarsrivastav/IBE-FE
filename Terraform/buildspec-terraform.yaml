@@ -12,11 +12,18 @@ phases:
       - echo "Executing Terraform commands..."
       - ls -la
       - cd Terraform
-      - echo "Current directory $(pwd)"
       - ls -la
       - terraform init -input=false -no-color
   build:
     commands:
+      - |
+        if terraform workspace list | grep -q "\b${ENVIRONMENT}\b"; then
+          echo "Workspace ${ENVIRONMENT} exists, selecting..."
+        else
+          echo "Workspace ${ENVIRONMENT} does not exist, creating..."
+          terraform workspace new ${ENVIRONMENT}
+        fi
+      - terraform workspace select ${ENVIRONMENT}
       - echo "Running Terraform Plan..."
       - echo "ENVIRONMENT=${ENVIRONMENT}"
       - terraform plan -var-file="${ENVIRONMENT}.tfvars" -out=tfplan
