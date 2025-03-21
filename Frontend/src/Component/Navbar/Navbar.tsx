@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { setCurrency } from "../../Redux/slice/currencySlice";
 import { useDispatch } from "react-redux"; 
@@ -27,9 +27,21 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
+  const availableLanguages = ["en", "es"]; // Languages supported in the dropdown
+
+  // Detect browser language on mount
+  useEffect(() => {
+    const browserLang = navigator.language.split("-")[0]; // Extract primary language code (e.g., 'en-US' -> 'en')
+    
+    // Ensure it's a supported language
+    if (availableLanguages.includes(browserLang)) {
+      setLocale(browserLang);
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
+
   const handleCurrencyChange = (event: any) => {
     dispatch(setCurrency(event.target.value));
-  }
+  };
 
   return (
     <AppBar position="static" className={styles.navbar}>
@@ -37,17 +49,18 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
         {/* Logo */}
         <Typography variant="h6" className={styles.navbar__logo}>
           <div className={styles.navbar__logo__title}>Kickdrum{" "}</div>
-          <Typography component="span" className={styles.navbar__logo__subtitle}>
+          <div className={styles.navbar__logo__subtitle}>
             {intl.formatMessage({ id: "title" })}
-          </Typography>
+          </div>
         </Typography>
 
-        {/* Desktop Menu - Only show on medium screens and larger */}
+        {/* Desktop Menu */}
         <Box className={styles.navbar__desktopMenu} sx={{ display: { xs: "none", md: "flex" } }}>
           <Typography variant="body2" className={styles.navbar__desktopMenu__menuItem}>
             {intl.formatMessage({ id: "myBookings" })}
           </Typography>
           
+          {/* Language Selection */}
           <div className={styles.navbar__desktopMenu__language}>
             <LanguageIcon className={styles.navbar__desktopMenu__language__icon} />
             <Select
@@ -55,14 +68,15 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
               onChange={(e) => setLocale(e.target.value)}
               variant="standard"
               disableUnderline
-              IconComponent={() => <span />} // Removes the dropdown icon
+              IconComponent={() => <span />}
               className={styles.navbar__desktopMenu__language__select}
             >
-              <MenuItem value="en">{intl.formatMessage({ id: "english" })}</MenuItem>
-              <MenuItem value="es">{intl.formatMessage({ id: "spanish" })}</MenuItem>
+              <MenuItem value="en">{intl.formatMessage({ id: "en" })}</MenuItem>
+              <MenuItem value="es">{intl.formatMessage({ id: "sp" })}</MenuItem>
             </Select>
           </div>
 
+          {/* Currency Selection */}
           <Select defaultValue="usd" variant="standard" disableUnderline IconComponent={() => <span />} className={styles.navbar__desktopMenu__select} onChange={handleCurrencyChange}>
             <MenuItem value="usd">{intl.formatMessage({ id: "usd" })}</MenuItem>
             <MenuItem value="eur">{intl.formatMessage({ id: "eur" })}</MenuItem>
@@ -72,7 +86,7 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
           </Button>
         </Box>
 
-        {/* Mobile Menu Icon - Only show on xs and sm screens */}
+        {/* Mobile Menu Icon */}
         <IconButton
           className={styles.navbar__menuIcon}
           sx={{ display: { xs: "flex", md: "none" } }}
@@ -82,7 +96,7 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
         </IconButton>
       </Toolbar>
 
-      {/* Mobile Menu - Only show when menu is open */}
+      {/* Mobile Menu */}
       {menuOpen && (
         <Box className={styles.navbar__mobileMenu} sx={{ display: { xs: "flex", md: "none" } }}>
           <Typography variant="body2" className={styles.navbar__mobileMenu__menuItem}>

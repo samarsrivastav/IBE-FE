@@ -23,7 +23,7 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
             </Routes>
           </main>
-          
+        
           <Footer />
         </div>
       </HashRouter>
