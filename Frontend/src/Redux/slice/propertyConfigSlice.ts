@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import fetchPropertyConfig from "../thunk/propertyConfigThunk"
 
+
  interface PropertyConfig {
     id: number;
     propertyId: number;
@@ -8,7 +9,8 @@ import fetchPropertyConfig from "../thunk/propertyConfigThunk"
     wheelChairOption: boolean;
     showRoomNumber: boolean;
     maxGuestPerRoom: number;
-    guestTypes: any | null;
+    maxRooms: number;
+    guestTypes: Record<string, any>;
 }
 
 const initialState: PropertyConfig = {
@@ -18,6 +20,7 @@ const initialState: PropertyConfig = {
     wheelChairOption: true,
     showRoomNumber: true,
     maxGuestPerRoom: 4,
+    maxRooms: 4,
     guestTypes : {
       "adult": 'Ages 18+',
       "child": 'Ages 13-17',
@@ -38,6 +41,7 @@ const propertyConfigSlice = createSlice({
           state.wheelChairOption = action.payload.wheelChairOption;
           state.showRoomNumber = action.payload.showRoomNumber;
           state.maxGuestPerRoom = action.payload.maxGuestPerRoom;
+          state.maxRooms = action.payload.maxRooms;
           state.guestTypes = action.payload.guestTypes;
         });
       },

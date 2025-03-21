@@ -37,7 +37,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
       const formattedData: PriceData[] = Object.entries(propertyRate.property).map(
         ([date, price]) => ({
           date: new Date(date).toISOString().split('T')[0], // Format date as YYYY-MM-DD
-          price: price as unknown as number,// Directly use price
+          price: price as unknown as number,
         })
       );
       setPriceData(formattedData);
