@@ -6,11 +6,17 @@ import { fetchPropertiesRate } from '../../Redux/thunk/propertyRateThunk';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { AppDispatch } from '../../Redux/store';
-
+import { fetchPromotionRate } from '../../Redux/thunk/promotionThunk';
 
 interface PriceData {
   date: string;
   price: number;
+}
+
+interface Promotion {
+  startDate: [number, number, number];
+  endDate: [number, number, number];
+  discount: number;
 }
 
 const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
@@ -29,9 +35,33 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
    
   useEffect(() => {
       dispatch(fetchPropertiesRate());
+      dispatch(fetchPromotionRate());
     }, [dispatch]);
     
   const propertyRate = useSelector((state: RootState) => state.propertyRate);
+  const promotionRate = useSelector((state: RootState) => state.promotion);
+  console.log(promotionRate);
+
+  // Create a sample promotion array for testing when API is down
+  const [promotions, setPromotions] = useState<Promotion[]>([
+    {
+      startDate: [2025, 5, 12],
+      endDate: [2025, 5, 18],
+      discount: 25 // 25% discount
+    },
+    {
+      startDate: [2025, 6, 12],
+      endDate: [2025, 6, 18],
+      discount: 25 // 25% discount
+    }
+  ]);
+
+  useEffect(() => {
+    // When promotionRate data is available, update promotions state
+    if (promotionRate && promotionRate.length > 0) {
+      setPromotions(promotionRate);
+    }
+  }, [promotionRate]);
 
   useEffect(() => {
     if (propertyRate.property) {
@@ -80,6 +110,25 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
       setSecondMonth(6);
     }
   }, [firstMonth]);
+
+  // Check if a date falls within any promotion period
+  const getPromotion = (dateStr: string): Promotion | null => {
+    const date = new Date(dateStr);
+    return promotions.find(promo => {
+      const startDate = new Date(promo.startDate[0], promo.startDate[1] - 1, promo.startDate[2]);
+      const endDate = new Date(promo.endDate[0], promo.endDate[1] - 1, promo.endDate[2]);
+      return date >= startDate && date <= endDate;
+    }) || null;
+  };
+
+  // Calculate the discounted price for a date
+  const getDiscountedPrice = (originalPrice: number, dateStr: string): number | null => {
+    const promotion = getPromotion(dateStr);
+    if (!promotion) return null;
+    
+    // Calculate discounted price (assuming discount is percentage)
+    return Math.round(originalPrice * (1 - promotion.discount / 100));
+  };
 
   // Get price for a specific date
   const getPriceForDate = (dateStr: string): number | null => {
@@ -278,6 +327,8 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = formatDate(year, month, day);
       const price = getPriceForDate(dateStr);
+      const discountedPrice = price ? getDiscountedPrice(price, dateStr) : null;
+      const hasPromotion = !!discountedPrice;
       
       // Determine cell classes based on selection state
       let cellClasses = ["day"];
@@ -288,6 +339,10 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
         cellClasses.push("selected-end");
       } else if (isInRange(dateStr)) {
         cellClasses.push("in-range");
+      }
+      
+      if (hasPromotion) {
+        cellClasses.push("has-promotion");
       }
       
       // Disable dates that can't be selected based on selection state
@@ -313,7 +368,16 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
           <div className="day-content">
             <div className="day-number">{day}</div>
             {price !== null ? (
-              <div className="price">${price}</div>
+              <div className="price-container">
+                {hasPromotion ? (
+                  <>
+                    <div className="price original-price">${price}</div>
+                    <div className="price discounted-price">${discountedPrice}</div>
+                  </>
+                ) : (
+                  <div className="price">${price}</div>
+                )}
+              </div>
             ) : (
               <div className="price unavailable">N/A</div>
             )}

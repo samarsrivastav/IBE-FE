@@ -7,6 +7,7 @@ import searchReducer from './slice/searchSlice'
 import propertyRateSliceReducer from './slice/propertyRateSlice'
 import propertyConfigSliceReducer from './slice/propertyConfigSlice'
 import tenantConfigSliceReducer from './slice/tenantConfigSlice'
+import promotionSliceReducer from './slice/promotionSlice'
 
 export const store = configureStore({
   reducer: combineReducers({
@@ -18,6 +19,7 @@ export const store = configureStore({
     propertyRate: propertyRateSliceReducer,
     propertyConfig: propertyConfigSliceReducer,
     tenantConfig: tenantConfigSliceReducer,
+    promotion: promotionSliceReducer,
   }),
 })
 

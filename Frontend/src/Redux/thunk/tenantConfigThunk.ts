@@ -4,7 +4,7 @@ import axios from "axios";
 const fetchTenantConfig = createAsyncThunk(
         "tenantConfig/fetchTenantConfig",
         async () => {
-            const baseURL = import.meta.env.VITE_TENANTCONFIG_API_URL + '4';
+            const baseURL = import.meta.env.VITE_TENANTCONFIG_API_URL + '1';
             console.log("baseURL", baseURL);
             const response = await axios.get(baseURL);
             return response.data;
