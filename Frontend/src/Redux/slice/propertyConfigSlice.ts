@@ -26,7 +26,7 @@ const initialState: PropertyConfig = {
       "child": 'Ages 13-17',
       "teen" : 'Ages 0-12',
     }
-  };
+};
 
 
 const propertyConfigSlice = createSlice({

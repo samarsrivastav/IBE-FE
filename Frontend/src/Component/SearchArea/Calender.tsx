@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { AppDispatch } from '../../Redux/store';
 
+
 interface PriceData {
   date: string;
   price: number;
@@ -20,6 +21,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   const [priceData, setPriceData] = useState<PriceData[]>([]);
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [selectionComplete, setSelectionComplete] = useState<boolean>(false);
+  const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
   
   // Track the two displayed months separately
   const [firstMonth, setFirstMonth] = useState<number>(5); // May
@@ -112,7 +114,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   // Find the next date without a price
   const findNextDateWithoutPrice = (dateStr: string): string | null => {
     const startDateObj = new Date(dateStr);
-    const maxSearchDays = 14; // Don't look beyond max stay length
+    const maxSearchDays = tenantConfig.configuration.lengthOfStay? tenantConfig.configuration.lengthOfStay : 14; // Don't look beyond max stay length
     
     for (let i = 1; i <= maxSearchDays; i++) {
       const nextDate = new Date(startDateObj);
@@ -192,7 +194,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   };
 
   //configurable
-  const max_days = 14;
+  const max_days = tenantConfig.configuration.lengthOfStay? tenantConfig.configuration.lengthOfStay : 14;
 
   // Check if a date is selectable as end date (within max_days of start and before any date without price)
   const isValidEndDate = (dateStr: string): boolean => {

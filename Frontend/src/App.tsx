@@ -7,6 +7,7 @@ import { Footer } from "./Component/Footer/Footer";
 import { Navbar } from "./Component/Navbar/Navbar";
 import { useState } from "react";
 import { messages } from "./Constant/language/i18n";
+import DynamicBackground from "./Component/DynamicChanges/DynamicBackground";
 
 function App() {
   const [locale, setLocale] = useState<string>("en");
@@ -16,7 +17,7 @@ function App() {
       <HashRouter>
         <div className="app-container">
           <Navbar locale={locale} setLocale={setLocale} />
-          
+          <DynamicBackground />
           <main className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />

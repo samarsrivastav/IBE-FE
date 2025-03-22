@@ -16,6 +16,10 @@ import { setCurrency } from "../../Redux/slice/currencySlice";
 import { useDispatch } from "react-redux"; 
 import styles from "./Navbar.module.scss";
 import { AppDispatch } from "../../Redux/store";
+import fetchTenantConfig  from "../../Redux/thunk/tenantConfigThunk";
+import { RootState } from "../../Redux/store";
+import { useSelector } from "react-redux";
+
 
 interface NavbarProps {
   locale: string;
@@ -28,6 +32,13 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const availableLanguages = ["en", "es"]; // Languages supported in the dropdown
+
+  useEffect(() => {
+    dispatch(fetchTenantConfig());
+  }, []);
+
+  const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
+  console.log("tenantConfig", tenantConfig);
 
   // Detect browser language on mount
   useEffect(() => {
@@ -47,12 +58,16 @@ export const Navbar = ({ locale, setLocale }: NavbarProps) => {
     <AppBar position="static" className={styles.navbar}>
       <Toolbar className={styles.navbar__toolbar}>
         {/* Logo */}
-        <Typography variant="h6" className={styles.navbar__logo}>
-          <div className={styles.navbar__logo__title}>Kickdrum{" "}</div>
-          <div className={styles.navbar__logo__subtitle}>
-            {intl.formatMessage({ id: "title" })}
-          </div>
-        </Typography>
+      <Typography variant="h6" className={styles.navbar__logo}>
+      <div className={styles.navbar__logo__title}>
+        {tenantConfig.configuration.headerLogo ? tenantConfig.configuration.headerLogo : "Kickdrum"}
+      </div>
+      {tenantConfig.configuration.headerLogo && (
+        <div className={styles.navbar__logo__subtitle}>
+          {intl.formatMessage({ id: "title" })}
+        </div>
+      )}
+      </Typography>
 
         {/* Desktop Menu */}
         <Box className={styles.navbar__desktopMenu} sx={{ display: { xs: "none", md: "flex" } }}>
