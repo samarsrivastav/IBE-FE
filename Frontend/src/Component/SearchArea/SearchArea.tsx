@@ -23,11 +23,13 @@ import {
   Paper,
   IconButton,
   Popover,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import CalendarComponent from "./Calender";
+import CalendarComponent from "./HotelBookingCalender";
 import AccessibleIcon from "@mui/icons-material/Accessible";
 import "./SearchArea.scss";
 import fetchPropertyConfig from "../../Redux/thunk/propertyConfigThunk";
@@ -62,6 +64,7 @@ const SearchArea: React.FC = () => {
   }, [dispatch, propertyId]);
 
   const propertyConfig = useSelector((state: RootState) => state.propertyConfig);
+  // console.log("propertyConfig", propertyConfig);
   
 
   // Calendar dropdown state
@@ -75,11 +78,33 @@ const SearchArea: React.FC = () => {
 
   // Handle property selection
   const handleSelect = (propertyId: number) => {
+    if(propertyId === 8 || propertyId === 20){
     dispatch(setPropertyId(propertyId));
+    }
+  };
+
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedPropertyId || selectedPropertyId === 0) {
+      setAlertMessage("Please select a property");
+      setOpenAlert(true);
+      return;
+    }
+    
+    if (!checkIn || !checkOut) {
+      setAlertMessage("Please select check-in and check-out dates");
+      setOpenAlert(true);
+      return;
+    }
+
     console.log("Search with:", searchState);
   };
 
@@ -93,7 +118,7 @@ const SearchArea: React.FC = () => {
   };
 
   // Calculate total guests
-  const totalGuests = Object.values(searchState.guests).reduce((a, b) => a + b, 0);
+  const totalGuests = Object.values(searchState.guests).reduce((a: number, b: number) => a + b, 0);
 
   // Define guest types based on propertyConfig
   type GuestType = "adults" | "child" | "teen";
@@ -169,6 +194,17 @@ const SearchArea: React.FC = () => {
   const generateRoomOptions = () => {
     const maxRooms = propertyConfig?.maxRooms || 4; // Default to 4 if not set
     return Array.from({ length: maxRooms }, (_, index) => index + 1);
+  };
+
+  // Validate if all required fields are filled
+  const isSearchEnabled = (): boolean => {
+    return !!(
+      selectedPropertyId && 
+      selectedPropertyId !== 0 && 
+      checkIn && 
+      checkOut && 
+      totalGuests > 0
+    );
   };
 
   return (
@@ -382,6 +418,31 @@ const SearchArea: React.FC = () => {
         >
           SEARCH
         </Button>
+
+        <Snackbar 
+          open={openAlert} 
+          autoHideDuration={3000} 
+          onClose={handleCloseAlert}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert 
+            onClose={handleCloseAlert} 
+            severity="info" 
+            sx={{ 
+              width: '100%',
+              backgroundColor: '#0a157a',
+              color: 'white',
+              '& .MuiAlert-icon': {
+                color: 'white'
+              },
+              '& .MuiAlert-action': {
+                color: 'white'
+              }
+            }}
+          >
+            {alertMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     </Paper>
   );

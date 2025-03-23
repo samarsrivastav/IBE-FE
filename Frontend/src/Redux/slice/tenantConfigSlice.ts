@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import fetchTenantConfig from "../thunk/tenantConfigThunk";
 
+
 interface TenantConfigState {
     configId : number;
     configuration: {
@@ -9,6 +10,7 @@ interface TenantConfigState {
         bannerImage: string;
         lengthOfStay: number;
     }
+    tenantId : number;
 }
 
 const initialState : TenantConfigState = {
@@ -18,9 +20,9 @@ const initialState : TenantConfigState = {
         pageTitle: "",
         bannerImage: "",
         lengthOfStay: 0,
-    }
+    },
+    tenantId : 0,
 }   
-
 
 const tenantConfigSlice = createSlice({
     name: "tenantConfig",
@@ -28,13 +30,13 @@ const tenantConfigSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(fetchTenantConfig.fulfilled, (state, action) => {
-            state.configId = action.payload.configId;
-            
-            // Access `configurationJson` instead of `configuration`
-            state.configuration.headerLogo = action.payload.configurationJson.headerLogo;
-            state.configuration.pageTitle = action.payload.configurationJson.pageTitle;
-            state.configuration.bannerImage = action.payload.configurationJson.bannerImage;
-            state.configuration.lengthOfStay = action.payload.configurationJson.lengthOfStay;
+            const config = action.payload[0];
+            state.configId = config.configId;
+            state.tenantId = config.tenantId;
+            state.configuration.headerLogo = config.configurationJson.headerLogo;
+            state.configuration.pageTitle = config.configurationJson.pageTitle;
+            state.configuration.bannerImage = config.configurationJson.bannerImage;
+            state.configuration.lengthOfStay = config.configurationJson.lengthOfStay;
         });
     }
 });

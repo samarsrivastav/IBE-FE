@@ -33,28 +33,20 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   const [firstMonth, setFirstMonth] = useState<number>(5); // May
   const [secondMonth, setSecondMonth] = useState<number>(6); // June
    
+  const propertyId = useSelector((state: RootState) => state.search.PropertyId);
   useEffect(() => {
-      dispatch(fetchPropertiesRate());
+      if (propertyId) {
+        dispatch(fetchPropertiesRate(propertyId.toString()));
+      }
       dispatch(fetchPromotionRate());
     }, [dispatch]);
     
   const propertyRate = useSelector((state: RootState) => state.propertyRate);
   const promotionRate = useSelector((state: RootState) => state.promotion);
-  console.log(promotionRate);
+ 
 
-  // Create a sample promotion array for testing when API is down
-  const [promotions, setPromotions] = useState<Promotion[]>([
-    {
-      startDate: [2025, 5, 12],
-      endDate: [2025, 5, 18],
-      discount: 25 // 25% discount
-    },
-    {
-      startDate: [2025, 6, 12],
-      endDate: [2025, 6, 18],
-      discount: 25 // 25% discount
-    }
-  ]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  
 
   useEffect(() => {
     // When promotionRate data is available, update promotions state

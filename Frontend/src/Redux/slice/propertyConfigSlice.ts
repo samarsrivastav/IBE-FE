@@ -1,6 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import fetchPropertyConfig from "../thunk/propertyConfigThunk"
 
+// {
+//   "id": 3,
+//   "propertyId": 15,
+//   "showGuest": true,
+//   "wheelChairOption": true,
+//   "showRoomNumber": false,
+//   "maxGuestPerRoom": 4,
+//   "maxRoomsPerBooking": 15,
+//   "guestTypes": {
+//     "adult": "Ages 18+",
+//     "child": "Ages 0-17"
+//   }
+// }
+
 
  interface PropertyConfig {
     id: number;
@@ -41,7 +55,7 @@ const propertyConfigSlice = createSlice({
           state.wheelChairOption = action.payload.wheelChairOption;
           state.showRoomNumber = action.payload.showRoomNumber;
           state.maxGuestPerRoom = action.payload.maxGuestPerRoom;
-          state.maxRooms = action.payload.maxRooms;
+          state.maxRooms = action.payload.maxRoomsPerBooking;
           state.guestTypes = action.payload.guestTypes;
         });
       },
