@@ -1,0 +1,105 @@
+.search-area {
+  &__paper {
+    max-width:23.75rem;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 36.563rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 16px;
+    padding: 1.5rem;
+  }
+
+  &__select {
+    background-color: #fff;
+  }
+
+  &__date-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgb(214, 211, 219);
+    padding: 10px 15px;
+    cursor: pointer;
+    gap: 10px;
+
+    &-text {
+      color: #000;
+      font-size: 1.1rem;
+      word-spacing: 25px;
+    }
+
+    &-icon {
+      color: #000;
+    }
+  }
+
+  &__guest-selector {
+    border: 1px solid rgba(24, 13, 13, 0.23);
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height:2.3rem;
+  }
+
+  &__guest-popover {
+    width: 300px;
+    padding: 16px;
+  }
+
+  &__guest-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 3rem;
+    margin-bottom: 16px;
+    // border: red 1px solid;
+
+    &-counter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      // border: red 1px solid;
+
+      &-value {
+        min-width: 20px;
+        text-align: center;
+      }
+    }
+  }
+
+  &__accessible-room-label {
+    margin-top: 0rem;
+    // border: red 1px solid;
+    margin-top : -1rem;
+  }
+
+  &__rooms-select {
+    width: 30%;
+    background-color: #fff;
+  }
+
+  &__search-button {
+    align-self: center;
+    width: 45%;
+    margin-top: 10rem !important;
+    padding: 1rem 0;
+    background-color: #0a157a !important;
+    &:hover {
+      background-color: #0d1657 !important;
+    }
+  }
+}
+
+
+

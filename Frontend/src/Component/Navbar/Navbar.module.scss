@@ -1,5 +1,7 @@
 // General Navbar styles
+
 .navbar { 
+  font-family: 'Lato', sans-serif !important;
   color: #10072C;
   background-color: white !important;
   box-shadow: none !important;
@@ -16,17 +18,28 @@
   &__logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    // gap: 0.5rem;
     color: #10072c;
+    padding:0 !important;
+    margin:0 ;
+
 
     &__title {
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       font-weight: bold;
+      width:6.438rem;
+      height:1.875rem;
     }
 
     &__subtitle {
-      font-weight: medium;
-      font-size: 1.3rem;
+      // font-weight: medium;
+      font-weight:700;
+      font-size: 20px;
+      // border: 1px solid red;   
+      line-height: 130%;
+      // height: 1.625rem;
+      // width: 13.563rem;
+      
     }
   }
 
