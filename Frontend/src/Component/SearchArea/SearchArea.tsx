@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { useState, useEffect } from "react";
@@ -33,15 +32,15 @@ import CalendarComponent from "./HotelBookingCalender";
 import AccessibleIcon from "@mui/icons-material/Accessible";
 import "./SearchArea.scss";
 import fetchPropertyConfig from "../../Redux/thunk/propertyConfigThunk";
+import { fetchProperties } from "../../Redux/thunk/propertiesThunk";
 
 // Create array of property data
-const properties = Array.from({ length: 24 }, (_, index) => ({
-  pid: index + 1,
-  name: `Property ${index + 1}`
-}));
 
 const SearchArea: React.FC = () => {
+  
   const dispatch = useDispatch<AppDispatch>();
+  const properties = useSelector((state: RootState) => state.properties.property.listProperties);
+
   const searchState = useSelector((state: RootState) => state.search);
   const { checkIn, checkOut } = searchState;
 
@@ -52,6 +51,8 @@ const SearchArea: React.FC = () => {
   const propertyId = useSelector((state: RootState) => state.search.PropertyId);
 
   useEffect(() => {
+    dispatch(fetchProperties());
+    console.log("fetching properties");
     if (propertyId) {
       dispatch(fetchPropertyConfig(propertyId));
       // Reset all values to initial state
@@ -63,12 +64,14 @@ const SearchArea: React.FC = () => {
     }
   }, [dispatch, propertyId]);
 
-  const propertyConfig = useSelector((state: RootState) => state.propertyConfig);
-  // console.log("propertyConfig", propertyConfig);
-  
+  const propertyConfig = useSelector(
+    (state: RootState) => state.propertyConfig
+  );
 
   // Calendar dropdown state
-  const [calendarAnchorEl, setCalendarAnchorEl] = useState<HTMLElement | null>(null);
+  const [calendarAnchorEl, setCalendarAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
   const handleCalendarOpen = (event: React.MouseEvent<HTMLDivElement>) => {
     setCalendarAnchorEl(event.currentTarget);
   };
@@ -78,8 +81,8 @@ const SearchArea: React.FC = () => {
 
   // Handle property selection
   const handleSelect = (propertyId: number) => {
-    if(propertyId === 8 || propertyId === 20){
-    dispatch(setPropertyId(propertyId));
+    if (propertyId === 8 || propertyId === 20) {
+      dispatch(setPropertyId(propertyId));
     }
   };
 
@@ -92,13 +95,13 @@ const SearchArea: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedPropertyId || selectedPropertyId === 0) {
       setAlertMessage("Please select a property");
       setOpenAlert(true);
       return;
     }
-    
+
     if (!checkIn || !checkOut) {
       setAlertMessage("Please select check-in and check-out dates");
       setOpenAlert(true);
@@ -117,12 +120,39 @@ const SearchArea: React.FC = () => {
     setGuestAnchorEl(null);
   };
 
+  const handleGuestUpdate = (type: string, increment: boolean) => {
+    const guestPerRoom = propertyConfig?.maxGuestPerRoom || 4;
+    const newGuestCount = searchState.guests[type] + (increment ? 1 : -1);
+  
+    if (newGuestCount < 0 || (type === "adults" && newGuestCount === 0)) return;
+  
+    const newTotalGuests = totalGuests + (increment ? 1 : -1);
+    let newRooms = searchState.rooms;
+    const minRoomsRequired = Math.ceil(newTotalGuests / guestPerRoom);
+    
+    if (increment) {
+      if (newTotalGuests > newRooms * guestPerRoom) {
+        newRooms = Math.min(newRooms + 1, propertyConfig?.maxRooms || 4);
+      }
+    } else {
+      if (newRooms > minRoomsRequired) {
+        newRooms = minRoomsRequired;
+      }
+    }
+  
+    dispatch(updateGuestCount({ type, value: newGuestCount }));
+    dispatch(setRooms(newRooms));
+  };
+  
   // Calculate total guests
-  const totalGuests = Object.values(searchState.guests).reduce((a: number, b: number) => a + b, 0);
+  const totalGuests = Object.values(searchState.guests).reduce(
+    (a: number, b: number) => a + b,
+    0
+  );
 
   // Define guest types based on propertyConfig
   type GuestType = "adults" | "child" | "teen";
-  
+
   // Default guest types when no config is available
   let guestTypes: { type: GuestType; label: string; subLabel: string }[] = [
     {
@@ -139,13 +169,13 @@ const SearchArea: React.FC = () => {
       type: "child",
       label: "Children",
       subLabel: "Ages 0-12",
-    }
+    },
   ];
 
   // If propertyConfig and guestTypes exist, override with config values
   if (propertyConfig && propertyConfig.guestTypes) {
     guestTypes = [];
-    
+
     // Always add adults
     if (propertyConfig.guestTypes.adult) {
       guestTypes.push({
@@ -187,9 +217,18 @@ const SearchArea: React.FC = () => {
     return totalGuests >= propertyConfig.maxGuestPerRoom;
   };
 
+  const handleRoomChange = (newRoomCount: number) => {
+    const guestPerRoom = propertyConfig?.maxGuestPerRoom || 4;
+    const minRoomsRequired = Math.ceil(totalGuests / guestPerRoom);
+
+    if (newRoomCount >= minRoomsRequired) {
+      dispatch(setRooms(newRoomCount));
+    }
+  };
+
   // Ensure at least one adult is always selected
   const isRemoveAdultDisabled = searchState.guests.adults <= 1;
-  
+
   // Generate room options based on maxRooms from property config
   const generateRoomOptions = () => {
     const maxRooms = propertyConfig?.maxRooms || 4; // Default to 4 if not set
@@ -199,10 +238,10 @@ const SearchArea: React.FC = () => {
   // Validate if all required fields are filled
   const isSearchEnabled = (): boolean => {
     return !!(
-      selectedPropertyId && 
-      selectedPropertyId !== 0 && 
-      checkIn && 
-      checkOut && 
+      selectedPropertyId &&
+      selectedPropertyId !== 0 &&
+      checkIn &&
+      checkOut &&
       totalGuests > 0
     );
   };
@@ -217,7 +256,7 @@ const SearchArea: React.FC = () => {
         <FormControl fullWidth>
           <Typography>Property name*</Typography>
           <Select
-            value={selectedPropertyId || 0}
+            value={selectedPropertyId ?? 0}
             onChange={() => {}} // Empty onChange as we're handling selection via checkboxes
             displayEmpty
             className="search-area__select"
@@ -229,11 +268,14 @@ const SearchArea: React.FC = () => {
                   </span>
                 );
               }
-              return properties.find(p => p.pid === selected)?.name || "";
+              const property = properties.find(
+                (p) => p.property_id === selected
+              );
+              return property?.property_name ?? "";
             }}
           >
             <MenuItem value={0}>
-              <Checkbox 
+              <Checkbox
                 checked={selectedPropertyId === 0}
                 onChange={() => handleSelect(0)}
               />
@@ -241,22 +283,22 @@ const SearchArea: React.FC = () => {
                 Select a property
               </span>
             </MenuItem>
-            {properties.map((property) => (
-              <MenuItem key={property.pid} value={property.pid}>
+            {properties!=undefined?properties.map((property) => (
+              <MenuItem key={property.property_id} value={property.property_id}>
                 <Checkbox
-                  checked={selectedPropertyId === property.pid}
-                  onChange={() => handleSelect(property.pid)}
+                  checked={selectedPropertyId === property.property_id}
+                  onChange={() => handleSelect(property.property_id)}
                 />
-                {property.name}
+                {property.property_name}
               </MenuItem>
-            ))}
+            )):null}
           </Select>
         </FormControl>
 
         <Box>
           <Typography>Select dates</Typography>
-          <Box 
-            className="search-area__date-selector" 
+          <Box
+            className="search-area__date-selector"
             onClick={handleCalendarOpen}
           >
             <Typography className="search-area__date-selector-text">
@@ -295,16 +337,15 @@ const SearchArea: React.FC = () => {
 
         <Box sx={{ display: "flex", gap: 2 }}>
           {/* Show guests section only if showGuest is true or not set yet */}
-          {(propertyConfig?.showGuest === undefined || propertyConfig?.showGuest) && (
+          {(propertyConfig?.showGuest === undefined ||
+            propertyConfig?.showGuest) && (
             <FormControl sx={{ width: "100%" }}>
               <Typography>Guests</Typography>
               <Box
                 onClick={handleGuestMenuClick}
                 className="search-area__guest-selector"
               >
-                <Typography>
-                  {totalGuests} Guests
-                </Typography>
+                <Typography>{totalGuests} Guests</Typography>
               </Box>
               <Popover
                 open={Boolean(guestAnchorEl)}
@@ -325,8 +366,27 @@ const SearchArea: React.FC = () => {
                 {guestTypes.map(({ type, label, subLabel }) => (
                   <Box key={type} className="search-area__guest-item">
                     <Box>
-                      <Typography sx={{fontWeight:"700",fontSize:"1rem",lineHeight:"150%",letterSpacing:"0px"}} variant="subtitle1">{label}</Typography>
-                      <Typography sx={{fontWeight:"400",fontSize:"0.875rem",lineHeight:"140%",letterSpacing:"0px"}} variant="caption" color="text.secondary">
+                      <Typography
+                        sx={{
+                          fontWeight: "700",
+                          fontSize: "1rem",
+                          lineHeight: "150%",
+                          letterSpacing: "0px",
+                        }}
+                        variant="subtitle1"
+                      >
+                        {label}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: "400",
+                          fontSize: "0.875rem",
+                          lineHeight: "140%",
+                          letterSpacing: "0px",
+                        }}
+                        variant="caption"
+                        color="text.secondary"
+                      >
                         {subLabel}
                       </Typography>
                     </Box>
@@ -341,7 +401,11 @@ const SearchArea: React.FC = () => {
                             })
                           );
                         }}
-                        disabled={type === "adults" ? isRemoveAdultDisabled : searchState.guests[type] === 0}
+                        disabled={
+                          type === "adults"
+                            ? isRemoveAdultDisabled
+                            : searchState.guests[type] === 0
+                        }
                       >
                         <RemoveIcon />
                       </IconButton>
@@ -351,12 +415,21 @@ const SearchArea: React.FC = () => {
                       <IconButton
                         size="small"
                         onClick={() => {
+                          const newGuestCount =
+                            (searchState.guests[type] || 0) + 1;
+                          let newRooms = searchState.rooms;
+                          const maxGuestsAllowed =
+                            propertyConfig?.maxGuestPerRoom || 4;
+                          const maxRoomsAllowed = propertyConfig?.maxRooms || 4;
+
+                          if (totalGuests + 1 > newRooms * maxGuestsAllowed) {
+                            newRooms = Math.min(newRooms + 1, maxRoomsAllowed);
+                          }
+
                           dispatch(
-                            updateGuestCount({
-                              type,
-                              value: (searchState.guests[type] || 0) + 1,
-                            })
+                            updateGuestCount({ type, value: newGuestCount })
                           );
+                          dispatch(setRooms(newRooms));
                         }}
                         disabled={isAddGuestDisabled(type)}
                       >
@@ -366,7 +439,10 @@ const SearchArea: React.FC = () => {
                   </Box>
                 ))}
                 {propertyConfig?.maxGuestPerRoom && (
-                  <Typography sx={{p: 1, fontSize:"0.75rem"}} color="text.secondary">
+                  <Typography
+                    sx={{ p: 1, fontSize: "0.75rem" }}
+                    color="text.secondary"
+                  >
                     Maximum {propertyConfig.maxGuestPerRoom} guests per room
                   </Typography>
                 )}
@@ -375,16 +451,26 @@ const SearchArea: React.FC = () => {
           )}
 
           {/* Show rooms selection only if showRoomNumber is true or not set yet */}
-          {(propertyConfig?.showRoomNumber === undefined || propertyConfig?.showRoomNumber) && (
+          {(propertyConfig?.showRoomNumber === undefined ||
+            propertyConfig?.showRoomNumber) && (
             <FormControl className="search-area__rooms-select">
               <Typography>Rooms</Typography>
               <Select
                 value={searchState.rooms}
-                onChange={(e) => dispatch(setRooms(Number(e.target.value)))}
+                onChange={(e) => handleRoomChange(Number(e.target.value))}
                 className="search-area__select"
               >
                 {generateRoomOptions().map((num) => (
-                  <MenuItem key={num} value={num}>
+                  <MenuItem
+                    key={num}
+                    value={num}
+                    disabled={
+                      num <
+                      Math.ceil(
+                        totalGuests / (propertyConfig?.maxGuestPerRoom || 4)
+                      )
+                    }
+                  >
                     {num}
                   </MenuItem>
                 ))}
@@ -394,8 +480,10 @@ const SearchArea: React.FC = () => {
         </Box>
 
         {/* Show wheelchair option only if wheelChairOption is true or not set yet */}
-        {(propertyConfig?.wheelChairOption === undefined || propertyConfig?.wheelChairOption) && (
-          <FormControlLabel className="search-area__accessible-room-label"
+        {(propertyConfig?.wheelChairOption === undefined ||
+          propertyConfig?.wheelChairOption) && (
+          <FormControlLabel
+            className="search-area__accessible-room-label"
             control={
               <Box display="flex" alignItems="center">
                 <Checkbox
@@ -404,7 +492,7 @@ const SearchArea: React.FC = () => {
                     dispatch(setNeedsAccessibleRoom(e.target.checked))
                   }
                 />
-                <AccessibleIcon style={{ marginLeft : "-0.7rem" }} />
+                <AccessibleIcon style={{ marginLeft: "-0.7rem" }} />
               </Box>
             }
             label="I need an Accessible Room"
@@ -419,25 +507,25 @@ const SearchArea: React.FC = () => {
           SEARCH
         </Button>
 
-        <Snackbar 
-          open={openAlert} 
-          autoHideDuration={3000} 
+        <Snackbar
+          open={openAlert}
+          autoHideDuration={3000}
           onClose={handleCloseAlert}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          <Alert 
-            onClose={handleCloseAlert} 
-            severity="info" 
-            sx={{ 
-              width: '100%',
-              backgroundColor: '#0a157a',
-              color: 'white',
-              '& .MuiAlert-icon': {
-                color: 'white'
+          <Alert
+            onClose={handleCloseAlert}
+            severity="info"
+            sx={{
+              width: "100%",
+              backgroundColor: "#0a157a",
+              color: "white",
+              "& .MuiAlert-icon": {
+                color: "white",
               },
-              '& .MuiAlert-action': {
-                color: 'white'
-              }
+              "& .MuiAlert-action": {
+                color: "white",
+              },
             }}
           >
             {alertMessage}

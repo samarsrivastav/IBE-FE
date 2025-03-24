@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { AppDispatch } from '../../Redux/store';
 import { fetchPromotionRate } from '../../Redux/thunk/promotionThunk';
+import { useCurrencyConverter } from '../../Config/CustomHooks/useCurrencyConverter';
 
 interface PriceData {
   date: string;
@@ -28,7 +29,8 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [selectionComplete, setSelectionComplete] = useState<boolean>(false);
   const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
-  
+  const { convertedPrices, currency } = useCurrencyConverter(priceData);
+
   // Track the two displayed months separately
   const [firstMonth, setFirstMonth] = useState<number>(5); // May
   const [secondMonth, setSecondMonth] = useState<number>(6); // June
@@ -89,6 +91,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
 
   const navigateSecondMonthNext = () => {
     if (secondMonth < 6) { // Don't go above June (6)
+      navigateFirstMonthNext(); // Ensure first month is always before second month
       setSecondMonth(prev => prev + 1);
     }
   };
@@ -124,7 +127,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
 
   // Get price for a specific date
   const getPriceForDate = (dateStr: string): number | null => {
-    const entry = priceData.find(item => item.date === dateStr);
+    const entry = convertedPrices.find(item => item.date === dateStr);
     return entry ? entry.price : null;
   };
 
@@ -291,6 +294,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
       const dateStr = formatDate(year, month - 1, day);
       const price = getPriceForDate(dateStr);
       
+      
       // Determine cell classes based on selection state
       let cellClasses = ["day", "last-month", "disabled"]; // Always disable previous month's days
       
@@ -309,7 +313,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
         >
           <div className="day-content">
             <div className="day-number">{day}</div>
-            {price && <div className="price">${price}</div>}
+            {price && <div className="price">{currency==="eur"?"€":"$"}{price}</div>}
           </div>
         </div>
       );
@@ -363,11 +367,11 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
               <div className="price-container">
                 {hasPromotion ? (
                   <>
-                    <div className="price original-price">${price}</div>
-                    <div className="price discounted-price">${discountedPrice}</div>
+                    <div className="price original-price">{currency==="eur"?"€":"$"}{price}</div>
+                    <div className="price discounted-price">{currency==="eur"?"€":"$"}{discountedPrice}</div>
                   </>
                 ) : (
-                  <div className="price">${price}</div>
+                  <div className="price">{currency==="eur"?"€":"$"}{price}</div>
                 )}
               </div>
             ) : (
@@ -439,12 +443,26 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
       }
       return `Please select end date. Max length of stay: ${max_days} days`;
     } else if (startDate && endDate) {
-      return `Selected: ${startDate} to ${endDate}`;
+      return <span className='selected-minimum-price'>From {currency === "eur" ? "€" : "$"}{getMinimumPriceInRange(startDate,endDate)}/night</span>;
     } else {
       return "Please select start date";
     }
   };
 
+  const getMinimumPriceInRange = (start: string, end: string): number | null => {
+    if (!start || !end) return null;
+  
+    const selectedPrices = convertedPrices
+      .filter(({ date }) => date >= start && date <= end)
+      .map(({ date, price }) => {
+        const discountedPrice = getDiscountedPrice(price, date);
+        return discountedPrice ?? price;
+      });
+  
+    return selectedPrices.length > 0 ? Math.min(...selectedPrices) : null;
+  };
+  
+  
   // Handle apply button click
   const handleApplyDates = () => {
     if (startDate && endDate) {

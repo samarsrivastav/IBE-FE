@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "./Navbar.module.scss";
 import { AppDispatch, RootState } from "../../Redux/store";
 import fetchTenantConfig from "../../Redux/thunk/tenantConfigThunk";
+import { LOGO_KICKDRUM_DEFAULT } from "../../Constant";
 
 const SUPPORTED_LANGUAGES = [
   { code: "en", name: "English" },
@@ -42,10 +43,13 @@ interface NavbarProps {
 export const Navbar = ({ language, setLanguage }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const { currency } = useSelector((state: RootState) => state.currency);
   const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
 
   useEffect(() => {
     dispatch(fetchTenantConfig());
+    const storedCurrency = localStorage.getItem("selectedCurrency") || "usd";
+    dispatch(setCurrency(storedCurrency));
   }, [dispatch]);
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
@@ -58,7 +62,8 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
   };
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
-    dispatch(setCurrency(event.target.value));
+    const newCurrency = event.target.value;
+    dispatch(setCurrency(newCurrency));
   };
 
   const getText = (key: string): string => {
@@ -70,7 +75,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
     <AppBar position="static" className={styles.navbar}>
       <Toolbar className={styles.navbar__toolbar}>
         <Typography variant="h6" className={styles.navbar__logo}>
-          {tenantConfig.configuration.headerLogo || "BookingPro"}
+          <img src={tenantConfig.configuration.headerLogo ?? LOGO_KICKDRUM_DEFAULT} alt="logo" className={styles.navbar_logo_img} />
           <div className={styles.navbar__logo__subtitle}>{getText("title")}</div>
         </Typography>
 
@@ -84,7 +89,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
               ))}
             </Select>
           </div>
-          <Select defaultValue="usd" variant="standard" disableUnderline onChange={handleCurrencyChange}>
+          <Select value={currency} variant="standard" disableUnderline onChange={handleCurrencyChange}>
             <MenuItem value="usd">{getText("usd")}</MenuItem>
             <MenuItem value="eur">{getText("eur")}</MenuItem>
           </Select>
@@ -105,7 +110,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
               <MenuItem key={lang.code} value={lang.code}>{lang.name}</MenuItem>
             ))}
           </Select>
-          <Select defaultValue="usd" className={styles.navbar__mobileMenu__select} onChange={handleCurrencyChange}>
+          <Select value={currency} className={styles.navbar__mobileMenu__select} onChange={handleCurrencyChange}>
             <MenuItem value="usd">{getText("usd")}</MenuItem>
             <MenuItem value="eur">{getText("eur")}</MenuItem>
           </Select>

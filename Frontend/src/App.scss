@@ -3,10 +3,12 @@ html, body {
   padding: 0;
   height: 100%;
   box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
 }
 
 body {
   background-color: #f8f9fa;
+  top: 0 !important;
 }
 
 #root {

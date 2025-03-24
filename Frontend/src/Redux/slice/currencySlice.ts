@@ -7,8 +7,10 @@ interface CurrencyState {
   loading: boolean;
 }
 
+const storedCurrency = localStorage.getItem("selectedCurrency") || "usd";
+
 const initialState: CurrencyState = {
-  currency: "usd",
+  currency: storedCurrency,
   exchangeRates: {},
   loading: false,
 };
@@ -19,6 +21,7 @@ const currencySlice = createSlice({
   reducers: {
     setCurrency: (state, action) => {
       state.currency = action.payload;
+      localStorage.setItem("selectedCurrency", action.payload);
     },
   },
   extraReducers: (builder) => {

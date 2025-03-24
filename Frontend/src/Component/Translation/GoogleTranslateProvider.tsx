@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-
-// Define interface for window with Google Translate properties
 declare global {
   interface Window {
     google: {
@@ -21,8 +19,18 @@ interface GoogleTranslateProviderProps {
 export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = ({ 
   children, 
   language, 
-  setLanguage
+  setLanguage 
 }) => {
+  
+  useEffect(() => {
+    const savedLang = localStorage.getItem("selectedLanguage");
+    if (savedLang) {
+      setLanguage(savedLang);
+    } else {
+      localStorage.setItem("selectedLanguage", language);
+    }
+  }, []);
+
   const googleTranslateElementInit = () => {
     if (
       !window.google ||
@@ -31,48 +39,41 @@ export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = (
     ) {
       return;
     }
-    
-    // Clean previous translation cookies
+
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     
-    // Get browser language
     const browserLang = (
       navigator.language ||
       (navigator as any).userLanguage ||
       "en"
     ).split("-")[0];
-    
-    console.log("Browser language detected:", browserLang);
-    
-    // Initialize translation element
+
     new window.google.translate.TranslateElement(
       {
-        pageLanguage: "en", // Default page language
-        includedLanguages: "en,es,fr,de,hi,gu", // Customize these languages as needed
+        pageLanguage: "en",
+        includedLanguages: "en,es,fr,de,hi,gu",
         autoDisplay: false,
         gaTrack: false,
       },
       "google_translate_element"
     );
-    
-    // Set to browser language if available or use the current language
+
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
     if (select) {
       select.dispatchEvent(new Event("change"));
       setTimeout(() => {
-        let langToUse = language;
-        
-        // If no language is explicitly set, try to use browser language
-        if (language === "en" && browserLang !== "en") {
+        let langToUse = localStorage.getItem("selectedLanguage") || language;
+
+        if (langToUse === "en" && browserLang !== "en") {
           const options = Array.from(select.options);
-          const hasLanguage = options.some(option => option.value === browserLang);
-          if (hasLanguage) {
+          if (options.some(option => option.value === browserLang)) {
             langToUse = browserLang;
             setLanguage(browserLang);
+            localStorage.setItem("selectedLanguage", browserLang);
           }
         }
-        
-        if (langToUse && langToUse !== "en") {
+
+        if (langToUse !== "en") {
           select.value = langToUse;
           select.dispatchEvent(new Event("change"));
         }
@@ -80,21 +81,19 @@ export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = (
     }
   };
 
-  // Function to change language programmatically
   const changeLanguage = (langCode: string) => {
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
     if (select) {
       select.value = langCode;
       select.dispatchEvent(new Event("change"));
       setLanguage(langCode);
+      localStorage.setItem("selectedLanguage", langCode);
     }
   };
 
   useEffect(() => {
-    // Make changeLanguage available globally
     (window as any).changeGoogleTranslateLanguage = changeLanguage;
-    
-    // Clear existing translation cookies
+
     document.cookie.split(";").forEach((c: string) => {
       if (c.trim().startsWith("googtrans=")) {
         document.cookie =
@@ -102,14 +101,12 @@ export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = (
           "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       }
     });
-    
-    // Add meta tag to prevent Google's automatic translation
+
     const meta = document.createElement("meta");
     meta.name = "google";
     meta.content = "notranslate";
     document.head.appendChild(meta);
-    
-    // Dynamically add Google Translate script
+
     if (
       !document.querySelector(
         'script[src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"]'
@@ -123,7 +120,7 @@ export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = (
       document.body.appendChild(addScript);
       window.googleTranslateElementInit = googleTranslateElementInit;
     }
-    
+
     return () => {
       if (document.head.contains(meta)) {
         document.head.removeChild(meta);
@@ -131,7 +128,6 @@ export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = (
     };
   }, []);
 
-  // Update language when it changes
   useEffect(() => {
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
     if (select && language !== "en") {
@@ -144,7 +140,7 @@ export const GoogleTranslateProvider: React.FC<GoogleTranslateProviderProps> = (
     <>
       <div 
         id="google_translate_element" 
-        style={{ position: "absolute", top: "-1000px", visibility: "hidden" }}
+        style={{height:0 }}
       ></div>
       {children}
     </>

@@ -1,4 +1,12 @@
 .home-page-container {
-//   border: red 1px solid;
   margin-left: 3rem;
+}
+@media (max-width: 768px) {
+  .home-container {
+    .home-page-container {
+      margin-left: 0;
+    }
+    display: flex;
+    justify-content: center;
+  }
 }

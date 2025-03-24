@@ -6,6 +6,7 @@ phases:
       - npm install
   pre_build:
     commands:
+      - aws ssm get-parameter --name "/genwin/frontend/env/dev" --with-decryption --query "Parameter.Value" --output text > .env
       - aws ssm get-parameter --name "/genwin/frontend/env/sentry" --with-decryption --query "Parameter.Value" --output text > .env.sentry-build-plugin
   build:
     commands:

@@ -13,12 +13,16 @@
     display: flex;
     justify-content: space-between;
   }
+  .navbar_logo_img{
+    width: 6.438rem;
+    height: 1.875rem;
+    margin-right: 0.5rem;
+  }
 
   // Logo and Title styles
   &__logo {
     display: flex;
     align-items: center;
-    // gap: 0.5rem;
     color: #10072c;
     padding:0 !important;
     margin:0 ;
@@ -32,13 +36,9 @@
     }
 
     &__subtitle {
-      // font-weight: medium;
       font-weight:700;
       font-size: 20px;
-      // border: 1px solid red;   
       line-height: 130%;
-      // height: 1.625rem;
-      // width: 13.563rem;
       
     }
   }
@@ -143,5 +143,88 @@
 
   &__menuIcon {
     color: #10072c;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .navbar {
+    padding: 0.8rem 1.5rem;
+
+    &__desktopMenu {
+      width: 50%;
+      gap: 12px;
+    }
+
+    .navbar_logo_img {
+      width: 5.5rem;
+      height: 1.6rem;
+    }
+
+    &__logo {
+      &__title {
+        font-size: 1.2rem;
+        width: 5.5rem;
+        height: 1.6rem;
+      }
+
+      &__subtitle {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+
+    &__desktopMenu {
+      display: none;
+    }
+
+    &__toolbar {
+      justify-content: space-between;
+    }
+
+    .navbar_logo_img {
+      width: 5rem;
+      height: 1.5rem;
+    }
+
+    &__menuIcon {
+      display: block;
+    }
+
+    &__mobileMenu {
+      display: flex;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem 0.8rem;
+    
+
+    .navbar_logo_img {
+      width: 4rem;
+      height: 1.2rem;
+    }
+
+    &__logo {
+      &__title {
+        font-size: 1rem;
+        width: 4rem;
+        height: 1.2rem;
+      }
+
+      &__subtitle {
+        font-size: 12px;
+      }
+    }
+
+    &__mobileMenu {
+      padding: 12px 0;
+      gap: 12px;
+    }
   }
 }

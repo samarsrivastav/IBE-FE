@@ -4,6 +4,6 @@ export interface Property {
     property_address: string;
     contact_number: string;
 }
-export type getProperty={
-    getProperty: Property;
+export type listProperties={
+    listProperties: Property;
 }
