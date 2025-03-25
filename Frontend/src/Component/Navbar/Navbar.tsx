@@ -76,7 +76,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
       <Toolbar className={styles.navbar__toolbar}>
         <Typography variant="h6" className={styles.navbar__logo}>
           <img src={tenantConfig.configuration.headerLogo ?? LOGO_KICKDRUM_DEFAULT} alt="logo" className={styles.navbar_logo_img} />
-          <div className={styles.navbar__logo__subtitle}>{getText("title")}</div>
+          <div className={styles.navbar__logo__subtitle}>Internet Booking Engine</div>
         </Typography>
 
         <Box className={styles.navbar__desktopMenu} sx={{ display: { xs: "none", md: "flex" } }}>
