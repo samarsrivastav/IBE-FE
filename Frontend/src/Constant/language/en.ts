@@ -1,0 +1,17 @@
+export default {
+  title: "Internet Booking Engine",
+  myBookings: "MY BOOKINGS",
+  login: "LOGIN",
+  language: "Language",
+  currency: "Currency",
+  english: "English",
+  spanish: "Spanish",
+  usd: "$ USD",
+  eur: "€ EUR",
+  inr: "₹ INR",
+  Welcome: "Welcome to Kickdrum",
+  Environment: "Environment",
+  Hello_World: "Hello World",
+  Properties: "Properties",
+  Health: "Health",
+};

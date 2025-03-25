@@ -1,0 +1,1 @@
+export const LOGO_KICKDRUM_DEFAULT: string = "https://d32gc6ga88q4t5.cloudfront.net/kickdrum-logo.jpeg";
