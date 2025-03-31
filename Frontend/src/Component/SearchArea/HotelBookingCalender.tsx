@@ -118,7 +118,9 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
     return promotions.find(promo => {
       const startDate = new Date(promo.startDate[0], promo.startDate[1] - 1, promo.startDate[2]);
       const endDate = new Date(promo.endDate[0], promo.endDate[1] - 1, promo.endDate[2]);
-      return date >= startDate && date <= endDate;
+      const adjustedEndDate = new Date(endDate);
+      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+      return date >= startDate && date <= adjustedEndDate;
     }) || null;
   };
 
