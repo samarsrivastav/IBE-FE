@@ -10,7 +10,8 @@ import BedDropDown from "./RoomDropdown/BedDropDown";
 import { fetchProperties } from "../../../Redux/thunk/propertiesThunk";
 import fetchPropertyConfig from "../../../Redux/thunk/propertyConfigThunk";
 import { GuestDropDown } from "./GuestDropDown/GuestDropDown";
-import { setCheckIn, setCheckOut } from "../../../Redux/slice/searchSlice";
+import { setBeds, setCheckIn, setCheckOut, setRooms } from "../../../Redux/slice/searchSlice";
+import { fetchRoomDetails } from "../../../Redux/thunk/roomDataThunk";
 
 interface SearchFiltersProps {
   searchParams: URLSearchParams;
@@ -23,7 +24,14 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 }) => {
   const dispatch = useDispatch();
   const searchState = useSelector((state: RootState) => state.search);
-  const { checkIn, checkOut } = searchState;
+  let { checkIn, checkOut } = searchState;
+  const newParams = new URLSearchParams(searchParams);
+  if(!checkIn){
+    checkIn = newParams.get("checkIn")??searchState.checkIn;
+  }
+  if(!checkOut){
+    checkOut= newParams.get("checkOut")??searchState.checkOut;
+  }
   const propertyId = searchState.PropertyId;
   const propertyConfig = useSelector((state: RootState) => state.propertyConfig);
 
@@ -47,9 +55,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     if (checkIn && checkOut && new Date(checkIn) > new Date(checkOut)) {
       setAlertMessage("Check-in date cannot be later than Check-out date.");
       setOpenAlert(true);
-
-      // Reset check-in date and keep check-out date
-      dispatch(setCheckIn(""));
     }
   }, [checkIn, checkOut, dispatch]);
 
@@ -61,22 +66,58 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setSearchParams(newParams);
   }, [checkIn, checkOut, setSearchParams]);
 
-  // Sync query parameters with Redux state
-  useEffect(() => {
-    const queryCheckIn = searchParams.get("checkIn");
-    const queryCheckOut = searchParams.get("checkOut");
-
-    if (queryCheckIn) dispatch(setCheckIn(queryCheckIn));
-    if (queryCheckOut) dispatch(setCheckOut(queryCheckOut));
-  }, [searchParams, dispatch]);
 
   useEffect(() => {
     dispatch(fetchProperties());
+  }, [dispatch]);
+
+  const handleSearch = () => {
+    if (!checkIn || !checkOut) {
+      setAlertMessage("Please select both Check-in and Check-out dates.");
+      setOpenAlert(true);
+      return;
+    }
+  
+    if (new Date(checkIn) > new Date(checkOut)) {
+      setAlertMessage("Check-in date cannot be later than Check-out date.");
+      setOpenAlert(true);
+      return;
+    }
+  
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("checkIn", checkIn);
+    newParams.set("checkOut", checkOut);
+    setSearchParams(newParams);
+  
+    dispatch(setCheckIn(checkIn));
+    dispatch(setCheckOut(checkOut));
+  
+    const rooms_count = newParams.get("rooms");
+    const bed_count = newParams.get("beds");
+  
+    if (rooms_count) dispatch(setRooms(parseInt(rooms_count)));
+    if (bed_count) dispatch(setBeds(parseInt(bed_count)));
+  
+    // Call API only when the search button is clicked
     if (propertyId) {
       dispatch(fetchPropertyConfig(propertyId));
     }
-  }, [dispatch, propertyId]);
-
+    //function to call rooms
+    callRooms();
+  };
+  const searchSliceData=useSelector((state:RootState)=>state.search)
+  const callRooms=()=>{
+    console.log("click")
+    dispatch(fetchRoomDetails({
+      PropertyId: parseInt(searchParams.get("propertyId") || `${searchSliceData.PropertyId}`, 10),
+      beds: parseInt(searchParams.get("beds") || `${searchSliceData.beds}`, 10),
+      checkIn: searchParams.get("checkIn") || searchSliceData.checkIn,
+      checkOut: searchParams.get("checkOut") || searchSliceData.checkOut,
+      guests: searchSliceData.guests, // Ensure guests are correctly handled
+      rooms: parseInt(searchParams.get("rooms") || `${searchSliceData.rooms}`, 10),
+    }));
+  }
+  
   return (
     <div className={styles.filters}>
       <GuestDropDown />
@@ -128,6 +169,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           {alertMessage}
         </Alert>
       </Snackbar>
+      <button className={styles.filters__button} onClick={handleSearch}>SEARCH DATES</button>
+    
     </div>
   );
 };
