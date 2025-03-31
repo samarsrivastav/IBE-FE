@@ -10,6 +10,8 @@ import tenantConfigSliceReducer from './slice/tenantConfigSlice'
 import promotionSliceReducer from './slice/promotionSlice'
 import roomReducer from "./slice/roomDataSlice"
 import selectedRoomReducer from "./slice/selectRoomTypeSlice"
+import promoCodeReducer from './slice/promoCodeSlice'
+
 export const store = configureStore({
   reducer: combineReducers({
     tempSlice: tempSliceReducer,
@@ -22,7 +24,8 @@ export const store = configureStore({
     tenantConfig: tenantConfigSliceReducer,
     promotion: promotionSliceReducer,
     rooms: roomReducer,
-    selectedRoom:selectedRoomReducer
+    selectedRoom:selectedRoomReducer,
+    promoCode: promoCodeReducer
   }),
 })
 

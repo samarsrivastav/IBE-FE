@@ -1,7 +1,26 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Package } from "../Package/Package";
 import { AmenityItem } from "../AmenityItem/AmenityItem";
 import { useCurrencyConverter } from "../../../../Config/CustomHooks/useCurrency";
+import { useDispatch, useSelector } from 'react-redux';
+import { validatePromoCode } from '../../../../Redux/thunk/promoCodeThunk';
+import { RootState, AppDispatch } from '../../../../Redux/store';
+import { Alert, Snackbar } from '@mui/material';
+
+interface PackageType {
+  id: string;
+  title: string;
+  description: string;
+  price: string;
+  type: string;
+}
+
+interface ConvertedPackageType extends PackageType {
+  convertedPrice: {
+    price: number;
+  };
+  currency: string;
+}
 
 interface RoomDetailsProps {
   room: {
@@ -9,26 +28,97 @@ interface RoomDetailsProps {
     maxOccupancy: string;
     bedSize: string;
     description: string;
-    amenities: string [];
-    packages: {
-      id: string;
-      title: string;
-      description: string;
-      price: string;
-      type: string;
-    }[];
+    amenities: string[];
+    packages: PackageType[];
   };
 }
 
 export const RoomDetails: React.FC<RoomDetailsProps> = ({ room }) => {
-
-  const currencyConverFunction = (price: number) => {
-    const {convertedPrice,currency} = useCurrencyConverter(price);
-    return {convertedPrice, currency};
-  }
-  const standardRoom=room.packages.find(pkg=>pkg.type==="standard");
-  const standardRate = currencyConverFunction(Number(standardRoom?.price)).convertedPrice.price;
+  const [promoCode, setPromoCode] = useState('');
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [promoPackage, setPromoPackage] = useState<PackageType | null>(null);
   
+  const dispatch = useDispatch<AppDispatch>();
+  const promoCodeState = useSelector((state: RootState) => state.promoCode);
+  const searchState = useSelector((state: RootState) => state.search);
+  const { checkOut } = searchState;
+
+  const standardRoom = room.packages.find(pkg => pkg.type === "standard");
+  const standardPrice = Number(standardRoom?.price) || 0;
+  const { convertedPrice: standardConvertedPrice, currency: standardCurrency } = useCurrencyConverter(standardPrice);
+
+  // Convert all package prices at the top level
+  const packagePrices = room.packages.slice(1).map(pkg => ({
+    ...pkg,
+    price: pkg.price // Keep as string
+  }));
+
+  // Convert promo package price at the top level if it exists
+  const promoPrice = promoPackage ? Number(promoPackage.price) : 0;
+  const { convertedPrice: promoConvertedPrice, currency: promoCurrency } = useCurrencyConverter(promoPrice);
+
+  // Convert each package price individually at the top level
+  const convertedPackagePrices: ConvertedPackageType[] = packagePrices.map(pkg => {
+    const { convertedPrice, currency } = useCurrencyConverter(Number(pkg.price));
+    return {
+      ...pkg,
+      convertedPrice,
+      currency
+    };
+  });
+
+  const handlePromoCodeApply = async () => {
+    if (!promoCode.trim()) {
+      setAlertMessage('Please enter a promo code');
+      setOpenAlert(true);
+      return;
+    }
+
+    if (!checkOut) {
+      setAlertMessage('Please select check-out date first');
+      setOpenAlert(true);
+      return;
+    }
+
+    try {
+      const result = await dispatch(validatePromoCode({ 
+        code: promoCode.trim(), 
+        usageDate: checkOut 
+      })).unwrap();
+
+      if (!result) {
+        setAlertMessage('Invalid promo code');
+        setOpenAlert(true);
+        return;
+      }
+
+      // Create a new package with the promo code discount
+      const discountedPrice = standardPrice * (1 - result.discount / 100);
+      
+      // Create new promo package
+      const newPromoPackage: PackageType = {
+        id: result.id.toString(),
+        title: result.title,
+        description: result.description,
+        price: discountedPrice.toString(),
+        type: 'promo'
+      };
+
+      setPromoPackage(newPromoPackage);
+      setAlertMessage('Promo code applied successfully!');
+      setOpenAlert(true);
+    } catch (error) {
+      console.error('Error validating promo code:', error);
+      setAlertMessage('Invalid promo code');
+      setOpenAlert(true);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+  };
+
   return (
     <div className="room-modal__details">
       {/* Left Column */}
@@ -79,27 +169,44 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ room }) => {
         <div className="room-modal__pricing">
           <div className="room-modal__standard-rate">
             <h3 className="room-modal__rate-title">Standard Rate</h3>
-            <Package
-              description={room.packages[0].description}
-              price={standardRate.toString()}
-              type="standard"
-              currency={currencyConverFunction(Number(room.packages[0].price)).currency}
-            />
+            {standardRoom && (
+              <Package
+                id={standardRoom.id}
+                title={standardRoom.title}
+                description={standardRoom.description}
+                price={standardConvertedPrice.price.toString()}
+                type="standard"
+                currency={standardCurrency}
+              />
+            )}
           </div>
           <div className="room-modal__packages">
             <h3 className="room-modal__section-title">Deals & Packages</h3>
-            {room.packages.slice(1).map((pkg, index) => {
-              const { convertedPrice, currency } = currencyConverFunction(Number(pkg.price));
-              return (
-                <Package
-                  key={index}
-                  description={pkg.description}
-                  price={convertedPrice.price.toString()}
-                  currency={currency}
-                  type="package"
-                />
-              );
-            })}
+            {/* Regular packages */}
+            {convertedPackagePrices.map((pkg, index) => (
+              <Package
+                key={`regular-${index}`}
+                id={pkg.id}
+                title={pkg.title}
+                description={pkg.description}
+                price={pkg.convertedPrice.price.toString()}
+                currency={pkg.currency}
+                type="package"
+              />
+            ))}
+            
+            {/* Promo package if available */}
+            {promoPackage && (
+              <Package
+                key={`promo-${promoPackage.id}`}
+                id={promoPackage.id}
+                title={promoPackage.title}
+                description={promoPackage.description}
+                price={promoConvertedPrice.price.toString()}
+                currency={promoCurrency}
+                type="promo"
+              />
+            )}
           </div>
         </div>
 
@@ -107,8 +214,20 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ room }) => {
         <div className="room-modal__promo">
           <p className="room-modal__promo-text">Enter a promo code</p>
           <div className="room-modal__promo-input-container">
-            <input className="room-modal__promo-input" type="text" />
-            <button className="room-modal__promo-button">APPLY</button>
+            <input 
+              className="room-modal__promo-input" 
+              type="text" 
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              placeholder="Enter promo code"
+            />
+            <button 
+              className="room-modal__promo-button"
+              onClick={handlePromoCodeApply}
+              disabled={promoCodeState.loading}
+            >
+              {promoCodeState.loading ? 'APPLYING...' : 'APPLY'}
+            </button>
           </div>
         </div>
       </div>
@@ -127,6 +246,31 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ room }) => {
           </div>
         </div>
       </div>
+
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={promoCodeState.error ? 'error' : 'success'}
+          sx={{
+            width: '100%',
+            backgroundColor: promoCodeState.error ? '#d32f2f' : '#0a157a',
+            color: 'white',
+            '& .MuiAlert-icon': {
+              color: 'white',
+            },
+            '& .MuiAlert-action': {
+              color: 'white',
+            },
+          }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

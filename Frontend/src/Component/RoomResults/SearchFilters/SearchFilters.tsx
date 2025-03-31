@@ -107,7 +107,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
   const searchSliceData=useSelector((state:RootState)=>state.search)
   const callRooms=()=>{
-    console.log("click")
     dispatch(fetchRoomDetails({
       PropertyId: parseInt(searchParams.get("propertyId") || `${searchSliceData.PropertyId}`, 10),
       beds: parseInt(searchParams.get("beds") || `${searchSliceData.beds}`, 10),

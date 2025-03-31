@@ -43,12 +43,19 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
   };
 
   useEffect(() => {
-    if (selectedRoom?.room?.title === room.room_type_name && (localStorage.getItem("step") ?? "") >= "2") {
+    const step = localStorage.getItem("step");
+    if (selectedRoom?.room?.title === room.room_type_name && step && step >= "2") {
       setIsModalOpen(true);
     }
   }, [selectedRoom, room.room_type_name]);
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    if (localStorage.getItem("step") === "2") {
+      localStorage.setItem("step", "1");
+      setStep(1);
+    }
+    setIsModalOpen(false);
+  }
 
   const standardRoom = room.promotion?.find((pkg) => pkg.type === "standard");
   const { convertedPrice, currency } = useCurrencyConverter(Number(standardRoom?.price));
