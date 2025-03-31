@@ -1,0 +1,46 @@
+.filter {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  
+    &:last-child {
+      border-bottom: none;
+    }
+  
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      cursor: pointer;
+    }
+  
+    &__title {
+      font-size: 14px;
+    }
+  
+    &__icon {
+      color: #666;
+      font-size: 20px;
+    }
+  
+    &__content {
+      padding-bottom: 10px;
+    }
+  
+    &__options {
+      padding-left: 5px;
+    }
+  }
+  
+  .checkbox {
+    &__label {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+  
+      .MuiCheckbox-root {
+        padding: 0;
+        margin-right: 8px;
+      }
+    }
+  }

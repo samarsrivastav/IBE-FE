@@ -12,6 +12,7 @@ interface SearchState {
   checkOut: string | null;
   guests: GuestCounts;
   rooms: number;
+  beds:number;
   needsAccessibleRoom: boolean;
 }
 
@@ -24,6 +25,7 @@ const initialState: SearchState = {
     adults: 1,
     child: 0
   },
+  beds:1,
   rooms: 1,
   needsAccessibleRoom: false,
 };
@@ -39,7 +41,6 @@ const searchSlice = createSlice({
   reducers: {
     setPropertyId: (state, action: PayloadAction<number>) => {
       state.PropertyId= action.payload;
-      
     },
     setCheckIn: (state, action: PayloadAction<string>) => {
       state.checkIn = action.payload;
@@ -50,6 +51,9 @@ const searchSlice = createSlice({
     updateGuestCount: (state, action: PayloadAction<UpdateGuestCountPayload>) => {
       const { type, value } = action.payload;
       state.guests[type] = value;
+    },
+    setBeds : (state, action: PayloadAction<number>) => {
+      state.beds = action.payload;
     },
     setRooms: (state, action: PayloadAction<number>) => {
       state.rooms = action.payload;
@@ -72,6 +76,7 @@ export const {
   setCheckOut,
   updateGuestCount,
   setRooms,
+  setBeds,
   setNeedsAccessibleRoom,
   resetGuestCounts,
   resetSearch,

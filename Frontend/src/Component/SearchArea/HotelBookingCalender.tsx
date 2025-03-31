@@ -8,6 +8,8 @@ import { RootState } from '../../Redux/store';
 import { AppDispatch } from '../../Redux/store';
 import { fetchPromotionRate } from '../../Redux/thunk/promotionThunk';
 import { useCurrencyConverter } from '../../Config/CustomHooks/useCurrencyConverter';
+import { currencySymbolMap } from '../../Constant/CurrencyConstant';
+import { useSearchParams } from 'react-router-dom';
 
 interface PriceData {
   date: string;
@@ -34,8 +36,12 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   // Track the two displayed months separately
   const [firstMonth, setFirstMonth] = useState<number>(5); // May
   const [secondMonth, setSecondMonth] = useState<number>(6); // June
-   
-  const propertyId = useSelector((state: RootState) => state.search.PropertyId);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const propertyIdState = useSelector((state: RootState) => state.search.PropertyId);
+  const propertyId=searchParams.get("propertyId")??propertyIdState;
+  
+  
+  
   useEffect(() => {
       if (propertyId) {
         dispatch(fetchPropertiesRate(propertyId.toString()));
@@ -313,7 +319,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
         >
           <div className="day-content">
             <div className="day-number">{day}</div>
-            {price && <div className="price">{currency==="eur"?"€":"$"}{price}</div>}
+            {price && <div className="price">{currencySymbolMap.get(currency)}{price}</div>}
           </div>
         </div>
       );
@@ -367,11 +373,11 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
               <div className="price-container">
                 {hasPromotion ? (
                   <>
-                    <div className="price original-price">{currency==="eur"?"€":"$"}{price}</div>
-                    <div className="price discounted-price">{currency==="eur"?"€":"$"}{discountedPrice}</div>
+                    <div className="price original-price">{currencySymbolMap.get(currency)}{price}</div>
+                    <div className="price discounted-price">{currencySymbolMap.get(currency)}{discountedPrice}</div>
                   </>
                 ) : (
-                  <div className="price">{currency==="eur"?"€":"$"}{price}</div>
+                  <div className="price">{currencySymbolMap.get(currency)}{price}</div>
                 )}
               </div>
             ) : (

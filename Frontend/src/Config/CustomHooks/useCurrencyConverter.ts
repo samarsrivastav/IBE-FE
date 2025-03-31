@@ -3,7 +3,7 @@ import { fetchExchangeRates } from "../../Redux/thunk/exchangeRateThunk";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { useDispatch, useSelector } from "react-redux";
 
-interface PriceData {
+export interface PriceData {
   date: string;
   price: number;
 }

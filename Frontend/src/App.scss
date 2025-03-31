@@ -3,7 +3,7 @@ html, body {
   padding: 0;
   height: 100%;
   box-sizing: border-box;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato', sans-serif !important;
 }
 
 body {
@@ -24,7 +24,6 @@ body {
 
 // Main Content
 .main-content {
-  height: 679px; 
   min-height: 679px; 
   margin-bottom: 170px;
 }

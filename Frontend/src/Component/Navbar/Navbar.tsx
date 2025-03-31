@@ -18,22 +18,15 @@ import styles from "./Navbar.module.scss";
 import { AppDispatch, RootState } from "../../Redux/store";
 import fetchTenantConfig from "../../Redux/thunk/tenantConfigThunk";
 import { LOGO_KICKDRUM_DEFAULT } from "../../Constant";
+import { Link } from "react-router-dom";
+import ImageWithFallback from "../Util/ImageWithFallback";
 
 const SUPPORTED_LANGUAGES = [
-  { code: "en", name: "English" },
-  { code: "es", name: "Español" },
-  { code: "fr", name: "Français" },
-  { code: "de", name: "Deutsch" },
+  { code: "en", name: "En" },
+  // { code: "es", name: "Español" },
+  // { code: "de", name: "Deutsch" },
   { code: "hi", name: "हिन्दी" },
 ];
-
-const LANGUAGE_DISPLAY = {
-  en: { myBookings: "My Bookings", login: "Login", title: "Internet Booking System", usd: "USD", eur: "EUR" },
-  es: { myBookings: "Mis Reservas", login: "Iniciar Sesión", title: "Sistema de Reservas", usd: "USD", eur: "EUR" },
-  fr: { myBookings: "Mes Réservations", login: "Connexion", title: "Système de Réservation", usd: "USD", eur: "EUR" },
-  de: { myBookings: "Meine Buchungen", login: "Anmelden", title: "Buchungssystem", usd: "USD", eur: "EUR" },
-  hi: { myBookings: "मेरी बुकिंग", login: "लॉगिन", title: "इंटरनेट बुकिंग सिस्टम", usd: "USD", eur: "EUR" },
-};
 
 interface NavbarProps {
   language: string;
@@ -66,55 +59,134 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
     dispatch(setCurrency(newCurrency));
   };
 
-  const getText = (key: string): string => {
-    return LANGUAGE_DISPLAY[language as keyof typeof LANGUAGE_DISPLAY]?.[key as keyof typeof LANGUAGE_DISPLAY.en] || 
-           LANGUAGE_DISPLAY.en[key as keyof typeof LANGUAGE_DISPLAY.en];
-  };
-
   return (
     <AppBar position="static" className={styles.navbar}>
       <Toolbar className={styles.navbar__toolbar}>
-        <Typography variant="h6" className={styles.navbar__logo}>
-          <img src={tenantConfig.configuration.headerLogo ?? LOGO_KICKDRUM_DEFAULT} alt="logo" className={styles.navbar_logo_img} />
-          <div className={styles.navbar__logo__subtitle}>Internet Booking Engine</div>
-        </Typography>
+        <Link to="/" className={styles.navbar__logo}>
+          <Typography variant="h6" className={styles.navbar__logo}>
+            <ImageWithFallback
+              src={tenantConfig.configuration.headerLogo}
+              fallback={LOGO_KICKDRUM_DEFAULT}
+              alt="logo"
+              className={styles.navbar_logo_img}
+            />
+            <div className={styles.navbar__logo__subtitle}>
+              Internet Booking Engine
+            </div>
+          </Typography>
+        </Link>
 
-        <Box className={styles.navbar__desktopMenu} sx={{ display: { xs: "none", md: "flex" } }}>
-          <Typography variant="body2" className={styles.navbar__desktopMenu__menuItem}>{getText("myBookings")}</Typography>
+        <Box
+          className={styles.navbar__desktopMenu}
+          sx={{ display: { xs: "none", md: "flex" } }}
+        >
+          <Typography
+            variant="body2"
+            className={styles.navbar__desktopMenu__menuItem}
+          >
+            {"MY BOOKINGS"}
+          </Typography>
           <div className={styles.navbar__desktopMenu__language}>
-            <LanguageIcon className={styles.navbar__desktopMenu__language__icon} />
-            <Select value={language} onChange={handleLanguageChange} variant="standard" disableUnderline>
-              {SUPPORTED_LANGUAGES.map(lang => (
-                <MenuItem key={lang.code} value={lang.code}>{lang.name}</MenuItem>
+            <Select
+              value={language}
+              onChange={handleLanguageChange}
+              variant="standard"
+              disableUnderline
+              className="notranslate"
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <LanguageIcon
+                    sx={{ marginRight: 1 }}
+                    className={styles.navbar__desktopMenu__language__icon}
+                  />
+                  {
+                    SUPPORTED_LANGUAGES.find((lang) => lang.code === selected)
+                      ?.name
+                  }
+                </Box>
+              )}
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <MenuItem
+                  key={lang.code}
+                  value={lang.code}
+                  style={{ top: "0" }}
+                  className="notranslate"
+                >
+                  {lang.name}
+                </MenuItem>
               ))}
             </Select>
           </div>
-          <Select value={currency} variant="standard" disableUnderline onChange={handleCurrencyChange}>
-            <MenuItem value="usd">{getText("usd")}</MenuItem>
-            <MenuItem value="eur">{getText("eur")}</MenuItem>
+          <Select
+            value={currency}
+            variant="standard"
+            disableUnderline
+            onChange={handleCurrencyChange}
+          >
+            <MenuItem value="usd">{"$ USD"}</MenuItem>
+            <MenuItem value="eur">{"€ EUR"}</MenuItem>
+            <MenuItem value="inr">{"₹ INR"}</MenuItem>
           </Select>
-          <Button variant="contained" className={styles.navbar__desktopMenu__loginButton}>{getText("login")}</Button>
+          <Button
+            variant="contained"
+            className={styles.navbar__desktopMenu__loginButton}
+          >
+            {"login"}
+          </Button>
         </Box>
 
-        <IconButton className={styles.navbar__menuIcon} sx={{ display: { xs: "flex", md: "none" } }} onClick={() => setMenuOpen(!menuOpen)}>
+        <IconButton
+          className={styles.navbar__menuIcon}
+          sx={{ display: { xs: "flex", md: "none" } }}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
           <MenuIcon />
         </IconButton>
       </Toolbar>
 
       {menuOpen && (
-        <Box className={styles.navbar__mobileMenu} sx={{ display: { xs: "flex", md: "none" } }}>
-          <Typography variant="body2" className={styles.navbar__mobileMenu__menuItem}>{getText("myBookings")}</Typography>
-          <IconButton><LanguageIcon className={styles.navbar__mobileMenu__language__icon} /></IconButton>
-          <Select value={language} onChange={handleLanguageChange} className={styles.navbar__mobileMenu__select}>
-            {SUPPORTED_LANGUAGES.map(lang => (
-              <MenuItem key={lang.code} value={lang.code}>{lang.name}</MenuItem>
+        <Box
+          className={styles.navbar__mobileMenu}
+          sx={{ display: { xs: "flex", md: "none" } }}
+        >
+          <Typography
+            variant="body2"
+            className={styles.navbar__mobileMenu__menuItem}
+          >
+            {"MY BOOKINGS"}
+          </Typography>
+          <IconButton>
+            <LanguageIcon
+              className={styles.navbar__mobileMenu__language__icon}
+            />
+          </IconButton>
+          <Select
+            value={language}
+            onChange={handleLanguageChange}
+            className={styles.navbar__mobileMenu__select}
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <MenuItem key={lang.code} value={lang.code}>
+                {lang.name}
+              </MenuItem>
             ))}
           </Select>
-          <Select value={currency} className={styles.navbar__mobileMenu__select} onChange={handleCurrencyChange}>
-            <MenuItem value="usd">{getText("usd")}</MenuItem>
-            <MenuItem value="eur">{getText("eur")}</MenuItem>
+          <Select
+            value={currency}
+            className={styles.navbar__mobileMenu__select}
+            onChange={handleCurrencyChange}
+          >
+            <MenuItem value="usd">{"$ USD"}</MenuItem>
+            <MenuItem value="eur">{"€ EUR"}</MenuItem>
+            <MenuItem value="inr">{"₹ INR"}</MenuItem>
           </Select>
-          <Button variant="contained" className={styles.navbar__mobileMenu__loginButton}>{getText("login")}</Button>
+          <Button
+            variant="contained"
+            className={styles.navbar__mobileMenu__loginButton}
+          >
+            {"login"}
+          </Button>
         </Box>
       )}
     </AppBar>

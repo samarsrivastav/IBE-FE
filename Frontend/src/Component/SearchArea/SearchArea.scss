@@ -1,7 +1,10 @@
+.css-1gtchvp-MuiPaper-root{
+  width: 340px;
+}
 .search-area {
   &__paper {
-    max-width:23.75rem;
-    width: 23.75rem;
+    max-width:21.25rem;
+    width: 21.25rem;
     padding: 20px;
     margin-top: 20px;
     display: flex;
@@ -10,6 +13,7 @@
   }
 
   &__form {
+    width: 292px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -19,24 +23,32 @@
 
   &__select {
     background-color: #fff;
+    .css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+      height: 48px;
+      padding: 0px 14px;
+      display: flex;
+      align-items: center;
+    }
   }
 
   &__date-selector {
-    display: flex;
     align-items: center;
-    justify-content: space-between;
+    padding: 0px;
+    width: 292px;
+    height: 46px !important;
+    display: flex;
+    justify-content: space-around;
     border: 1px solid rgb(214, 211, 219);
-    padding: 10px 15px;
     cursor: pointer;
-    gap: 10px;
 
     &-text {
       color: #000;
-      font-size: 1.1rem;
       word-spacing: 25px;
     }
 
     &-icon {
+      width: 16px;
+      height: 16px;
       color: #000;
     }
   }
@@ -44,13 +56,13 @@
   &__guest-selector {
     border: 1px solid rgba(24, 13, 13, 0.23);
     border-radius: 4px;
-    padding: 8px;
     cursor: pointer;
     background-color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height:2.3rem;
+    padding: 0 8px;
+    height:3rem ;
   }
 
   &__guest-popover {
@@ -64,13 +76,11 @@
     align-items: center;
     margin-right: 3rem;
     margin-bottom: 16px;
-    // border: red 1px solid;
 
     &-counter {
       display: flex;
       align-items: center;
       gap: 8px;
-      // border: red 1px solid;
 
       &-value {
         min-width: 20px;
@@ -81,7 +91,6 @@
 
   &__accessible-room-label {
     margin-top: 0rem;
-    // border: red 1px solid;
     margin-top : -1rem;
   }
 
@@ -101,8 +110,16 @@
     }
   }
 }
-
-
+.css-1tktgsa-MuiPaper-root-MuiPopover-paper-MuiMenu-paper{
+  max-height: 7.125rem !important;
+}
+.css-1toxriw-MuiList-root-MuiMenu-list{
+  padding: 0px !important;
+  .css-1rju2q6-MuiButtonBase-root-MuiMenuItem-root{
+    height: 38px;
+    border-bottom: 1px solid #E4E3E5;
+  }
+}
 
 @media screen and (max-width: 768px) {
   .search-area {
@@ -128,7 +145,7 @@
     }
 
     &__guest-selector {
-      height: auto;
+      height: 36px;
       padding: 6px;
       flex-direction: column;
       align-items: flex-start;

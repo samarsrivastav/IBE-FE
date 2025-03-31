@@ -20,7 +20,6 @@ const propertiesSlice = createSlice({
       })
       .addCase(fetchProperties.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
         state.property = action.payload;
       })
       .addCase(fetchProperties.rejected, (state, action) => {

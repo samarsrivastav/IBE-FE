@@ -1,0 +1,111 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+
+    &__item {
+        display: flex;
+        justify-content: center;
+        height: 4.125rem;
+        flex-direction: column;
+        border: 1px solid #c2c2c2;
+        border-radius: 4px;
+
+        &--guests {
+            flex: 0 0 16.375rem;
+        }
+
+        &--rooms,
+        &--beds {
+            flex: 0 0 8.125rem;
+        }
+
+        &--date {
+            flex: 1;
+            flex: 0 0 31.750rem;
+        }
+    }
+
+    &__label {
+        @include lato-text($color: $text-secondary, $margin-bottom: 0);
+    }
+
+    &__select {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        
+    }
+
+    &__value {
+        display: grid;
+        @include lato-text($weight: 700, $color: $text-primary, $margin-bottom: 0, $line-height: 150%);
+    }
+
+    &__icon,
+    &__calendar {
+        color: #24292E;
+    }
+
+    &__icon {
+        & path {
+            transform: scale(1.25, 1.163)
+        }
+    }
+
+    &__button {
+        @include lato-text($weight: 700, $letter-spacing: 2%, $color: white, $margin-bottom: 0);
+        background-color: $primary;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0 20px;
+        cursor: pointer;
+        height: 4.125rem;
+        width: 10.5rem;
+        white-space: nowrap;
+    }
+}
+.dropdown {
+  position: absolute;
+  background: white;
+  width: 100px;
+  list-style: none;
+  margin: 0;
+  z-index: 100;
+}
+
+.dropdown li {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.dropdown li:hover {
+  background: #f4f4f4;
+}
+
+@media (max-width: 768px) {
+    .filters {
+        &__item {
+            &--guests {
+                flex: 1 1 100%;
+            }
+
+            &--rooms,
+            &--beds,
+            &--date {
+                flex: 1 1 40%;
+            }
+        }
+
+        &__button {
+            flex: 1 1 100%;
+        }
+    }
+}

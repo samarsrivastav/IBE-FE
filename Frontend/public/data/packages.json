@@ -1,0 +1,34 @@
+[
+    {
+      "roomTypeId": 1,
+      "packages": [
+        {
+          "id": "breakfast",
+          "title": "Complimentary Breakfast",
+          "description": "Includes a free buffet breakfast.",
+          "price": "50",
+          "type": "standard"
+        },
+        {
+          "id": "spa",
+          "title": "Spa Access",
+          "description": "Full-day spa access with massage treatment.",
+          "price": "120",
+          "type": "package"
+        }
+      ]
+    },
+    {
+      "roomTypeId": 2,
+      "packages": [
+        {
+          "id": "late-checkout",
+          "title": "Late Checkout",
+          "description": "Extended stay until 4 PM.",
+          "price": "30",
+          "type": "standard"
+        }
+      ]
+    }
+  ]
+  

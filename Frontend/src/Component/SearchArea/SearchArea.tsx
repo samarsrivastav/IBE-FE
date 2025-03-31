@@ -33,6 +33,8 @@ import AccessibleIcon from "@mui/icons-material/Accessible";
 import "./SearchArea.scss";
 import fetchPropertyConfig from "../../Redux/thunk/propertyConfigThunk";
 import { fetchProperties } from "../../Redux/thunk/propertiesThunk";
+import { useNavigate } from "react-router-dom";
+import { Property } from "../../types";
 
 // Create array of property data
 
@@ -52,7 +54,6 @@ const SearchArea: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchProperties());
-    console.log("fetching properties");
     if (propertyId) {
       dispatch(fetchPropertyConfig(propertyId));
       // Reset all values to initial state
@@ -92,7 +93,7 @@ const SearchArea: React.FC = () => {
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
-
+  const navigate = useNavigate()
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -109,6 +110,16 @@ const SearchArea: React.FC = () => {
     }
 
     console.log("Search with:", searchState);
+    //make string like 2 adults, 1 child
+    const guest=Object.entries(searchState.guests).map(([key, value]) => {
+      if(value>0)
+      return `${value} ${key}`;
+      else
+      return "";
+    }
+    ).filter((value)=>value!=="").join(", ");
+
+    navigate("/property?propertyId="+propertyId+"&checkIn=" + checkIn+"&checkOut="+checkOut+"&guests="+guest+"&rooms="+searchState.rooms);
   };
 
   // Guest dropdown state
@@ -120,29 +131,6 @@ const SearchArea: React.FC = () => {
     setGuestAnchorEl(null);
   };
 
-  const handleGuestUpdate = (type: string, increment: boolean) => {
-    const guestPerRoom = propertyConfig?.maxGuestPerRoom || 4;
-    const newGuestCount = searchState.guests[type] + (increment ? 1 : -1);
-  
-    if (newGuestCount < 0 || (type === "adults" && newGuestCount === 0)) return;
-  
-    const newTotalGuests = totalGuests + (increment ? 1 : -1);
-    let newRooms = searchState.rooms;
-    const minRoomsRequired = Math.ceil(newTotalGuests / guestPerRoom);
-    
-    if (increment) {
-      if (newTotalGuests > newRooms * guestPerRoom) {
-        newRooms = Math.min(newRooms + 1, propertyConfig?.maxRooms || 4);
-      }
-    } else {
-      if (newRooms > minRoomsRequired) {
-        newRooms = minRoomsRequired;
-      }
-    }
-  
-    dispatch(updateGuestCount({ type, value: newGuestCount }));
-    dispatch(setRooms(newRooms));
-  };
   
   // Calculate total guests
   const totalGuests = Object.values(searchState.guests).reduce(
@@ -235,16 +223,7 @@ const SearchArea: React.FC = () => {
     return Array.from({ length: maxRooms }, (_, index) => index + 1);
   };
 
-  // Validate if all required fields are filled
-  const isSearchEnabled = (): boolean => {
-    return !!(
-      selectedPropertyId &&
-      selectedPropertyId !== 0 &&
-      checkIn &&
-      checkOut &&
-      totalGuests > 0
-    );
-  };
+
 
   return (
     <Paper className="search-area__paper" elevation={1}>
@@ -259,12 +238,13 @@ const SearchArea: React.FC = () => {
             value={selectedPropertyId ?? 0}
             onChange={() => {}} // Empty onChange as we're handling selection via checkboxes
             displayEmpty
+            sx={{ height: "48px" }}
             className="search-area__select"
             renderValue={(selected) => {
               if (!selected) {
                 return (
                   <span style={{ color: "grey", fontStyle: "italic" }}>
-                    Select a property
+                    Search all property
                   </span>
                 );
               }
@@ -274,20 +254,12 @@ const SearchArea: React.FC = () => {
               return property?.property_name ?? "";
             }}
           >
-            <MenuItem value={0}>
-              <Checkbox
-                checked={selectedPropertyId === 0}
-                onChange={() => handleSelect(0)}
-              />
-              <span style={{ color: "grey", fontStyle: "italic" }}>
-                Select a property
-              </span>
-            </MenuItem>
-            {properties!=undefined?properties.map((property) => (
+            
+            {properties!=undefined?properties.map((property:Property) => (
               <MenuItem key={property.property_id} value={property.property_id}>
                 <Checkbox
-                  checked={selectedPropertyId === property.property_id}
-                  onChange={() => handleSelect(property.property_id)}
+                  checked={selectedPropertyId === Number(property.property_id)}
+                  onChange={() => handleSelect(Number(property.property_id))}
                 />
                 {property.property_name}
               </MenuItem>

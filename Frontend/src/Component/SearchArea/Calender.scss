@@ -17,9 +17,7 @@
   }
   
   .month-calendar {
-    margin-top: 1rem;
-    // border: red 1px solid;
-    width: 48%;
+    width: 50%;
     
     @media (max-width: 896px) {
       width: 100%;
@@ -197,12 +195,13 @@
       align-items: flex-end;
       
       .apply-dates-btn {
+        width: 8.062rem;
+        height: 2.5rem;
         background-color: #26266D; // Deep blue color for button
         border: none;
         color: white; 
-        padding: 1rem 1rem;
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        font-weight: 700;
         border-radius: 0.2rem;
         cursor: pointer;
         text-transform: uppercase;
@@ -231,6 +230,10 @@
   color: black !important;
   display: block;
   width: 100%;
+}
+.css-comesa-MuiPaper-root-MuiPopover-paper{
+  width: 864px !important;  
+  height: 470px !important;
 }
 
 @media (max-width: 896px) {

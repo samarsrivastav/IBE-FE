@@ -1,1 +1,2 @@
-export const LOGO_KICKDRUM_DEFAULT: string = "https://d32gc6ga88q4t5.cloudfront.net/kickdrum-logo.jpeg";
+export const LOGO_KICKDRUM_DEFAULT: string = "https://d32gc6ga88q4t5.cloudfront.net/tenantResources/kickdrum-logo.jpeg";
+export const DEFAULT_BANNER_IMAGE: string = "https://source.unsplash.com/random/1200x400/?hotel";

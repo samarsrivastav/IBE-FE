@@ -6,7 +6,7 @@ export const fetchHealth = createAsyncThunk(
   async () => {
     const baseURL = import.meta.env.VITE_HEALTH_API_URL; 
     const response = await axios.get(baseURL);
-    console.log(response.data)
+
     return response.data;
   }
 );
