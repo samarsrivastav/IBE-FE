@@ -1,0 +1,17 @@
+export default {
+  title: "Motor de Reservas en Línea",
+  myBookings: "MIS RESERVAS",
+  login: "INICIAR SESIÓN",
+  language: "Idioma",
+  currency: "Moneda",
+  english: "Inglés",
+  spanish: "Español",
+  usd: "$ USD",
+  eur: "€ EUR",
+  inr: "₹ INR",
+  Welcome: "Bienvenido a Kickdrum",
+  Environment: "Entorno",
+  Hello_World: "Hola Mundo",
+  Properties: "Propiedades",
+  Health: "Salud",
+};
