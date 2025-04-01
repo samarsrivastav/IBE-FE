@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import styles from "../SearchFilters.module.scss";
 import { Popover, MenuItem } from "@mui/material";
-import { AppDispatch } from "../../../../Redux/store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../../../Redux/store";
+import { useDispatch, useSelector } from "react-redux";
 import { setBeds } from "../../../../Redux/slice/searchSlice";
+import { fetchRoomDetails } from "../../../../Redux/thunk/roomDataThunk";
 
 interface SearchFiltersProps {
   searchParams: URLSearchParams;
@@ -14,6 +15,8 @@ interface SearchFiltersProps {
 const BedDropDown: React.FC<SearchFiltersProps> = ({ searchParams, setSearchParams }) => {
   const [beds, setParamBeds] = useState(searchParams.get("beds") || "1");
   const [bedsAnchorEl, setBedsAnchorEl] = useState<HTMLElement | null>(null);
+  const [lastSetByDropdown, setLastSetByDropdown] = useState(false); // Track source of change
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleBedsOpen = (event: React.MouseEvent<HTMLDivElement>) => {
     setBedsAnchorEl(event.currentTarget);
@@ -22,19 +25,45 @@ const BedDropDown: React.FC<SearchFiltersProps> = ({ searchParams, setSearchPara
   const handleBedsClose = () => {
     setBedsAnchorEl(null);
   };
-  const dispatch=useDispatch<AppDispatch>();
+
   const handleBedsChange = (value: string) => {
     setParamBeds(value);
     const newParams = new URLSearchParams(searchParams);
     newParams.set("beds", value);
     setSearchParams(newParams);
-    dispatch(setBeds(parseInt(value)))
+    dispatch(setBeds(parseInt(value)));
+    setLastSetByDropdown(true); // Mark change as dropdown-triggered
     handleBedsClose();
   };
+  const searchSliceData=useSelector((state:RootState)=>state.search)
+  const callRooms = () => {
+    dispatch(
+      fetchRoomDetails({
+        PropertyId: searchSliceData.PropertyId || parseInt(searchParams.get("propertyId") || "0", 10),
+        beds: searchSliceData.beds || parseInt(searchParams.get("beds") || "0", 10),
+        checkIn: searchSliceData.checkIn || searchParams.get("checkIn") || "",
+        checkOut: searchSliceData.checkOut || searchParams.get("checkOut") || "",
+        guests: searchSliceData.guests,
+        rooms: searchSliceData.rooms || parseInt(searchParams.get("rooms") || "0", 10),
+      })
+    );
+  }
+
+  // Detect manual query parameter changes
+  useEffect(() => {
+    const currentBeds = searchParams.get("beds") || "1";
+    if (currentBeds !== beds) {
+      setParamBeds(currentBeds);
+      if (!lastSetByDropdown) {
+        callRooms(); // Only call when changed manually
+      }
+      setLastSetByDropdown(false); // Reset flag
+    }
+  }, [searchParams]);
 
   return (
     <div className={`${styles.filters__item} ${styles["filters__item--beds"]}`}>
-      <div  onClick={handleBedsOpen}>
+      <div onClick={handleBedsOpen}>
         <div className={styles.filters__select}>
           <div className={styles.filters__value}>
             <label className={styles.filters__label}>Beds</label>

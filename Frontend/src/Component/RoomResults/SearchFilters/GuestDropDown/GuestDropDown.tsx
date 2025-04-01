@@ -17,6 +17,7 @@ import {
   updateGuestCount,
 } from "../../../../Redux/slice/searchSlice";
 import fetchPropertyConfig from "../../../../Redux/thunk/propertyConfigThunk";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export const GuestDropDown = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +37,6 @@ export const GuestDropDown = () => {
       dispatch(fetchPropertyConfig(propertyId));
     }
   }, [dispatch, propertyId]);
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const guestParam = params.get("guests");
@@ -113,19 +113,19 @@ export const GuestDropDown = () => {
       className={`${styles.filters__item} ${styles["filters__item--guests"]}`}
       sx={{ width: "100%" }}
     >
-      <Typography>Guests</Typography>
-      <Box
-        onClick={handleGuestMenuClick}
-        className="search-area__guest-selector"
-      >
-        <Typography>
-          {Object.entries(searchState.guests)
+      <div  onClick={handleGuestMenuClick}>
+        <div className={styles.filters__select}>
+          <div className={styles.filters__value}>
+            <label className={styles.filters__label}>Guests</label>
+            {Object.entries(searchState.guests)
             .filter(([_, count]) => count > 0) // Exclude guests with count 0
             .map(([type, count]) => `${count} ${type}`)
             .join(", ") || "Select Guests"}{" "}
-          {/* Show placeholder if all counts are 0 */}
-        </Typography>
-      </Box>
+          </div>
+          <KeyboardArrowDownIcon className={styles.filters__icon} />
+        </div>
+      </div>
+     
 
       <Popover
         open={Boolean(guestAnchorEl)}

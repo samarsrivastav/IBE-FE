@@ -119,7 +119,7 @@ const SearchArea: React.FC = () => {
     }
     ).filter((value)=>value!=="").join(", ");
 
-    navigate("/property?propertyId="+propertyId+"&checkIn=" + checkIn+"&checkOut="+checkOut+"&guests="+guest+"&rooms="+searchState.rooms);
+    navigate("/property?propertyId="+propertyId+"&guests="+guest+"&rooms="+searchState.rooms+"&checkIn=" + checkIn+"&checkOut="+checkOut);
   };
 
   // Guest dropdown state

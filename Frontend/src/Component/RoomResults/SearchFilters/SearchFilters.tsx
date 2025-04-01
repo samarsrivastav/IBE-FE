@@ -96,7 +96,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     const bed_count = newParams.get("beds");
   
     if (rooms_count) dispatch(setRooms(parseInt(rooms_count)));
-    if (bed_count) dispatch(setBeds(parseInt(bed_count)));
+    if (bed_count) {
+      dispatch(setBeds(parseInt(bed_count)));
+    }
   
     // Call API only when the search button is clicked
     if (propertyId) {
@@ -106,16 +108,20 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     callRooms();
   };
   const searchSliceData=useSelector((state:RootState)=>state.search)
-  const callRooms=()=>{
-    dispatch(fetchRoomDetails({
-      PropertyId: parseInt(searchParams.get("propertyId") || `${searchSliceData.PropertyId}`, 10),
-      beds: parseInt(searchParams.get("beds") || `${searchSliceData.beds}`, 10),
-      checkIn: searchParams.get("checkIn") || searchSliceData.checkIn,
-      checkOut: searchParams.get("checkOut") || searchSliceData.checkOut,
-      guests: searchSliceData.guests, // Ensure guests are correctly handled
-      rooms: parseInt(searchParams.get("rooms") || `${searchSliceData.rooms}`, 10),
-    }));
-  }
+  
+  const callRooms = () => {
+    dispatch(
+      fetchRoomDetails({
+        PropertyId: searchSliceData.PropertyId || parseInt(searchParams.get("propertyId") || "0", 10),
+        beds: searchSliceData.beds || parseInt(searchParams.get("beds") || "0", 10),
+        checkIn: searchSliceData.checkIn || searchParams.get("checkIn") || "",
+        checkOut: searchSliceData.checkOut || searchParams.get("checkOut") || "",
+        guests: searchSliceData.guests,
+        rooms: searchSliceData.rooms || parseInt(searchParams.get("rooms") || "0", 10),
+      })
+    );
+  };
+
   
   return (
     <div className={styles.filters}>
