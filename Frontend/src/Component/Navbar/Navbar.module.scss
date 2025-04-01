@@ -17,6 +17,7 @@
     background-color: white;
     display: flex;
     justify-content: space-between;
+    padding-left: 0;
   }
   .navbar_logo_img{
     width: 6.44rem;
@@ -59,13 +60,15 @@
     justify-content: space-around;
     width: 40%;
     gap: 16px;
-
+    font-family: 'Lato', sans-serif !important;
     &__menuItem {
       font-weight: bold;
       color: #10072c;
     }
 
     &__language {
+      height: 1.1875rem;
+      width: 2.8125rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -95,7 +98,7 @@
       box-shadow: none;
       font-weight: bold;
       color: #271a4d;
-      min-width: 50px;
+      min-width: 3.125rem;
       padding: 0;
 
       &:focus {
@@ -106,7 +109,17 @@
     &__loginButton {
       background-color: #2a1e4f !important;
       color: white;
-
+      width: 5.3125rem;
+      height: 2.1875rem;
+      p{
+        width: 2.8125rem;
+        height: 1.25rem;
+        font-family: 'Lato', sans-serif ;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 140%;
+        letter-spacing: 2%;
+      }
       &:hover {
         background-color: #8b7cf3;
       }

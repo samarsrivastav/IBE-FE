@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
 
 .footer {
+  border: none !important;
   background-color: #10072c;
   color: white;
   height: 5.25rem;
@@ -34,7 +35,7 @@
       letter-spacing: 0.2px;
       font-size: 1rem;
       height : 3.3125rem;
-      width : 17.063rem;
+      width : 17.0625rem;
     }
       
     
@@ -69,6 +70,9 @@
       text-align: center;
       margin-top: 0.5rem;
     }
+    .navbar_logo_img{
+      margin-left:0;
+    }
   }
 }
 
@@ -82,6 +86,9 @@
 
     &__text {
       font-size: 0.9rem;
+    }
+    .navbar_logo_img{
+      margin-left:0;
     }
   }
 }

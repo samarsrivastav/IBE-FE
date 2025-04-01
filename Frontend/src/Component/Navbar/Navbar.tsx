@@ -61,7 +61,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
 
   return (
     <AppBar position="static" className={styles.navbar}>
-      <Toolbar className={styles.navbar__toolbar}>
+      <Toolbar className={styles.navbar__toolbar} sx={{paddingLeft:"0 !important"}}>
         <Link to="/" className={styles.navbar__logo}>
           <Typography variant="h6" className={styles.navbar__logo}>
             <ImageWithFallback
@@ -82,21 +82,44 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
         >
           <Typography
             variant="body2"
+            sx={{
+              fontFamily: "'Lato', sans-serif !important",
+              fontWeight:"700",
+              lineHeight:"140%",
+              width:"6.375rem",
+              height:"1.25rem",
+              letterSpacing:"2%"
+            }}
             className={styles.navbar__desktopMenu__menuItem}
           >
             {"MY BOOKINGS"}
           </Typography>
           <div className={styles.navbar__desktopMenu__language}>
             <Select
+              sx={{
+                height:"1.1875rem",
+                width:"2.8125rem",
+                ".MuiSelect-select":{
+                  height:"1.1875rem",
+                  minHeight:"1.1875rem",
+                  padding:"0 !important",
+                },
+                "&.MuiSelect-root::after, &.MuiSelect-root::before": {
+                  display: "none",
+                },
+                "& .MuiSelect-icon": {
+                  display: "none !important",
+                },
+              }}
               value={language}
               onChange={handleLanguageChange}
               variant="standard"
               disableUnderline
               className="notranslate"
               renderValue={(selected) => (
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{height:"1.1875rem", display: "flex", alignItems: "center", }}>
                   <LanguageIcon
-                    sx={{ marginRight: 1 }}
+                    sx={{ marginRight: 1, height:"16px",width:"16px",margin:"0 !important" }}
                     className={styles.navbar__desktopMenu__language__icon}
                   />
                   {
@@ -123,6 +146,21 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
             variant="standard"
             disableUnderline
             onChange={handleCurrencyChange}
+            sx={{
+              height:"1.25rem",
+              width:"3.1875rem",
+              "& .MuiSelect-select": {
+                padding: "0 !important",
+                minHeight:"1.25rem !important",
+                height:"1.25rem !important"
+              },
+              "&.MuiSelect-root::after, &.MuiSelect-root::before": {
+                display: "none",
+              },
+              "& .MuiSelect-icon": {
+                display: "none !important",
+              },
+            }}  
           >
             <MenuItem value="usd">{"$ USD"}</MenuItem>
             <MenuItem value="eur">{"€ EUR"}</MenuItem>
@@ -132,7 +170,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
             variant="contained"
             className={styles.navbar__desktopMenu__loginButton}
           >
-            {"login"}
+            <p>{"login"}</p>
           </Button>
         </Box>
 
