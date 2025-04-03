@@ -39,18 +39,7 @@ const RoomResults: React.FC = () => {
   const propertyId = searchParams.get("propertyId") ?? propertyIdFromState;
   const searchSliceData=useSelector((state:RootState)=>state.search)
   console.log(searchSliceData)
-  
-  // useEffect(() => {
-  //   dispatch(fetchRoomDetails({
-  //     PropertyId: parseInt(searchParams.get("propertyId") || `${searchSliceData.PropertyId}`, 10),
-  //     beds: parseInt(searchParams.get("beds") || `${searchSliceData.beds}`, 10),
-  //     checkIn: searchParams.get("checkIn") || searchSliceData.checkIn,
-  //     checkOut: searchParams.get("checkOut") || searchSliceData.checkOut,
-  //     guests: searchSliceData.guests, // Ensure guests are correctly handled
-  //     rooms: parseInt(searchParams.get("rooms") || `${searchSliceData.rooms}`, 10),
-  //   }));
-  // }, [ searchParams, searchSliceData]);
-  
+    
 
   useEffect(() => {
     setFilteredRooms(rooms);

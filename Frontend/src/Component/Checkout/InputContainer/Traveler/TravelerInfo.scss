@@ -1,0 +1,44 @@
+.traveler__container{
+    padding-bottom: 2rem;
+    .traveler__inputs{
+        margin: 1rem auto;
+        .input{
+            width: 21.625rem;
+            height:4.3125rem;
+            margin: 1.5rem 0;
+        }
+        .full__name{
+            display: flex;
+            justify-content: space-between;
+            width: 100% !important;
+        }
+    }
+    .disable__button{
+        display: flex;
+        justify-content: right;
+        button{
+            padding:0;
+            background-color: #26266D;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 10.9375rem;
+            height: 2.75rem;
+            border-radius: 4px;
+            p{
+                margin: 0;
+                width: 8.5625rem;
+                height: 1.25rem;
+                color: white;
+                font-family: "Lato",sans-serif;
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 140%;
+                vertical-align: middle;
+                text-transform: uppercase;
+            }
+
+        }
+    }
+}
