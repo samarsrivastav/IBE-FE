@@ -1,0 +1,68 @@
+.modalContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    position: relative;
+  }
+  
+  .contentContainer {
+    height: 100%;
+    padding: 1.5rem 1rem; // px-4 py-6
+    width: 100%;
+  
+    @media (min-width: 768px) {
+      padding: 2.5rem 2rem; // md:px-8 md:py-10
+    }
+  }
+  
+  .title {
+    font-weight: bold;
+    font-size: 1.25rem; // text-[1.25rem]
+    line-height: 140%; // leading-[140%]
+    color: #000000; // text-black
+    margin-bottom: 0.25rem; // mb-1
+  
+    @media (min-width: 768px) {
+      font-size: 1.5rem; // md:text-[1.5rem]
+    }
+  }
+  
+  .description {
+    font-weight: normal;
+    font-size: 0.875rem; // text-[0.875rem]
+    line-height: 140%; // leading-[140%]
+    color: #000000; // text-black
+    margin-bottom: 1.5rem; // mb-6
+  
+    @media (min-width: 768px) {
+      font-size: 1rem; // md:text-[1rem]
+    }
+  }
+  
+  .footer {
+    width: 100%;
+    padding: 0 1rem; // px-4
+    position: absolute;
+    bottom: 1.5rem; // bottom-6
+    left: 0;
+  
+    @media (min-width: 768px) {
+      padding: 0 2rem 0 2rem; // md:px-8 md:pr-16
+      bottom: 2.5rem; // md:bottom-10
+    }
+  
+    .footerContent {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  
+      .footerTitle,
+      .footerPrice {
+        font-family: 'Lato', sans-serif; // font-lato
+        font-size: 1.125rem; // text-[1.125rem]
+        line-height: 140%; // leading-[140%]
+        color: #000000; // text-black
+      }
+    }
+  }

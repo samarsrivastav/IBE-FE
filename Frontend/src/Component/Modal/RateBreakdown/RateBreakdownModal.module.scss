@@ -1,0 +1,135 @@
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.contentContainer {
+  height: 100%;
+  padding: 1.5rem 1rem; // py-6 px-4
+  width: 80%;
+}
+
+.header {
+  font-weight: bold;
+  font-size: 1.25rem; // text-[1.25rem]
+  line-height: 140%; // leading-[140%]
+  color: #000000; // text-black
+  margin-bottom: 0.25rem; // mb-1
+
+  @media (min-width: 768px) {
+    font-size: 1.5rem; // md:text-[1.5rem]
+  }
+}
+
+.roomTypeSection {
+  margin-bottom: 1rem; // mb-4
+
+  .roomType,
+  .rateTitle {
+    font-weight: normal;
+    font-size: 1rem; // text-[1rem]
+    line-height: 140%; // leading-[140%]
+    color: #000000; // text-black
+    margin-bottom: 0.25rem; // mb-1
+  }
+
+  .rateTitle {
+    margin-bottom: 1.5rem; // mb-6
+  }
+}
+
+.promotionTitle {
+  font-weight: normal;
+  font-size: 1.125rem; // text-[1.125rem]
+  line-height: 140%; // leading-[140%]
+  color: #000000; // text-black
+  margin-bottom: 1.25rem; // mb-5
+}
+
+.dailyRates {
+  margin-bottom: 1.5rem; // mb-6
+
+  .rateItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem; // mb-2
+
+    .rateDate,
+    .rateAmount {
+      font-weight: normal;
+      font-size: 1rem; // text-[1rem]
+      line-height: 140%; // leading-[140%]
+      color: #000000; // text-black
+    }
+  }
+}
+
+.roomTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem; // mb-5
+
+  .totalLabel,
+  .totalAmount {
+    font-weight: normal;
+    font-size: 1.125rem; // text-[1.125rem]
+    line-height: 140%; // leading-[140%]
+    color: #000000; // text-black
+  }
+}
+
+.taxesSection {
+  margin-bottom: 1rem; // mb-4
+  border-top: 1px solid #d1d5db; // border-border-grey-dark
+  padding-top: 1.25rem; // pt-5
+
+  .taxTitle {
+    font-weight: normal;
+    font-size: 1.125rem; // text-[1.125rem]
+    line-height: 140%; // leading-[140%]
+    color: #000000; // text-black
+    margin-bottom: 0.5rem; // mb-2
+  }
+
+  .taxItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem; // mb-1
+
+    .taxName,
+    .taxAmount {
+      font-weight: normal;
+      font-size: 1rem; // text-[1rem]
+      line-height: 140%; // leading-[140%]
+      color: #000000; // text-black
+    }
+  }
+}
+
+.paymentBreakdown {
+  margin-top: auto; // mt-auto
+  border-top: 1px solid #d1d5db; // border-border-grey-dark
+  padding-top: 1.25rem; // pt-5
+  padding-bottom: 0.625rem; // pb-2.5
+
+  .paymentItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem; // mb-2
+
+    .paymentLabel,
+    .paymentAmount {
+      font-weight: normal;
+      font-size: 1rem; // text-[1rem]
+      line-height: 140%; // leading-[140%]
+      color: #000000; // text-black
+    }
+  }
+}

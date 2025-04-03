@@ -1,0 +1,66 @@
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.contentContainer {
+  height: 100%;
+  padding: 0rem;
+  width: 100%;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 140%;
+  color: #000000;
+  margin: 1rem ;
+
+  @media (min-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
+
+.description {
+  font-weight: normal;
+  font-size: 0.875rem;
+  line-height: 140%;
+  width: 80%;
+  color: #000000;
+  margin: 1rem ;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
+}
+
+.footer {
+  width: 80%;
+  margin: 1rem ;
+  padding: 1rem 0;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0;
+
+  @media (min-width: 768px) {
+    bottom: 1.5rem;
+  }
+
+  .footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .footerTitle,
+    .footerPrice {
+      font-family: "Lato", sans-serif;
+      font-size: 1.125rem;
+      line-height: 140%;
+      color: #000000;
+    }
+  }
+}
