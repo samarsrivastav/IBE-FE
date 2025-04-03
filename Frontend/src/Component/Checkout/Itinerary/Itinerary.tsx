@@ -1,6 +1,41 @@
 import { Box, Typography, Button, Divider } from "@mui/material";
+import CircusPromotionModal from "../../Modal/CircusPromotion/CircusPromotionModal";
+import { useModal } from "../../../Config/CustomHooks/UseModal";
+import RateBreakdownModal from "../../Modal/RateBreakdown/RateBreakdownModal";
 
 export const Itinerary = () => {
+  const promotionModal = useModal();
+  const rateBreakdownModal = useModal();
+  const promotionData = {
+    title: 'Circus Saving Promotion',
+    description: 'Experience the magic of savings with our special circus-themed promotion! Limited time offers that will make your wallet smile.',
+    footer: {
+      title: 'Total Savings',
+      price: 2570.6,
+    },
+  };
+  const rateBreakdownData = { 
+    roomType: 'Room type',
+    rateTitle: 'Nightly Rate (per room)',
+    promotionTitle: 'Circus savings promotion',
+    dailyRates: [
+      { date: 'Wednesday, March 9, 2022', amount: 132 },
+      { date: 'Wednesday, March 10, 2022', amount: 132 },
+      { date: 'Wednesday, March 11, 2022', amount: 100 },
+      { date: 'Wednesday, March 12, 2022', amount: 132 },
+      { date: 'Wednesday, March 13, 2022', amount: 132 },
+      { date: 'Wednesday, March 14, 2022', amount: 132 },
+      { date: 'Wednesday, March 15, 2022', amount: 132 },
+      { date: 'Wednesday, March 16, 2022', amount: 132 },
+    ],
+    roomTotal: 1024,
+    taxes: [
+      { name: 'Resort fee', amount: 132 },
+      { name: 'Occupancy tax', amount: 132 },
+    ],
+    dueNow: 400,
+    dueAtResort: 1288,
+  };
   return (
     <Box sx={{ backgroundColor: "#EFF0F1", padding: "16px", borderRadius: "8px" }}>
       <Box display="flex" justifyContent="space-between">
@@ -22,7 +57,7 @@ export const Itinerary = () => {
       <Typography variant="body2">$132/night</Typography>
       <Typography variant="body2">1 room</Typography>
       <Typography variant="body2">
-        Special Promoname, $132/night <sup>ⓘ</sup>
+        Special Promoname, $132/night <sup onClick={()=>promotionModal.openModal("LARGE")}>ⓘ</sup>
       </Typography>
 
       <Divider sx={{ marginY: "8px" }} />
@@ -34,7 +69,7 @@ export const Itinerary = () => {
       ].map((item, index) => (
         <Box key={index} display="flex" justifyContent="space-between">
           <Typography variant="body2">
-        {item.label} {item.label.includes("Fees") && <sup>ⓘ</sup>}
+        {item.label} {item.label.includes("Fees") && <sup onClick={()=>rateBreakdownModal.openModal("LARGE")}>ⓘ</sup>}
           </Typography>
           <Typography variant="body2">{item.value}</Typography>
         </Box>
@@ -56,6 +91,20 @@ export const Itinerary = () => {
           CONTINUE SHOPPING
         </Button>
       </Box>
+      {/* Circus Promotion Modal */}
+      <CircusPromotionModal
+        isOpen={promotionModal.isOpen}
+        onClose={promotionModal.closeModal}
+        title={promotionData.title}
+        description={promotionData.description}
+        footer={promotionData.footer}
+      />
+      {/* Rate Breakdown Modal */}
+      <RateBreakdownModal
+        isOpen={rateBreakdownModal.isOpen}
+        onClose={rateBreakdownModal.closeModal}
+        {...rateBreakdownData}
+      />
     </Box>
   );
 };
