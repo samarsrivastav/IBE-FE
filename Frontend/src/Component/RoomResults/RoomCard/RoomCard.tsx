@@ -50,7 +50,8 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
   }, [selectedRoom, room.room_type_name]);
 
   const closeModal = () => {
-    if (localStorage.getItem("step") === "2") {
+    const selectedPackage=localStorage.getItem("package")
+    if ((selectedPackage===null || selectedPackage=="") && localStorage.getItem("step") === "2") {
       localStorage.setItem("step", "1");
       setStep(1);
     }

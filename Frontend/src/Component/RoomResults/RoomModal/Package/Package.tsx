@@ -1,6 +1,7 @@
 import React from 'react';
 import './Package.scss';
 import { currencySymbolMap } from '../../../../Constant/CurrencyConstant';
+import { useNavigate } from 'react-router-dom';
 
 interface PackageProps {
   id: string;
@@ -12,7 +13,17 @@ interface PackageProps {
 }
 
 export const Package: React.FC<PackageProps> = ({ id, title, currency, description, price, type }) => {
-  const handleSelectPackage = () => {
+  const navigate = useNavigate()
+  const handleSelectPackage = async () => {
+    localStorage.setItem("step","3")
+    localStorage.setItem("package",JSON.stringify({
+      id,
+      title,
+      description,
+      price,
+      currency,
+      type
+    }))
     console.log('Selected package:', {
       id,
       title,
@@ -21,6 +32,7 @@ export const Package: React.FC<PackageProps> = ({ id, title, currency, descripti
       currency,
       type
     });
+    navigate("/checkout")
   };
 
   return (
