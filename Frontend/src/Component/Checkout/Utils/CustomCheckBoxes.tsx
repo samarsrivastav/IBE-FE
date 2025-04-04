@@ -10,12 +10,13 @@ const CustomCheckboxes: React.FC = () => {
   const termsContent = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`;
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1,marginTop:"1rem" }}>
       <FormControlLabel
         sx={{
           color: "#5D5D5D",
           width: "13.25rem",
           height: "1.4375rem",
+          marginLeft:"0",
           ".MuiCheckbox-root": { width: "0.9375rem", height: "0.9375rem", padding: "8px" },
           ".MuiFormControlLabel-label": { fontFamily: "Lato", fontWeight: 400, fontSize: "14px", lineHeight: "140%", marginLeft: "8px" },
         }}
@@ -28,6 +29,7 @@ const CustomCheckboxes: React.FC = () => {
           color: "#5D5D5D",
           width: "20.3125rem",
           height: "1.4375rem",
+          marginLeft:"0",
           ".MuiCheckbox-root": { width: "0.9375rem", height: "0.9375rem", padding: "8px" },
           ".MuiFormControlLabel-label": { fontFamily: "Lato", fontWeight: 400, fontSize: "14px", lineHeight: "140%", marginLeft: "8px" },
         }}

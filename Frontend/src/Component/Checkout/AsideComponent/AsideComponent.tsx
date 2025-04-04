@@ -3,6 +3,7 @@ import { HelpSection } from '../HelpSection/HelpSection'
 import { Itinerary } from '../Itinerary/Itinerary'
 
 export const AsideComponent = () => {
+  
   return (
     <Box
         sx={{

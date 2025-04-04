@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import styles from "./ResultsContent.module.scss";
 import RoomCard from "../RoomCard/RoomCard";
 import SortComponent from "./SubComp/SortComponent";
 import PaginationComponent from "./SubComp/PaginationComponent";
+import { Itinerary } from "../../Checkout/Itinerary/Itinerary";
 
 interface ResultsContentProps {
   rooms: any[];
@@ -13,9 +14,24 @@ const ResultsContent: React.FC<ResultsContentProps> = ({ rooms, setStep }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
 
-  const roomsPerPage = 3;
-  const totalPages = Math.ceil(rooms.length / roomsPerPage);
+  const [roomsPerPage,setRoomsPerPage] = useState<number>(3);
 
+  useEffect(()=>{
+    setSteps()
+  },[])
+  const setSteps=()=>{
+    const setPackage=localStorage.getItem("package")
+    console.log(setPackage)
+
+    if(setPackage!==null){
+      setRoomsPerPage(2)
+    }else{
+      setRoomsPerPage(3)
+    }
+    console.log(roomsPerPage)
+  }
+  const totalPages = Math.ceil(rooms.length / roomsPerPage);
+  const isStoredPackage=localStorage.getItem("package")
   const sortedRooms = useMemo(() => {
     let sorted = [...rooms];
 
@@ -23,15 +39,9 @@ const ResultsContent: React.FC<ResultsContentProps> = ({ rooms, setStep }) => {
       case "priceLow":
         sorted.sort((a, b) => a.price - b.price);
         break;
-      // case "priceHigh":
-      //   sorted.sort((a, b) => b.price - a.price);
-      //   break;
       case "reviewsHigh":
         sorted.sort((a, b) => b.reviews - a.reviews);
         break;
-      // case "reviewsLow":
-      //   sorted.sort((a, b) => a.reviews - b.reviews);
-      //   break;
       default:
         break;
     }
@@ -63,6 +73,7 @@ const ResultsContent: React.FC<ResultsContentProps> = ({ rooms, setStep }) => {
         ) : (
           <p>No rooms found</p>
         )}
+        {isStoredPackage !== null ? <Itinerary setSteps={setSteps}/> : null}
       </div>
 
       {rooms.length > roomsPerPage && (
