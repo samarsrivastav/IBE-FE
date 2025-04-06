@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
 import { Heading } from "../../Heading/Heading";
 import CustomInput from "../../Utils/CustomInput";
 import "./BillingInfo.scss";
 import CustomDropdown from "../../Utils/CustomDropdown";
 import { countryData, statesByCountry } from "../countryData";
+import useBillingForm from "../../../../Config/CustomHooks/persistedState/useBillingInfo";
 
 interface BillingInfoProp {
   setIsBillingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,17 +18,20 @@ export const BillingInfo = ({
   setIsTravelerOpen,
   setIsPaymentOpen,
 }: BillingInfoProp) => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [mailingAddress1, setMailingAddress1] = useState<string>("");
-  const [mailingAddress2, setMailingAddress2] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [zip, setZip] = useState<string>("");
-  const [selectedCountryOption, setSelectedCountryOption] = useState<string>("");
-  const [selectedStateOption, setSelectedStateOption] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const { form, updateField, error, setError } = useBillingForm();
+
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    mailingAddress1,
+    mailingAddress2,
+    city,
+    zip,
+    selectedCountryOption,
+    selectedStateOption
+  } = form;
 
   const countryKeys = Object.keys(statesByCountry) as (keyof typeof statesByCountry)[];
 
@@ -44,6 +47,17 @@ export const BillingInfo = ({
     selectedStateOption.trim() &&
     error === null;
 
+  const validateZip = (zipCode: string): string | null => {
+    if (zipCode.length !== 6) {
+      const errorMessage = "Zip code must be exactly 6 digits.";
+      setError(errorMessage);
+      return errorMessage;
+    } else {
+      setError(null);
+      return null;
+    }
+  };
+
   const handleAccordianState = () => {
     setIsBillingOpen(false);
     setIsTravelerOpen(true);
@@ -55,16 +69,7 @@ export const BillingInfo = ({
       setIsPaymentOpen(true);
     }
   };
-  const validateZip = (zipCode: string): string | null => {
-    if (zipCode.length !== 6) {
-      const errorMessage = "Zip code must be exactly 6 digits.";
-      setError(errorMessage);
-      return errorMessage;
-    } else {
-      setError(null);
-      return null;
-    }
-  };
+
   return (
     <div className="billing__container">
       <div className="billing__header">
@@ -75,98 +80,52 @@ export const BillingInfo = ({
         <div className="billing__content">
           <div className="billing__inputs">
             <div className="input full__name">
-              <CustomInput
-                type="text"
-                label="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                setError={setError}
-              />
-              <CustomInput
-                type="text"
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                setError={setError}
-              />
+              <CustomInput label="First Name" value={firstName} onChange={e => updateField("firstName", e.target.value)} setError={setError} />
+              <CustomInput label="Last Name" value={lastName} onChange={e => updateField("lastName", e.target.value)} setError={setError} />
             </div>
             <div className="input address">
-              <CustomInput
-                type="text"
-                label="Mailing Address1"
-                value={mailingAddress1}
-                onChange={(e) => setMailingAddress1(e.target.value)}
-                setError={setError}
-              />
-              <CustomInput
-                type="text"
-                label="Mailing Address2"
-                value={mailingAddress2}
-                onChange={(e) => setMailingAddress2(e.target.value)}
-                setError={setError}
-              />
+              <CustomInput label="Mailing Address1" value={mailingAddress1} onChange={e => updateField("mailingAddress1", e.target.value)} setError={setError} />
+              <CustomInput label="Mailing Address2" value={mailingAddress2} onChange={e => updateField("mailingAddress2", e.target.value)} setError={setError} />
             </div>
             <div className="input">
               <CustomDropdown
                 label="Country"
                 options={countryData}
                 value={selectedCountryOption}
-                onChange={setSelectedCountryOption}
+                onChange={(val) => updateField("selectedCountryOption", val)}
               />
             </div>
             <div className="input city-details">
-              <CustomInput
-                type="text"
-                label="City"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                setError={setError}
-              />
+              <CustomInput label="City" value={city} onChange={e => updateField("city", e.target.value)} setError={setError} />
               <div className="pin">
                 <CustomDropdown
                   placeholder="AL"
                   label="State"
                   options={countryKeys.includes(selectedCountryOption as keyof typeof statesByCountry)
                     ? statesByCountry[selectedCountryOption as keyof typeof statesByCountry]
-                    : []
-                  }
+                    : []}
                   value={selectedStateOption}
-                  onChange={setSelectedStateOption}
+                  onChange={(val) => updateField("selectedStateOption", val)}
                 />
                 <CustomInput
-                  type="text"
                   label="Zip"
                   value={zip}
-                  onChange={(e) => setZip(e.target.value)}
+                  onChange={e => updateField("zip", e.target.value)}
                   setError={setError}
                   customValidation={validateZip}
                 />
               </div>
             </div>
             <div className="input phone">
-              <CustomInput
-                label="Phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                setError={setError}
-              />
+              <CustomInput label="Phone" type="tel" value={phone} onChange={e => updateField("phone", e.target.value)} setError={setError} />
             </div>
             <div className="input email">
-              <CustomInput
-                type="email"
-                label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                setError={setError}
-              />
+              <CustomInput label="Email" type="email" value={email} onChange={e => updateField("email", e.target.value)} setError={setError} />
             </div>
           </div>
 
           <div className="disable__button">
-            <p className="edit-link" onClick={handleAccordianState}>
-              Edit Traveler Info.
-            </p>
+            <p className="edit-link" onClick={handleAccordianState}>Edit Traveler Info.</p>
             <button onClick={handlePaymentAccordianState} disabled={!isFormValid}>
               <p>Next: Payment Info</p>
             </button>

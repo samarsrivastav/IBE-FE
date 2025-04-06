@@ -95,7 +95,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
             <div className={styles.rating}>
               <div className="stars__section" style={{ width: "100%",textAlign:"right" }}>
                 <Star className={styles.starIcon} fill="#26266D" />
-                <span>{room.rating}</span>
+                <span>{room.rating.toFixed(2)}</span>
               </div>
               <span className={styles.reviews}>({room.reviews} reviews)</span>
             </div>

@@ -73,7 +73,7 @@ const OtpModal: FC<OtpModalProps> = ({
                 onChange={handleOtpChange}
                 onBlur={handleBlur}
                 className={`${styles.input} ${touched && error ? styles.error : ''}`}
-                placeholder="Enter OTP"
+                placeholder=""
                 maxLength={6}
                 pattern="\d*"
                 inputMode="numeric"
@@ -97,7 +97,7 @@ const OtpModal: FC<OtpModalProps> = ({
             disabled={touched && !!error}
             className={`${styles.button} ${touched && error ? styles.disabled : ''}`}
           >
-            CONFIRM OTP
+            <p>CONFIRM OTP</p>
           </button>
         </div>
       </div>

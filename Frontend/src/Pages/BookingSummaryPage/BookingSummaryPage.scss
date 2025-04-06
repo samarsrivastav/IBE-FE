@@ -1,0 +1,390 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Lato", Helvetica;
+  font-size: 16px;
+  line-height: 140%;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.confirmation-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 1);
+  padding-top: 24px;
+
+  .confirmation-page__container {
+    width: 1440px;
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  .confirmation-page__main {
+    padding: 0 163px;
+
+    .confirmation-page__main-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      h1 {
+        font-family: "Lato", Helvetica;
+        color: rgba(47, 47, 47, 1);
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 140%;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+
+        button {
+          font-family: "Lato", Helvetica;
+          color: rgba(0, 110, 255, 1);
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
+  .confirmation-page__card {
+    border: 1px solid rgba(193, 194, 194, 1);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 1);
+
+    .confirmation-page__card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px 0;
+
+      .confirmation-page__card-header-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        h2 {
+          font-family: "Lato", Helvetica;
+          color: rgba(47, 47, 47, 1);
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 140%;
+        }
+
+        span {
+          font-family: "Lato", Helvetica;
+          color: rgba(93, 93, 93, 1);
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 140%;
+        }
+      }
+
+      button {
+        font-family: "Lato", Helvetica;
+        color: rgba(0, 110, 255, 1);
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+
+    .confirmation-page__card-content {
+      padding: 24px 28px;
+
+      .room-details {
+        display: flex;
+        gap: 24px;
+
+        .room-details__image {
+          width: 328px;
+          height: 224px;
+          object-fit: cover;
+        }
+
+        .room-details__info {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+
+          .dates {
+            display: flex;
+            gap: 12px;
+
+            .dates__card {
+              width: 105px;
+              height: 106px;
+              background-color: rgba(255, 255, 255, 1);
+              border: 1px solid rgba(133, 134, 133, 1);
+              border-radius: 5px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 12px;
+
+              span {
+                &:first-child {
+                  font-family: "Lato", Helvetica;
+                  color: rgba(133, 134, 133, 1);
+                  font-size: 14px;
+                  font-weight: 400;
+                  line-height: 140%;
+                }
+
+                &:nth-child(2) {
+                  font-family: "Lato", Helvetica;
+                  color: rgba(47, 47, 47, 1);
+                  font-size: 20px;
+                  font-weight: 700;
+                  margin-top: 8px;
+                }
+
+                &:last-child {
+                  font-family: "Lato", Helvetica;
+                  color: rgba(47, 47, 47, 1);
+                  margin-top: 8px;
+                }
+              }
+            }
+          }
+
+          .package {
+            margin-top: 8px;
+
+            h3 {
+              font-family: "Lato", Helvetica;
+              color: rgba(47, 47, 47, 1);
+              font-size: 20px;
+              font-weight: 700;
+              line-height: 130%;
+            }
+
+            p {
+              font-family: "Lato", Helvetica;
+              color: rgba(93, 93, 93, 1);
+              margin-top: 12px;
+            }
+          }
+        }
+      }
+
+      .priceDetails {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
+        margin-bottom: 24px;
+        font-family: "Lato", Helvetica;
+        color: black;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 140%;
+      }
+
+      .separator {
+        height: 1px;
+        background-color: #c1c2c2;
+        // margin: 24px 0;
+      }
+    }
+  }
+}
+@media print {
+  body {
+    background: white;
+    font-size: 12pt;
+    line-height: 1.4;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .actions {
+    display: none;
+  }
+
+  .confirmation-page {
+    padding: 0;
+    margin: 0;
+    color: black;
+    background: white;
+    width: 100%;
+
+    &__container {
+      width: 100%;
+      overflow: visible;
+      margin: 0;
+      padding: 0;
+    }
+
+    &__main {
+      padding: 20px;
+      width: 100%;
+    }
+
+    &__card {
+      border: none;
+      box-shadow: none;
+      page-break-inside: avoid;
+
+      &-header {
+        button {
+          display: none;
+        }
+      }
+
+      &-content {
+        .room-details {
+          flex-direction: column;
+          gap: 16px;
+
+          &__image {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+          }
+
+          &__info {
+            .dates {
+              justify-content: flex-start;
+            }
+          }
+        }
+
+        .priceDetails {
+          font-size: 14pt;
+          margin: 20px 0;
+        }
+
+        .separator {
+          margin: 20px 0;
+          background-color: #e0e0e0;
+        }
+
+        .booking-summary {
+          .expandable-section {
+            page-break-inside: avoid;
+            margin-bottom: 24px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+
+            &__header {
+              background: #f8f9fa;
+              padding: 16px 20px;
+              border-bottom: 1px solid #e0e0e0;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              cursor: default;
+
+              h3 {
+                color: #2f2f2f;
+                font-size: 16pt;
+                font-weight: 600;
+                margin: 0;
+              }
+
+              .expand-icon {
+                display: none;
+              }
+            }
+
+            &__content {
+              padding: 20px;
+              background: white;
+
+              .expandable-section-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 12px 0;
+                border-bottom: 1px solid #f0f0f0;
+
+                &:last-child {
+                  border-bottom: none;
+                }
+
+                .item-label {
+                  color: #5d5d5d;
+                  font-size: 12pt;
+                }
+
+                .item-value {
+                  color: #2f2f2f;
+                  font-size: 12pt;
+                  font-weight: 500;
+
+                  &.price {
+                    color: #2f2f2f;
+                    font-weight: 600;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Hide unnecessary elements
+  .confirmation-page__card-header button,
+  .actions {
+    display: none !important;
+  }
+
+  // Ensure proper page breaks
+  .confirmation-page__card {
+    page-break-inside: avoid;
+  }
+
+  // Improve text readability
+  h1,
+  h2,
+  h3 {
+    color: #000 !important;
+    font-weight: bold !important;
+  }
+
+  // Ensure proper spacing
+  .confirmation-page__main-title {
+    margin-bottom: 30px;
+  }
+
+  // Add page numbers and header
+  @page {
+    margin: 2cm;
+    @bottom-right {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+    }
+    @top-center {
+      content: "Booking Summary";
+      font-size: 12pt;
+      color: #666;
+    }
+  }
+}

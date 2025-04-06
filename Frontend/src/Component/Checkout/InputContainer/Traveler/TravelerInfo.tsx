@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { Heading } from "../../Heading/Heading";
 import CustomInput from "../../Utils/CustomInput";
 import "./TravelerInfo.scss";
+import { useTravelerInfo } from "../../../../Config/CustomHooks/persistedState/useTravellerInfo";
 
 interface TravelerInfoProps {
   isOpen: boolean;
@@ -9,21 +9,11 @@ interface TravelerInfoProps {
   setIsTravelerOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const TravelerInfo = ({
-  isOpen,
-  setIsBillingOpen,
-  setIsTravelerOpen,
-}: TravelerInfoProps) => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [error,setError]=useState<string|null>(null)
-  
-  const isFormValid = firstName.trim() && lastName.trim() && email.trim() && phone.trim() && (error===null);
+export const TravelerInfo = ({ isOpen, setIsBillingOpen, setIsTravelerOpen }: TravelerInfoProps) => {
+  const { travelerInfo, setTravelerInfo, isValid, error, setError } = useTravelerInfo();
 
-  const handleAccordianState = () => {
-    if (isFormValid) {
+  const handleNext = () => {
+    if (isValid) {
       setIsBillingOpen(true);
       setIsTravelerOpen(false);
     }
@@ -37,15 +27,19 @@ export const TravelerInfo = ({
           <CustomInput
             type="text"
             label="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={travelerInfo.firstName}
+            onChange={(e) =>
+              setTravelerInfo({ ...travelerInfo, firstName: e.target.value })
+            }
             setError={setError}
           />
           <CustomInput
             type="text"
             label="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={travelerInfo.lastName}
+            onChange={(e) =>
+              setTravelerInfo({ ...travelerInfo, lastName: e.target.value })
+            }
             setError={setError}
           />
         </div>
@@ -53,8 +47,10 @@ export const TravelerInfo = ({
           <CustomInput
             label="Phone"
             type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={travelerInfo.phone}
+            onChange={(e) =>
+              setTravelerInfo({ ...travelerInfo, phone: e.target.value })
+            }
             setError={setError}
           />
         </div>
@@ -62,15 +58,16 @@ export const TravelerInfo = ({
           <CustomInput
             type="email"
             label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            value={travelerInfo.email}
+            onChange={(e) =>
+              setTravelerInfo({ ...travelerInfo, email: e.target.value })
+            }
             setError={setError}
           />
         </div>
       </div>
       <div className="disable__button">
-        <button onClick={handleAccordianState} disabled={!isFormValid}>
+        <button onClick={handleNext} disabled={!isValid}>
           <p>Next: Billing Info</p>
         </button>
       </div>
