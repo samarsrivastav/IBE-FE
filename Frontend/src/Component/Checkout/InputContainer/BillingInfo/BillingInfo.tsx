@@ -79,7 +79,7 @@ export const BillingInfo = ({
     console.log(taxes)
     dispatch(
       setFinancialData({
-        taxes:totalTaxes,
+        taxes:Number(totalTaxes.toFixed(2)),
         roomTotal,
         dueNow,
         dueAtResort,

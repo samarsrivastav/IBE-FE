@@ -5,25 +5,20 @@ const getConfirmationData=()=>{
   const searchParams = localStorage.getItem("searchParams");
   const params = new URLSearchParams(searchParams ?? "");
   const guestCount = params.get("guests")
+  console.log(guestCount)
 
-  const guestArray = guestCount?.split(",").map((guest) => {
-    const [adults, children] = guest.split(" ");
-    return {
-      adults: parseInt(adults),
-      children: parseInt(children),
-    };
-  });
-  const totalGuestCount = guestArray?.reduce((acc, guest) => {
-    return acc + guest.adults + guest.children;
-  }, 0);
-  const adultCount= guestArray?.reduce((acc, guest) => {
-    return acc + guest.adults;
-  }, 0);
-  const childCount= guestArray?.reduce((acc, guest) => {
-    return acc + guest.children;
-  }, 0);
+  const guestArray = guestCount?.split(",")
+  console.log(guestArray)
+  //['1 adults', '1 child']
+  const adultsCount = (guestArray ?? [])[0]?.split(" ")[0]
+  const childCount = (guestArray ?? [])[1]?.split(" ")[0]
+
+  console.log(adultsCount,childCount)
+  const totalGuestCount = [Number(adultsCount), Number(childCount)]
+  
+
   const financialData = JSON.parse(localStorage.getItem("financialData") || "{}");
-  console.log(financialData)
+
   const confirmationDetails = {
     imageUrl: selectedRoom.room?.images[0],
     roomName: selectedRoom.room?.title,
@@ -32,14 +27,14 @@ const getConfirmationData=()=>{
     roomTypeId: selectedRoom.room?.roomTypeId,
     guestCount: totalGuestCount,
     promotionTitle: selectedPackage.title,
-    roomCount: params.get("rooms"),
-    adultCount: adultCount,
-    childCount: childCount,
-    totalCost: selectedPackage.price,
+    roomCount: Number(params.get("rooms")),
+    adultCount: Number(adultsCount),
+    childCount: Number(childCount),
+    totalCost: financialData.roomTotal+financialData.taxes,
     amountDueAtResort: selectedPackage.price,
     propertyId: params.get("propertyId"),
     nightlyRate: selectedPackage.price,
-    subTotal: selectedPackage.price,
+    subTotal: financialData.roomTotal,
     taxes: financialData.taxes,
     vat: 0
   };

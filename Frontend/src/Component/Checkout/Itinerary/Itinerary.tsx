@@ -143,7 +143,7 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
 
       {[
         { label: "Subtotal", value: `$${financialData?.roomTotal}` },
-        { label: "Taxes, Surcharges, Fees", value: `$${financialData?.taxes}` },
+        { label: "Taxes, Surcharges, Fees", value: `$${financialData?.taxes.toFixed(2)}` },
       ].map((item, index) => (
         <Box key={index} display="flex" justifyContent="space-between">
           <Typography variant="body2">
