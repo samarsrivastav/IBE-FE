@@ -7,8 +7,8 @@ import { Navbar } from "./Component/Navbar/Navbar";
 import { useState } from "react";
 import DynamicBackground from "./Component/DynamicChanges/DynamicBackground";
 import { GoogleTranslateProvider } from "./Component/Translation/GoogleTranslateProvider";
-import { Properties } from "./Pages/Properties/Properties";
 import RoomResults from "./Pages/Properties/RoomResults";
+import BookingSummaryPage from "./Pages/BookingSummaryPage/BookingSummaryPage";
 
 function AppContent() {
   const [language, setLanguage] = useState<string>("en");
@@ -23,6 +23,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/property" element={<RoomResults />} />
+          <Route path="/confirmation-page/:bookingId" element={<BookingSummaryPage/>}/>
         </Routes>
       </main>
       <Footer />

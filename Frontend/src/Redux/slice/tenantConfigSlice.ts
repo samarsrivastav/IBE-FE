@@ -9,6 +9,7 @@ interface TenantConfigState {
         pageTitle: string;
         bannerImage: string;
         lengthOfStay: number;
+        taxes:any
     }
     tenantId : number;
 }
@@ -20,6 +21,7 @@ const initialState : TenantConfigState = {
         pageTitle: "",
         bannerImage: "",
         lengthOfStay: 0,
+        taxes: {}
     },
     tenantId : 0,
 }   
@@ -37,6 +39,7 @@ const tenantConfigSlice = createSlice({
             state.configuration.pageTitle = config.configurationJson.pageTitle;
             state.configuration.bannerImage = config.configurationJson.bannerImage;
             state.configuration.lengthOfStay = config.configurationJson.lengthOfStay;
+            state.configuration.taxes = config.configurationJson.taxes;
         });
     }
 });

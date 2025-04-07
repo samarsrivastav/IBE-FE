@@ -3,8 +3,8 @@ import { Typography,Box } from "@mui/material";
 export const HelpSection = () => {
     return (
       <Box sx={{ 
-            width:"23rem",
-            height:"7.375rem",
+            width: "25rem",
+            height: "7.15rem",
             display:"flex",
             flexDirection:"column",
             justifyContent:"space-around",
