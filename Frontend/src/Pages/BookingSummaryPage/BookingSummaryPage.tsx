@@ -5,23 +5,53 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { formatCamelText } from "../../utils/textFormatUtils";
 import { sendConfirmationEmail } from "./utils";
-import { Loader } from "lucide-react";
+import { Loader, AlertCircle } from "lucide-react";
 import CancelRoomButton from "../../Component/ExpandableSection/CancelButton/CancelButton";
+import { Alert, Snackbar } from "@mui/material";
+
+const DeletedBookingState = (): JSX.Element => {
+  return (
+    <div className="deleted-booking-state">
+      <div className="deleted-booking-state__container">
+        <AlertCircle size={48} className="deleted-booking-state__icon" />
+        <h1>Booking Deleted</h1>
+        <p>This booking has been cancelled and is no longer active.</p>
+        <p>If you believe this is an error, please contact our support team.</p>
+        <button 
+          className="deleted-booking-state__button"
+          onClick={() => window.location.href = '/'}
+        >
+          Return to Home
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const BookingSummaryPage = (): JSX.Element => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const [isPrinting, setIsPrinting] = useState(false);
   const [bookingData, setBookingData] = useState<any>(null);
   const [isEmailSending, setIsEmailSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
-        const response = await axios.get(import.meta.env.VITE_CONFIRMATION_PAGE_API+bookingId);// replace with actual endpoint
+        const response = await axios.get(import.meta.env.VITE_CONFIRMATION_PAGE_API+bookingId);
         const data = response.data;
 
-        if (data) setBookingData(data);
+        if (data) {
+          // Check if the booking is active
+          if (data.confirmationDetails?.isActive === false) {
+            setBookingData({ ...data, isDeleted: true });
+          } else {
+            setBookingData(data);
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch booking data:", error);
+        setError("Failed to fetch booking details. Please try again later.");
       }
     };
 
@@ -38,7 +68,20 @@ const BookingSummaryPage = (): JSX.Element => {
     }, 300);
   };
 
+  if (error) {
+    return (
+      <div className="error-state">
+        <Alert severity="error">{error}</Alert>
+      </div>
+    );
+  }
+
   if (!bookingData) return <Loader/>;
+
+  // If booking is deleted, show the deleted state
+  if (bookingData.isDeleted) {
+    return <DeletedBookingState />;
+  }
 
   const {
     confirmationDetails,
@@ -47,25 +90,24 @@ const BookingSummaryPage = (): JSX.Element => {
     paymentInfo,
     imageUrl,
   } = bookingData;
- 
 
-const handleEmail = async () => {
-  setIsEmailSending(true);
-  try {
-    const response = await sendConfirmationEmail(
-      bookingId,
-      travelerInfo.email
-    );
-    if (response.status === 200) {
-      console.log("Confirmation email sent successfully!");
+  const handleEmail = async () => {
+    setIsEmailSending(true);
+    try {
+      const response = await sendConfirmationEmail(
+        bookingId,
+        travelerInfo.email
+      );
+      if (response.status === 200) {
+        console.log("Confirmation email sent successfully!");
+      }
+    } catch (error) {
+      alert("Failed to send confirmation email. Please try again.");
+      console.error("Failed to send confirmation email:", error);
+    } finally {
+      setIsEmailSending(false);
     }
-  } catch (error) {
-    alert("Failed to send confirmation email. Please try again.");
-    console.error("Failed to send confirmation email:", error);
-  } finally {
-    setIsEmailSending(false);
-  }
-};
+  };
 
   return (
     <div className="confirmation-page">
@@ -98,7 +140,6 @@ const handleEmail = async () => {
                 email={travelerInfo.email}
                 confirmationId={bookingId}
               />
-
             </div>
 
             <div className="confirmation-page__card-content">
@@ -247,11 +288,6 @@ const handleEmail = async () => {
                     {
                       label: "Card Number",
                       value: paymentInfo.cardNumber,
-                      type: "text",
-                    },
-                    {
-                      label: "Expiry",
-                      value: `${paymentInfo.expiryMonth}/${paymentInfo.expiryYear}`,
                       type: "text",
                     },
                   ]}

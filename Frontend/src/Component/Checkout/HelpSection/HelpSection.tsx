@@ -19,7 +19,7 @@ export const HelpSection = () => {
             fontSize: "2rem",
             lineHeight: "1.4",
             letterSpacing: "0px",
-
+            marginBottom: "8px"
         }}>
           Need help?
         </Typography>

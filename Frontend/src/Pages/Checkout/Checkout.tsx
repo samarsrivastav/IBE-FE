@@ -27,13 +27,17 @@ export const Checkout = () => {
   };
 
   return (
-    <div className="checkout-page">
+    <>
       <StepsIndicator step={currentStep} />
-      <div className="checkout-page__content">
-        <InputContainer />
+      <div className="checkout-page">
+        <div className="checkout-page__content">
+          <InputContainer />
+        </div>
+        <div className="checkout-page__aside">
+          <AsideComponent />
+        </div>
+        <Timer initialTime={600} onTimeout={handleTimeout} />
       </div>
-      <AsideComponent />
-      <Timer initialTime={600} onTimeout={handleTimeout} />
-    </div>
+    </>
   );
 };

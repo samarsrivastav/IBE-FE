@@ -9,6 +9,11 @@ import { initiatePayment, verifyOtpAndCompletePayment } from "./config/paymentAp
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../Redux/store";
+import LoaderModal from "../../../Util/Loader";
+import { Alert, Snackbar } from "@mui/material";
+
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface PaymentInfoProps {
   isOpen: boolean;
@@ -16,37 +21,118 @@ interface PaymentInfoProps {
   setIsBillingOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface OtpVerificationResponse {
+  verified?: boolean;
+  message?: string;
+  bookingId?: string;
+}
+
 export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: PaymentInfoProps) => {
   const { paymentInfo, setPaymentInfo, isValid } = usePaymentInfo();
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [paymentRequestId, setPaymentRequestId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  const MAX_OTP_ATTEMPTS = 3;
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info';
+  }>({
+    open: false,
+    message: '',
+    severity: 'info'
+  });
   const financialData = useSelector((state: RootState) => state.financial.data);
   const handleBack = () => {
     setIsBillingOpen(true);
     setIsPaymentOpen(false);
   };
 
-  const handlePurchase = async () => {
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
 
+  const handlePurchase = async () => {
+    setIsLoading(true);
     try {
       const response = await initiatePayment();
       setPaymentRequestId(response.message);
+      setSnackbar({
+        open: true,
+        message: 'Payment initiated successfully. Please check your email for OTP.',
+        severity: 'success'
+      });
       setIsOtpModalOpen(true);
     } catch (err) {
-      alert("Failed to initiate payment. Please try again."+err);
+      setSnackbar({
+        open: true,
+        message: 'Failed to initiate payment. Please try again.',
+        severity: 'error'
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
-  const navigate=useNavigate()
+
+  const navigate = useNavigate();
   const handleOtpConfirm = async (otp: string) => {
     if (!paymentRequestId) return;
 
     try {
-      const response=await verifyOtpAndCompletePayment( otp);
-      setIsOtpModalOpen(false);
-      alert("Payment Successful!"+response.bookingId);
-      navigate("/confirmation-page/"+response.bookingId)
-    } catch (err) {
-      alert("Invalid OTP. Please try again.");
+      const response: OtpVerificationResponse = await verifyOtpAndCompletePayment(otp);
+      
+      // First check if the response indicates verification failure
+      if (response && response.verified === false) {
+        setSnackbar({
+          open: true,
+          message: response.message || 'Verification failed',
+          severity: 'error'
+        });
+        return;
+      }
+      
+      // Then check for valid booking ID
+      if (response && response.bookingId && typeof response.bookingId === 'string' && UUID_REGEX.test(response.bookingId)) {
+        setIsOtpModalOpen(false);
+        setSnackbar({
+          open: true,
+          message: `Payment Successful! Booking ID: ${response.bookingId}`,
+          severity: 'success'
+        });
+        setTimeout(() => {
+          navigate("/confirmation-page/" + response.bookingId);
+        }, 2000);
+      } else {
+      console.log(response);
+        setSnackbar({
+          open: true,
+          message: response.bookingId || 'Invalid booking confirmation received. Please try again.',
+          severity: 'error'
+        });
+      }
+    } catch (err: any) {
+      // Get the exact error message from the backend response
+      const errorResponse = err.response?.data;
+      const errorMessage = errorResponse?.message || 'An unexpected error occurred';
+      
+      setOtpAttempts(prev => prev + 1);
+      
+      if (otpAttempts >= MAX_OTP_ATTEMPTS - 1) {
+        setSnackbar({
+          open: true,
+          message: errorMessage,
+          severity: 'error'
+        });
+        setIsOtpModalOpen(false);
+        setOtpAttempts(0);
+      } else {
+        setSnackbar({
+          open: true,
+          message: errorMessage,
+          severity: 'error'
+        });
+      }
     }
   };
 
@@ -96,8 +182,8 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
             </div>
             <div className="disable__button">
               <p className="edit-link" onClick={handleBack}>Edit Billing Info</p>
-              <button disabled={!isValid} onClick={handlePurchase}>
-                <p>Purchase</p>
+              <button disabled={!isValid || isLoading} onClick={handlePurchase}>
+                <p>{isLoading ? 'Processing...' : 'Purchase'}</p>
               </button>
             </div>
           </div>
@@ -106,9 +192,35 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
 
       <OtpModal
         isOpen={isOtpModalOpen}
-        onClose={() => setIsOtpModalOpen(false)}
+        onClose={() => {
+          setIsOtpModalOpen(false);
+          setOtpAttempts(0);
+        }}
         onConfirm={handleOtpConfirm}
       />
+      <LoaderModal isOpen={isLoading} text="Processing payment..." />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{
+            width: '100%',
+            backgroundColor: snackbar.severity === 'success' ? '#26266D' : '#EF4444',
+            color: 'white',
+            '& .MuiAlert-icon': {
+              color: 'white'
+            }
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

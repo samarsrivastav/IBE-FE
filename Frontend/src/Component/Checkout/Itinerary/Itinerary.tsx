@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../Redux/store";
 import { calculateDueAtResort, calculateDueNow, calculateRoomTotal, calculateTaxes, fetchRateData, formatDate } from "./utils";
 import { setFinancialData } from "../../../Redux/slice/financialSlice";
+import { setStep } from "../../../Redux/slice/stepSlice";
+
 interface ItineraryProps{
   setSteps?:()=>void
 }
@@ -35,17 +37,26 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
   const navigate=useNavigate();
   const currentStep=useSelector((state: RootState) => state.step.step);
   const location = useLocation();
-  const removeItinery=()=>{
+  const removeItinery = async () => {
     const currentPage = location.pathname;
-    localStorage.removeItem("package")
-    localStorage.removeItem("selectedRoom")
-    localStorage.setItem("step","1")
-    const searchParam=localStorage.getItem("searchParams")
-    if(currentPage==="/property"){
+    // First dispatch the step change
+    dispatch(setStep(1));
+    
+    // Then clear storage and set new step
+    localStorage.removeItem("package");
+    localStorage.removeItem("selectedRoom");
+    localStorage.setItem("step", "1");
+    
+    const searchParam = localStorage.getItem("searchParams");
+    if (currentPage === "/property") {
       setSteps && setSteps();
     }
-    navigate("/property?"+searchParam)
-  }
+    
+    // Force a re-render of the steps indicator by adding a small delay before navigation
+    setTimeout(() => {
+      navigate("/property?" + searchParam);
+    }, 0);
+  };
 
   useEffect(() => {
     setData();

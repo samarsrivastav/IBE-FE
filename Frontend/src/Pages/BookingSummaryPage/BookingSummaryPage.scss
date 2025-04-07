@@ -502,3 +502,61 @@ body {
     }
   }
 }
+
+.deleted-booking-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 2rem;
+
+  &__container {
+    text-align: center;
+    max-width: 600px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &__icon {
+    color: #dc3545;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    color: #dc3545;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+  }
+
+  p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  &__button {
+    background-color: #26266D;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #1a1a4a;
+    }
+  }
+}
+
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
