@@ -14,9 +14,9 @@ export const calculateRoomTotal = (dailyRates: { amount: number }[]) =>
 
 export const calculateTaxes = (roomTotal: number) => {
   const taxes = JSON.parse(localStorage.getItem("taxes") ?? "[]");
-  const country = JSON.parse(localStorage.getItem("billingInfo") ?? "{}").country;
+  const country = JSON.parse(localStorage.getItem("billingInfo") ?? "{}").country ?? "India";
 
-  console.log(taxes[country].resortFeePercent,country,taxes[country].occupancyTaxPercent);
+  console.log(taxes[country]);
 
   const resortFee = taxes[country]?.resortFeePercent || 10;
   const occupancyTax = taxes[country]?.occupancyTaxPercent || 20;
