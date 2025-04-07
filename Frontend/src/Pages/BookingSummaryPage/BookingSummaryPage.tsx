@@ -3,20 +3,23 @@ import "./BookingSummaryPage.scss";
 import { ExpandableSection } from "../../Component/ExpandableSection/ExpandableSection";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { formatCamelText } from "../../utils/textFormatUtils";
+import { sendConfirmationEmail } from "./utils";
+import { Loader } from "lucide-react";
+import CancelRoomButton from "../../Component/ExpandableSection/CancelButton/CancelButton";
 
 const BookingSummaryPage = (): JSX.Element => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const [isPrinting, setIsPrinting] = useState(false);
   const [bookingData, setBookingData] = useState<any>(null);
-  console.log(bookingId)
+  const [isEmailSending, setIsEmailSending] = useState(false);
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
-        const response = await axios.get("/data/dummyConfirmation.json");// replace with actual endpoint
+        const response = await axios.get(import.meta.env.VITE_CONFIRMATION_PAGE_API+bookingId);// replace with actual endpoint
         const data = response.data;
-        console.log(data) 
 
-        if (data[bookingId!]) setBookingData(data[bookingId!]);
+        if (data) setBookingData(data);
       } catch (error) {
         console.error("Failed to fetch booking data:", error);
       }
@@ -35,7 +38,7 @@ const BookingSummaryPage = (): JSX.Element => {
     }, 300);
   };
 
-  if (!bookingData) return <div>Loading...</div>;
+  if (!bookingData) return <Loader/>;
 
   const {
     confirmationDetails,
@@ -44,6 +47,25 @@ const BookingSummaryPage = (): JSX.Element => {
     paymentInfo,
     imageUrl,
   } = bookingData;
+ 
+
+const handleEmail = async () => {
+  setIsEmailSending(true);
+  try {
+    const response = await sendConfirmationEmail(
+      bookingId,
+      travelerInfo.email
+    );
+    if (response.status === 200) {
+      console.log("Confirmation email sent successfully!");
+    }
+  } catch (error) {
+    alert("Failed to send confirmation email. Please try again.");
+    console.error("Failed to send confirmation email:", error);
+  } finally {
+    setIsEmailSending(false);
+  }
+};
 
   return (
     <div className="confirmation-page">
@@ -53,20 +75,30 @@ const BookingSummaryPage = (): JSX.Element => {
             <h1>Upcoming reservation #{bookingId}</h1>
             <div className="actions">
               <button onClick={handlePrint}>Print</button>
-              <button>Email</button>
+              <button onClick={handleEmail} disabled={isEmailSending}>
+                {isEmailSending ? (
+                  <Loader className="email-loader" size={16} />
+                ) : (
+                  "Email"
+                )}
+              </button>
             </div>
           </div>
 
           <div className="confirmation-page__card">
             <div className="confirmation-page__card-header">
               <div className="confirmation-page__card-header-title">
-                <h2>Room 1: {confirmationDetails.roomName}</h2>
+                <h2>Room 1: {formatCamelText(confirmationDetails.roomName)}</h2>
                 <span>
                   {confirmationDetails.adultCount} adults,{" "}
                   {confirmationDetails.childCount} child
                 </span>
               </div>
-              <button>Cancel Room</button>
+              <CancelRoomButton
+                email={travelerInfo.email}
+                confirmationId={bookingId}
+              />
+
             </div>
 
             <div className="confirmation-page__card-content">
@@ -102,7 +134,7 @@ const BookingSummaryPage = (): JSX.Element => {
                     <div className="package">
                       <h3>{confirmationDetails.promotionTitle}</h3>
                       <p>
-                        This room has a special promotion applied.
+                        {confirmationDetails.promotionDescription}
                         <br />
                         <br />
                         Free cancellation available.

@@ -33,11 +33,10 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
   const [promotionData, setPromotionData] = useState(null);
   const [rateBreakdownData, setRateBreakdownData] = useState(null);
   const navigate=useNavigate();
-
+  const currentStep=useSelector((state: RootState) => state.step.step);
   const location = useLocation();
   const removeItinery=()=>{
     const currentPage = location.pathname;
-    console.log(currentPage)
     localStorage.removeItem("package")
     localStorage.removeItem("selectedRoom")
     localStorage.setItem("step","1")
@@ -54,7 +53,7 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
   const financialData = useSelector((state: RootState) => state.financial.data);
   
   const setData = async () => {
-    const apiData = await fetchRateData();
+    const apiData = await fetchRateData(selectedPackage.title,checkIn,checkOut);
     if (!apiData.length) return;
   
     const promotionData = {
@@ -103,7 +102,8 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
   
   return (
     <Box sx={{ backgroundColor: "#EFF0F1", padding: "16px", borderRadius: "8px",
-      height:"494px",width:"330px",
+      height: currentStep === 2 ? "30.875rem" : "31.25rem",
+      width: currentStep === 2 ? "20.625rem" : "25rem",
       display:"flex",
       flexDirection:"column",
       justifyContent:"space-between",

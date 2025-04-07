@@ -4,6 +4,10 @@ import "./BillingInfo.scss";
 import CustomDropdown from "../../Utils/CustomDropdown";
 import { countryData, statesByCountry } from "../countryData";
 import useBillingForm from "../../../../Config/CustomHooks/persistedState/useBillingInfo";
+import { useDispatch } from "react-redux";
+import { setFinancialData } from "../../../../Redux/slice/financialSlice";
+import { calculateDueAtResort, calculateDueNow, calculateTaxes } from "../../Itinerary/utils";
+import { useEffect } from "react";
 
 interface BillingInfoProp {
   setIsBillingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,13 +28,13 @@ export const BillingInfo = ({
     firstName,
     lastName,
     email,
-    phone,
+    phoneNumber,
     mailingAddress1,
     mailingAddress2,
     city,
-    zip,
-    selectedCountryOption,
-    selectedStateOption
+    zipCode,
+    country,
+    state
   } = form;
 
   const countryKeys = Object.keys(statesByCountry) as (keyof typeof statesByCountry)[];
@@ -39,12 +43,12 @@ export const BillingInfo = ({
     firstName.trim() &&
     lastName.trim() &&
     email.trim() &&
-    phone.trim() &&
+    phoneNumber.trim() &&
     mailingAddress1.trim() &&
     city.trim() &&
-    zip.trim() &&
-    selectedCountryOption.trim() &&
-    selectedStateOption.trim() &&
+    zipCode.trim() &&
+    country.trim() &&
+    state.trim() &&
     error === null;
 
   const validateZip = (zipCode: string): string | null => {
@@ -57,7 +61,31 @@ export const BillingInfo = ({
       return null;
     }
   };
-
+  useEffect(() => {
+    if (country) {
+      handleFinancialDataChange();
+    }
+  }, [country]);
+  
+  const dispatch = useDispatch();
+  const handleFinancialDataChange=()=>{
+    const financialData= JSON.parse(localStorage.getItem("financialData")??"{}")
+    const selectedPackage = JSON.parse(localStorage.getItem("package") ?? "{}");
+    const roomTotal = financialData.roomTotal;
+    const taxes = calculateTaxes(roomTotal);
+    const dueNow=calculateDueNow(roomTotal,taxes,selectedPackage.title)
+    const dueAtResort=calculateDueAtResort(roomTotal,dueNow)
+    const totalTaxes = taxes.reduce((sum, tax) => sum + tax.amount, 0);
+    console.log(taxes)
+    dispatch(
+      setFinancialData({
+        taxes:totalTaxes,
+        roomTotal,
+        dueNow,
+        dueAtResort,
+      })
+    )
+  }
   const handleAccordianState = () => {
     setIsBillingOpen(false);
     setIsTravelerOpen(true);
@@ -91,8 +119,10 @@ export const BillingInfo = ({
               <CustomDropdown
                 label="Country"
                 options={countryData}
-                value={selectedCountryOption}
-                onChange={(val) => updateField("selectedCountryOption", val)}
+                value={country}
+                onChange={(val) =>{
+                   updateField("country", val)
+                }}
               />
             </div>
             <div className="input city-details">
@@ -101,23 +131,23 @@ export const BillingInfo = ({
                 <CustomDropdown
                   placeholder="AL"
                   label="State"
-                  options={countryKeys.includes(selectedCountryOption as keyof typeof statesByCountry)
-                    ? statesByCountry[selectedCountryOption as keyof typeof statesByCountry]
+                  options={countryKeys.includes(country as keyof typeof statesByCountry)
+                    ? statesByCountry[country as keyof typeof statesByCountry]
                     : []}
-                  value={selectedStateOption}
-                  onChange={(val) => updateField("selectedStateOption", val)}
+                  value={state}
+                  onChange={(val) => updateField("state", val)}
                 />
                 <CustomInput
                   label="Zip"
-                  value={zip}
-                  onChange={e => updateField("zip", e.target.value)}
+                  value={zipCode}
+                  onChange={e => updateField("zipCode", e.target.value)}
                   setError={setError}
                   customValidation={validateZip}
                 />
               </div>
             </div>
             <div className="input phone">
-              <CustomInput label="Phone" type="tel" value={phone} onChange={e => updateField("phone", e.target.value)} setError={setError} />
+              <CustomInput label="Phone" type="tel" value={phoneNumber} onChange={e => updateField("phoneNumber", e.target.value)} setError={setError} />
             </div>
             <div className="input email">
               <CustomInput label="Email" type="email" value={email} onChange={e => updateField("email", e.target.value)} setError={setError} />

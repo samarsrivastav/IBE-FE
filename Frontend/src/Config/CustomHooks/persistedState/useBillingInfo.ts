@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const LOCAL_STORAGE_KEY = "billingInfo";
 
@@ -9,13 +9,13 @@ const useBillingForm = () => {
       firstName: "",
       lastName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       mailingAddress1: "",
       mailingAddress2: "",
       city: "",
-      zip: "",
-      selectedCountryOption: "",
-      selectedStateOption: ""
+      zipCode: "",
+      country: "",
+      state: ""
     };
   });
 

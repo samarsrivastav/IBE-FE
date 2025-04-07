@@ -4,9 +4,9 @@ export const usePaymentInfo = () => {
   const [paymentInfo, setPaymentInfo] = useState(() => {
     const stored = localStorage.getItem("paymentInfo");
     return stored ? JSON.parse(stored) : {
-      cardName: "",
-      expMonth: "",
-      expYear: "",
+      cardNumber: "",
+      expiryMonth: "",
+      expiryYear: "",
       cvv: ""
     };
   });

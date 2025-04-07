@@ -27,6 +27,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
 
     dispatch(setSelectedRoom({
       room: {
+        roomTypeId: room.room_type_id.toString(),
         title: room.room_type_name,
         size: room.area_in_square_feet,
         maxOccupancy: room.max_capacity,

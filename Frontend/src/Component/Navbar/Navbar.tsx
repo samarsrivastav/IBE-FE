@@ -38,13 +38,14 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { currency } = useSelector((state: RootState) => state.currency);
   const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
-
+  
   useEffect(() => {
     dispatch(fetchTenantConfig());
     const storedCurrency = localStorage.getItem("selectedCurrency") || "usd";
     dispatch(setCurrency(storedCurrency));
   }, [dispatch]);
-
+  localStorage.setItem("taxes", JSON.stringify(tenantConfig.configuration.taxes));
+  
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const newLanguage = event.target.value;
     setLanguage(newLanguage);

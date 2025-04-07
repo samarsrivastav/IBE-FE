@@ -47,9 +47,9 @@ export const TravelerInfo = ({ isOpen, setIsBillingOpen, setIsTravelerOpen }: Tr
           <CustomInput
             label="Phone"
             type="tel"
-            value={travelerInfo.phone}
+            value={travelerInfo.phoneNumber}
             onChange={(e) =>
-              setTravelerInfo({ ...travelerInfo, phone: e.target.value })
+              setTravelerInfo({ ...travelerInfo, phoneNumber: e.target.value })
             }
             setError={setError}
           />

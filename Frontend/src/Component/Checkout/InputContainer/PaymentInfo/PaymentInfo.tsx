@@ -27,9 +27,10 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
   };
 
   const handlePurchase = async () => {
+
     try {
-      const response = await initiatePayment(paymentInfo);
-      setPaymentRequestId(response.requestId);
+      const response = await initiatePayment();
+      setPaymentRequestId(response.message);
       setIsOtpModalOpen(true);
     } catch (err) {
       alert("Failed to initiate payment. Please try again."+err);
@@ -40,7 +41,7 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
     if (!paymentRequestId) return;
 
     try {
-      const response=await verifyOtpAndCompletePayment(paymentRequestId, otp);
+      const response=await verifyOtpAndCompletePayment( otp);
       setIsOtpModalOpen(false);
       alert("Payment Successful!"+response.bookingId);
       navigate("/confirmation-page/"+response.bookingId)
@@ -57,23 +58,23 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
           <div className="input card__details">
             <CustomInput
               type="text"
-              label="Card Name"
-              value={paymentInfo.cardName}
-              onChange={(e) => setPaymentInfo({ ...paymentInfo, cardName: e.target.value })}
+              label="Card Number"
+              value={paymentInfo.cardNumber}
+              onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })}
             />
             <div className="card__expiry">
               <CustomInput
                 type="text"
                 label="Exp MM"
-                value={paymentInfo.expMonth}
-                onChange={(e) => setPaymentInfo({ ...paymentInfo, expMonth: e.target.value })}
+                value={paymentInfo.expiryMonth}
+                onChange={(e) => setPaymentInfo({ ...paymentInfo, expiryMonth: e.target.value })}
                 width="10.25rem"
               />
               <CustomInput
                 type="text"
                 label="Exp YY"
-                value={paymentInfo.expYear}
-                onChange={(e) => setPaymentInfo({ ...paymentInfo, expYear: e.target.value })}
+                value={paymentInfo.expiryYear}
+                onChange={(e) => setPaymentInfo({ ...paymentInfo, expiryYear: e.target.value })}
                 width="10.25rem"
               />
             </div>
@@ -87,18 +88,18 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
               width="10.25rem"
             />
           </div>
-        </div>
-        <CustomCheckboxes />
-        <div className="bottom__component">
-          <div className="total__amount">
-            <p>Total Due:</p>
-            <p>${financialData?.dueNow}</p>
-          </div>
-          <div className="disable__button">
-            <p className="edit-link" onClick={handleBack}>Edit Billing Info</p>
-            <button disabled={!isValid} onClick={handlePurchase}>
-              <p>Purchase</p>
-            </button>
+          <CustomCheckboxes />
+          <div className="bottom__component">
+            <div className="total__amount">
+              <p>Total Due:</p>
+              <p>${financialData?.dueNow}</p>
+            </div>
+            <div className="disable__button">
+              <p className="edit-link" onClick={handleBack}>Edit Billing Info</p>
+              <button disabled={!isValid} onClick={handlePurchase}>
+                <p>Purchase</p>
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ export const useTravelerInfo = () => {
       firstName: "",
       lastName: "",
       email: "",
-      phone: ""
+      phoneNumber: ""
     };
   });
 
@@ -21,7 +21,7 @@ export const useTravelerInfo = () => {
     travelerInfo.firstName.trim() &&
     travelerInfo.lastName.trim() &&
     travelerInfo.email.trim() &&
-    travelerInfo.phone.trim() &&
+    travelerInfo.phoneNumber.trim() &&
     error === null;
 
   return {
