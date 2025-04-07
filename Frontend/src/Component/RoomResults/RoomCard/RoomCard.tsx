@@ -27,6 +27,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
 
     dispatch(setSelectedRoom({
       room: {
+        roomTypeId: room.room_type_id.toString(),
         title: room.room_type_name,
         size: room.area_in_square_feet,
         maxOccupancy: room.max_capacity,
@@ -95,7 +96,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
             <div className={styles.rating}>
               <div className="stars__section" style={{ width: "100%",textAlign:"right" }}>
                 <Star className={styles.starIcon} fill="#26266D" />
-                <span>{room.rating}</span>
+                <span>{room.rating.toFixed(2)}</span>
               </div>
               <span className={styles.reviews}>({room.reviews} reviews)</span>
             </div>

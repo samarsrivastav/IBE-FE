@@ -40,7 +40,7 @@ const ResultsContent: React.FC<ResultsContentProps> = ({ rooms, setStep }) => {
         sorted.sort((a, b) => a.price - b.price);
         break;
       case "reviewsHigh":
-        sorted.sort((a, b) => b.reviews - a.reviews);
+        sorted.sort((a, b) => b.rating - a.rating);
         break;
       default:
         break;
