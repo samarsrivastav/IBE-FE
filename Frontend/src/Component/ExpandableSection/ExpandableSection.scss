@@ -1,0 +1,75 @@
+.expandable-section {
+  font-family: "Lato", sans-serif;
+  border-radius: 0.5rem;
+  overflow: hidden;
+
+  &__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    p {
+      font-size: 1.25rem;
+      height: 3rem;
+      font-weight: 700;
+      color: #2f2f2f;
+      margin: 1.015rem 0 0 0.9375rem;
+      line-height: 170%;
+      letter-spacing: 0;
+    }
+
+    svg {
+      margin-left: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #6b7280;
+    }
+  }
+
+  &__content {
+    padding: 0.2rem 1rem;
+    background-color: white;
+    margin-left: 2.4375rem;
+
+    .content-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .label {
+        color: #5d5d5d;
+        font-weight: 400;
+        font-size: 1rem;
+        line-height: 140%;
+        letter-spacing: 0;
+      }
+
+      .value {
+        color: #2f2f2f;
+        font-weight: 400;
+        font-size: 1.25rem;
+        line-height: 140%;
+        letter-spacing: 0;
+      }
+    }
+  }
+}
+
+.page-container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+
+  .content-wrapper {
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+}

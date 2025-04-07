@@ -1,0 +1,14 @@
+.timer {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: #26266d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-family: "Lato", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }

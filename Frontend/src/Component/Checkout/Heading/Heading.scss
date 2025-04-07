@@ -1,19 +1,40 @@
-.input-container__heading{
+.input-container__heading {
     display: flex;
     align-items: center;
     background-color: #EFF0F1;
-    width: 46rem;
+    width: 100%; /* Make it responsive by default */
+    max-width: 46rem; /* Limit the maximum width */
     height: 2.6875rem;
-    h1{
+
+    h1 {
         margin: 0;
         margin-left: 1rem;
-        font-family: "Lato",sans-serif;
+        font-family: "Lato", sans-serif;
         font-weight: 700;
-        font-size: 20px;
+        font-size: 1.25rem; /* Use rem for better scalability (20px -> 1.25rem) */
         line-height: 130%;
         letter-spacing: 0px;
-        width: 10.5rem;
-        height: 1.5rem;
+        width: auto; /* Adjust width to fit content */
+        height: auto; /* Adjust height to fit content */
+    }
 
+    @media (max-width: 768px) {
+        /* For tablets and smaller screens */
+        height: 2.5rem;
+
+        h1 {
+            font-size: 1rem; /* Reduce font size (16px -> 1rem) */
+            margin-left: 0.75rem; /* Adjust margin */
+        }
+    }
+
+    @media (max-width: 480px) {
+        /* For mobile screens */
+        height: 2.25rem;
+
+        h1 {
+            font-size: 0.875rem; /* Further reduce font size (14px -> 0.875rem) */
+            margin-left: 0.5rem; /* Adjust margin */
+        }
     }
 }

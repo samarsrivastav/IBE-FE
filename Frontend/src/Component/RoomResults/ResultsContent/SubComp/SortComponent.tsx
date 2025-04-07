@@ -12,7 +12,7 @@ const SortComponent: React.FC<SortComponentProps> = ({ sortBy, setSortBy }) => {
       <InputLabel>Sort</InputLabel>
       <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} label="Sort By">
         <MenuItem value="priceLow">Price</MenuItem>
-        <MenuItem value="reviewsHigh">Reviews</MenuItem>
+        <MenuItem value="reviewsHigh">Ratings</MenuItem>
       </Select>
     </FormControl>
   );

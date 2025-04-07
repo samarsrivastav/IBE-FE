@@ -1,8 +1,18 @@
-.checkout-page{
-
-    &__content{
+.checkout-page {
+    &__content {
         width: 46rem;
         margin-top: 1rem;
         padding-left: 5.125rem;
+
+        @media (max-width: 768px) {
+            width: 100%;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        @media (max-width: 480px) {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
     }
 }

@@ -6,6 +6,7 @@ import { Package } from "../../../Redux/slice/roomDataSlice";
 
 export interface RoomModalProps {
   room: {
+    roomTypeId: string;
     title: string;
     size: string;
     maxOccupancy: string;
