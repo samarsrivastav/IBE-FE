@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import styles from "./SearchFilters.module.scss";
 import { Popover, Snackbar, Alert } from "@mui/material";
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../Redux/store";
 import RoomDropDown from "./RoomDropdown/RoomDropDown";
 import BedDropDown from "./RoomDropdown/BedDropDown";
-import { fetchProperties } from "../../../Redux/thunk/propertiesThunk";
 import fetchPropertyConfig from "../../../Redux/thunk/propertyConfigThunk";
 import { GuestDropDown } from "./GuestDropDown/GuestDropDown";
 import { setBeds, setCheckIn, setCheckOut, setRooms } from "../../../Redux/slice/searchSlice";
@@ -49,7 +48,17 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   const [alertMessage, setAlertMessage] = useState("");
 
   const handleCloseAlert = () => setOpenAlert(false);
-
+  const functionCalled = useRef(false);
+  useEffect(() => {
+    localStorage.setItem("searchParams", searchParams.toString());
+  }, [searchParams]);
+  
+  useEffect(() => {
+    const storedParams = localStorage.getItem("searchParams");
+    if (storedParams) {
+      setSearchParams(new URLSearchParams(storedParams));
+    }
+  }, [setSearchParams]);
   // Ensure check-in is before check-out
   useEffect(() => {
     if (checkIn && checkOut && new Date(checkIn) > new Date(checkOut)) {
@@ -65,11 +74,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     if (checkOut) newParams.set("checkOut", checkOut);
     setSearchParams(newParams);
   }, [checkIn, checkOut, setSearchParams]);
-
-
-  useEffect(() => {
-    dispatch(fetchProperties());
-  }, [dispatch]);
 
   const handleSearch = () => {
     if (!checkIn || !checkOut) {
