@@ -100,6 +100,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
               sx={{
                 height:"1.1875rem",
                 width:"2.8125rem",
+                color:"#26266D",
                 ".MuiSelect-select":{
                   height:"1.1875rem",
                   minHeight:"1.1875rem",
@@ -150,6 +151,8 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
             sx={{
               height:"1.25rem",
               width:"3.1875rem",
+              color:"#26266D",
+              fontFamily:"Lato",
               "& .MuiSelect-select": {
                 padding: "0 !important",
                 minHeight:"1.25rem !important",
