@@ -36,12 +36,21 @@ import { fetchProperties } from "../../Redux/thunk/propertiesThunk";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 
-// Create array of property data
+interface PropertyData {
+  property_id: number;
+  property_name: string;
+}
+
+interface GuestCounts {
+  adults: number;
+  child: number;
+  teen: number;
+}
 
 const SearchArea: React.FC = () => {
   
   const dispatch = useDispatch<AppDispatch>();
-  const properties = useSelector((state: RootState) => state.properties.property.listProperties);
+  const properties = useSelector((state: RootState) => state.properties.property.listProperties) as unknown as PropertyData[] || [];
 
   const searchState = useSelector((state: RootState) => state.search);
   const { checkIn, checkOut } = searchState;
@@ -52,16 +61,48 @@ const SearchArea: React.FC = () => {
 
   const propertyId = useSelector((state: RootState) => state.search.PropertyId);
 
+  // Restore search state from localStorage on mount
+  useEffect(() => {
+    const savedSearchState = localStorage.getItem('searchState');
+    if (savedSearchState) {
+      const parsedState = JSON.parse(savedSearchState);
+      // Only restore if we have valid data
+      if (parsedState.PropertyId) {
+        dispatch(setPropertyId(parsedState.PropertyId));
+      }
+      if (parsedState.rooms) {
+        dispatch(setRooms(parsedState.rooms));
+      }
+      if (parsedState.needsAccessibleRoom !== undefined) {
+        dispatch(setNeedsAccessibleRoom(parsedState.needsAccessibleRoom));
+      }
+      if (parsedState.checkIn) {
+        dispatch(setCheckIn(parsedState.checkIn));
+      }
+      if (parsedState.checkOut) {
+        dispatch(setCheckOut(parsedState.checkOut));
+      }
+      if (parsedState.guests) {
+        Object.entries(parsedState.guests).forEach(([type, value]) => {
+          if (type === 'adults' || type === 'child' || type === 'teen') {
+            dispatch(updateGuestCount({ type, value: value as number }));
+          }
+        });
+      }
+    }
+  }, [dispatch]);
+
+  // Save search state to localStorage whenever it changes
+  useEffect(() => {
+    if (searchState.PropertyId) { // Only save if we have a property selected
+      localStorage.setItem('searchState', JSON.stringify(searchState));
+    }
+  }, [searchState]);
+
   useEffect(() => {
     dispatch(fetchProperties());
     if (propertyId) {
       dispatch(fetchPropertyConfig(propertyId));
-      // Reset all values to initial state
-      dispatch(resetGuestCounts());
-      dispatch(setCheckIn(""));
-      dispatch(setCheckOut(""));
-      dispatch(setRooms(1));
-      dispatch(setNeedsAccessibleRoom(false));
     }
   }, [dispatch, propertyId]);
 
@@ -109,17 +150,27 @@ const SearchArea: React.FC = () => {
       return;
     }
 
-    console.log("Search with:", searchState);
-    //make string like 2 adults, 1 child
-    const guest=Object.entries(searchState.guests).map(([key, value]) => {
-      if(value>0)
-      return `${value} ${key}`;
-      else
-      return "";
-    }
-    ).filter((value)=>value!=="").join(", ");
+    const guest = Object.entries(searchState.guests)
+      .map(([key, value]) => {
+        if (value > 0) return `${value} ${key}`;
+        else return "";
+      })
+      .filter((value) => value !== "")
+      .join(", ");
 
-    navigate("/property?propertyId="+propertyId+"&guests="+guest+"&rooms="+searchState.rooms+"&checkIn=" + checkIn+"&checkOut="+checkOut);
+    const searchParams = new URLSearchParams();
+    if (propertyId) {
+      searchParams.set("propertyId", propertyId.toString());
+    }
+    searchParams.set("guests", guest);
+    searchParams.set("rooms", searchState.rooms.toString());
+    if (checkIn) searchParams.set("checkIn", checkIn);
+    if (checkOut) searchParams.set("checkOut", checkOut);
+    
+    // Save search parameters to localStorage
+    localStorage.setItem("searchParams", searchParams.toString());
+    
+    navigate("/property?" + searchParams.toString());
   };
 
   // Guest dropdown state
@@ -248,22 +299,25 @@ const SearchArea: React.FC = () => {
                   </span>
                 );
               }
-              const property = properties.find(
-                (p) => p.property_id === selected
+              const property = properties?.find(
+                (p: PropertyData) => p.property_id === selected
               );
-              return property?.property_name ?? "";
+              return property?.property_name ?? "Select a property";
             }}
           >
-            
-            {properties!=undefined?properties.map((property:Property) => (
+            {properties?.map((property: PropertyData) => (
               <MenuItem key={property.property_id} value={property.property_id}>
-                <Checkbox
-                  checked={selectedPropertyId === Number(property.property_id)}
-                  onChange={() => handleSelect(Number(property.property_id))}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedPropertyId === property.property_id}
+                      onChange={() => handleSelect(property.property_id)}
+                    />
+                  }
+                  label={property.property_name}
                 />
-                {property.property_name}
               </MenuItem>
-            )):null}
+            ))}
           </Select>
         </FormControl>
 
