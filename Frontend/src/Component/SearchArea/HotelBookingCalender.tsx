@@ -451,13 +451,13 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
       }
       return `Please select end date. Max length of stay: ${max_days} days`;
     } else if (startDate && endDate) {
-      return <span className='selected-minimum-price'>From {currency === "eur" ? "€" : "$"}{getMinimumPriceInRange(startDate,endDate)}/night</span>;
+      return <span className='selected-total-price'>Total: {currencySymbolMap.get(currency)}{getTotalPriceInRange(startDate,endDate)}</span>;
     } else {
       return "Please select start date";
     }
   };
 
-  const getMinimumPriceInRange = (start: string, end: string): number | null => {
+  const getTotalPriceInRange = (start: string, end: string): number | null => {
     if (!start || !end) return null;
   
     const selectedPrices = convertedPrices
@@ -467,7 +467,8 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
         return discountedPrice ?? price;
       });
   
-    return selectedPrices.length > 0 ? Math.min(...selectedPrices) : null;
+    const res= selectedPrices.length > 0 ? selectedPrices.reduce((sum, price) => sum + price, 0) : null;
+    return Number(res?.toFixed(2));
   };
   
   
