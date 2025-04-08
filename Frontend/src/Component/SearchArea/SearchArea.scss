@@ -12,6 +12,8 @@
     height: 36.563rem;
   }
 
+  
+
   &__form {
     width: 292px;
     display: flex;
@@ -32,10 +34,11 @@
   }
 
   &__date-selector {
+    font-family: 'lato', sans-serif;
     align-items: center;
     padding: 0px;
     width: 292px;
-    height: 46px !important;
+    height: 48px !important;
     display: flex;
     justify-content: space-around;
     border: 1px solid rgb(214, 211, 219);
@@ -102,7 +105,7 @@
   &__search-button {
     align-self: center;
     width: 45%;
-    margin-top: 10rem !important;
+    margin-top: 8rem !important;
     padding: 1rem 0;
     background-color: #0a157a !important;
     &:hover {
@@ -110,7 +113,7 @@
     }
   }
 }
-.css-1tktgsa-MuiPaper-root-MuiPopover-paper-MuiMenu-paper{
+.css-1tktgsa-MuiPaper-root-MuiPopover-paper-MuiMenu-paper,.css-d1xm6m{
   max-height: 7.125rem !important;
 }
 .css-1toxriw-MuiList-root-MuiMenu-list{
