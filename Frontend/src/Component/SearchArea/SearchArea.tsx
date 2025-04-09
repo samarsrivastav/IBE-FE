@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { useState, useEffect } from "react";
+import calendarIcon from "../../../public/u_calendar-alt.png";
+import arrowIcon from "../../../public/u_arrow-right.png";
+import wheelChairIcon from "../../../public/u_wheelchair.png";
 import {
   setPropertyId,
   setRooms,
@@ -36,12 +39,21 @@ import { fetchProperties } from "../../Redux/thunk/propertiesThunk";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 
-// Create array of property data
+interface PropertyData {
+  property_id: number;
+  property_name: string;
+}
+
+interface GuestCounts {
+  adults: number;
+  child: number;
+  teen: number;
+}
 
 const SearchArea: React.FC = () => {
   
   const dispatch = useDispatch<AppDispatch>();
-  const properties = useSelector((state: RootState) => state.properties.property.listProperties);
+  const properties = useSelector((state: RootState) => state.properties.property.listProperties) as unknown as PropertyData[] || [];
 
   const searchState = useSelector((state: RootState) => state.search);
   const { checkIn, checkOut } = searchState;
@@ -52,16 +64,48 @@ const SearchArea: React.FC = () => {
 
   const propertyId = useSelector((state: RootState) => state.search.PropertyId);
 
+  // Restore search state from localStorage on mount
+  useEffect(() => {
+    const savedSearchState = localStorage.getItem('searchState');
+    if (savedSearchState) {
+      const parsedState = JSON.parse(savedSearchState);
+      // Only restore if we have valid data
+      if (parsedState.PropertyId) {
+        dispatch(setPropertyId(parsedState.PropertyId));
+      }
+      if (parsedState.rooms) {
+        dispatch(setRooms(parsedState.rooms));
+      }
+      if (parsedState.needsAccessibleRoom !== undefined) {
+        dispatch(setNeedsAccessibleRoom(parsedState.needsAccessibleRoom));
+      }
+      if (parsedState.checkIn) {
+        dispatch(setCheckIn(parsedState.checkIn));
+      }
+      if (parsedState.checkOut) {
+        dispatch(setCheckOut(parsedState.checkOut));
+      }
+      if (parsedState.guests) {
+        Object.entries(parsedState.guests).forEach(([type, value]) => {
+          if (type === 'adults' || type === 'child' || type === 'teen') {
+            dispatch(updateGuestCount({ type, value: value as number }));
+          }
+        });
+      }
+    }
+  }, [dispatch]);
+
+  // Save search state to localStorage whenever it changes
+  useEffect(() => {
+    if (searchState.PropertyId) { // Only save if we have a property selected
+      localStorage.setItem('searchState', JSON.stringify(searchState));
+    }
+  }, [searchState]);
+
   useEffect(() => {
     dispatch(fetchProperties());
     if (propertyId) {
       dispatch(fetchPropertyConfig(propertyId));
-      // Reset all values to initial state
-      dispatch(resetGuestCounts());
-      dispatch(setCheckIn(""));
-      dispatch(setCheckOut(""));
-      dispatch(setRooms(1));
-      dispatch(setNeedsAccessibleRoom(false));
     }
   }, [dispatch, propertyId]);
 
@@ -109,17 +153,27 @@ const SearchArea: React.FC = () => {
       return;
     }
 
-    console.log("Search with:", searchState);
-    //make string like 2 adults, 1 child
-    const guest=Object.entries(searchState.guests).map(([key, value]) => {
-      if(value>0)
-      return `${value} ${key}`;
-      else
-      return "";
-    }
-    ).filter((value)=>value!=="").join(", ");
+    const guest = Object.entries(searchState.guests)
+      .map(([key, value]) => {
+        if (value > 0) return `${value} ${key}`;
+        else return "";
+      })
+      .filter((value) => value !== "")
+      .join(", ");
 
-    navigate("/property?propertyId="+propertyId+"&guests="+guest+"&rooms="+searchState.rooms+"&checkIn=" + checkIn+"&checkOut="+checkOut);
+    const searchParams = new URLSearchParams();
+    if (propertyId) {
+      searchParams.set("propertyId", propertyId.toString());
+    }
+    searchParams.set("guests", guest);
+    searchParams.set("rooms", searchState.rooms.toString());
+    if (checkIn) searchParams.set("checkIn", checkIn);
+    if (checkOut) searchParams.set("checkOut", checkOut);
+    
+    // Save search parameters to localStorage
+    localStorage.setItem("searchParams", searchParams.toString());
+    
+    navigate("/property?" + searchParams.toString());
   };
 
   // Guest dropdown state
@@ -223,7 +277,28 @@ const SearchArea: React.FC = () => {
     return Array.from({ length: maxRooms }, (_, index) => index + 1);
   };
 
+  // Helper function to generate the display string for guests
+  const generateGuestDisplayString = (guests: GuestCounts, configGuestTypes: typeof guestTypes) => {
+    const parts: string[] = [];
+    configGuestTypes.forEach(({ type, label }) => {
+      const count = guests[type];
+      if (count > 0) {
+        // Use the full label now
+        const fullLabel = label;
+        parts.push(`${count} ${fullLabel}`); 
+      }
+    });
 
+    if (parts.length === 0) {
+        if (guests.adults === 1 && guests.child === 0 && guests.teen === 0) {
+            // Show default 1 Adult with full label
+            return "1 Adult"; 
+        } 
+        return "Select Guests";
+    } 
+    
+    return parts.join(", ");
+  };
 
   return (
     <Paper className="search-area__paper" elevation={1}>
@@ -231,93 +306,197 @@ const SearchArea: React.FC = () => {
         component="form"
         onSubmit={handleSearch}
         className="search-area__form"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1.5rem",
+          width: "100%",
+          fontFamily: "Lato !important"
+        }}
       >
-        <FormControl fullWidth>
-          <Typography>Property name*</Typography>
+        <div >
+        <FormControl fullWidth sx={{ maxWidth: "292px", display: "flex", alignItems: "flex-start" }}>
+          <Typography 
+            sx={{ 
+              width: "100%", 
+              textAlign: "start", 
+              fontFamily: "Lato !important", 
+              fontWeight: 400, 
+              fontSize: "0.875rem", 
+              lineHeight: "140%", 
+              letterSpacing: "0px" 
+            }}
+          >
+            Property name*
+          </Typography>
           <Select
             value={selectedPropertyId ?? 0}
-            onChange={() => {}} // Empty onChange as we're handling selection via checkboxes
+            onChange={() => {}}
             displayEmpty
-            sx={{ height: "48px" }}
+            sx={{
+              height: "48px", 
+              width:"292px",
+              fontFamily: "Lato !important",
+              fontWeight: 400, 
+              fontSize: "0.875rem", 
+              lineHeight: "140%", 
+              letterSpacing: "0px",
+              "& .MuiSelect-select": {
+                fontFamily: "Lato !important",
+                fontWeight: 400, 
+                fontSize: "16px", 
+                lineHeight: "140%", 
+                letterSpacing: "0px"
+              }
+            }}
             className="search-area__select"
             renderValue={(selected) => {
               if (!selected) {
                 return (
-                  <span style={{ color: "grey", fontStyle: "italic" }}>
+                  <span style={{ color: "grey", fontStyle: "italic", fontFamily: "Lato" }}>
                     Search all property
                   </span>
                 );
               }
-              const property = properties.find(
-                (p) => p.property_id === selected
+              const property = properties?.find(
+                (p: PropertyData) => p.property_id === selected
               );
-              return property?.property_name ?? "";
+              return property?.property_name ?? "Select a property";
             }}
           >
-            
-            {properties!=undefined?properties.map((property:Property) => (
-              <MenuItem key={property.property_id} value={property.property_id}>
-                <Checkbox
-                  checked={selectedPropertyId === Number(property.property_id)}
-                  onChange={() => handleSelect(Number(property.property_id))}
+            {properties?.map((property: PropertyData) => (
+              <MenuItem
+                key={property.property_id}
+                value={property.property_id}
+                sx={{ 
+                  fontFamily: "Lato !important", 
+                  fontSize: "1rem" 
+                }}
+                disabled={property.property_id !== 8 && property.property_id !== 20}
+              >
+                <FormControlLabel
+                  sx={{ fontFamily: "Lato !important", fontSize: "1rem" }}
+                  control={
+                    <Checkbox
+                      checked={selectedPropertyId === property.property_id}
+                      onChange={() => handleSelect(property.property_id)}
+                    />
+                  }
+                  label={property.property_name}
                 />
-                {property.property_name}
               </MenuItem>
-            )):null}
+            ))}
           </Select>
         </FormControl>
+        </div>
 
-        <Box>
-          <Typography>Select dates</Typography>
-          <Box
-            className="search-area__date-selector"
-            onClick={handleCalendarOpen}
-          >
-            <Typography className="search-area__date-selector-text">
-              {checkIn && checkOut
-                ? `${checkIn} → ${checkOut}`
-                : "Check-in → Check-out"}
-            </Typography>
-            <IconButton>
-              <CalendarTodayIcon className="search-area__date-selector-icon" />
-            </IconButton>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <Box>
+            <Typography sx={{ fontFamily: "Lato !important" ,fontSize: "14px"}}>Select dates</Typography>
+            <Box
+              className="search-area__date-selector"
+              onClick={handleCalendarOpen}
+              sx={{ fontFamily: "Lato !important" }}
+            >
+              <Box className="search-area__date-selector-text" sx={{ fontFamily: "Lato !important" }}>
+                {checkIn && checkOut ? (
+                  <>
+                    {checkIn}
+                    <img 
+                      src={arrowIcon} 
+                      alt="arrow" 
+                      style={{ 
+                        margin: '0 16px',
+                        width: '16px',
+                        height: '16px',
+                        objectFit: 'contain'
+                      }} 
+                    />
+                    {checkOut}
+                  </>
+                ) : (
+                  <>
+                    Check-in
+                    <img 
+                      src={arrowIcon} 
+                      alt="arrow" 
+                      style={{ 
+                        margin: '0 16px',
+                        width: '16px',
+                        height: '16px',
+                        objectFit: 'contain'
+                      }} 
+                    />
+                    Check-out
+                  </>
+                )}
+              </Box>
+              <img src={calendarIcon} alt="calendar" />
+            </Box>
+
+            {/* Calendar dropdown */}
+            <Popover
+              open={Boolean(calendarAnchorEl)}
+              anchorEl={calendarAnchorEl}
+              onClose={handleCalendarClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              PaperProps={{
+                sx: {
+                  width: "896px",
+                  padding: 2,
+                },
+              }}
+            >
+              <CalendarComponent onClose={handleCalendarClose} />
+            </Popover>
           </Box>
-
-          {/* Calendar dropdown */}
-          <Popover
-            open={Boolean(calendarAnchorEl)}
-            anchorEl={calendarAnchorEl}
-            onClose={handleCalendarClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            PaperProps={{
-              sx: {
-                width: "896px",
-                padding: 2,
-              },
-            }}
-          >
-            <CalendarComponent onClose={handleCalendarClose} />
-          </Popover>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
           {/* Show guests section only if showGuest is true or not set yet */}
           {(propertyConfig?.showGuest === undefined ||
             propertyConfig?.showGuest) && (
-            <FormControl sx={{ width: "100%" }}>
-              <Typography>Guests</Typography>
+            <FormControl sx={{ width: "12.5rem" }}>
+              <Typography sx={{ fontFamily: "Lato !important",fontSize: "14px" }}>Guests</Typography>
               <Box
                 onClick={handleGuestMenuClick}
                 className="search-area__guest-selector"
+                sx={{
+                  height: "3rem",
+                  width: "12.5rem",
+                  border: "1px solid rgba(24, 13, 13, 0.23)",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  backgroundColor: "#fff",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "0 8px",
+                  fontFamily: "Lato !important"
+                }}
               >
-                <Typography>{totalGuests} Guests</Typography>
+                <Typography 
+                  sx={{ 
+                    fontFamily: "Lato !important", 
+                    fontWeight: 400, 
+                    fontSize: "0.875rem", // 14px
+                    lineHeight: "140%", 
+                    letterSpacing: "0px",
+                    whiteSpace: 'nowrap', // Prevent wrapping
+                    overflow: 'hidden',   // Hide overflow
+                    textOverflow: 'ellipsis' // Add ellipsis if text is too long
+                  }}
+                >
+                  {generateGuestDisplayString(searchState.guests, guestTypes)}
+                </Typography>
               </Box>
               <Popover
                 open={Boolean(guestAnchorEl)}
@@ -344,6 +523,7 @@ const SearchArea: React.FC = () => {
                           fontSize: "1rem",
                           lineHeight: "150%",
                           letterSpacing: "0px",
+                          fontFamily: "Lato !important"
                         }}
                         variant="subtitle1"
                       >
@@ -355,6 +535,7 @@ const SearchArea: React.FC = () => {
                           fontSize: "0.875rem",
                           lineHeight: "140%",
                           letterSpacing: "0px",
+                          fontFamily: "Lato !important"
                         }}
                         variant="caption"
                         color="text.secondary"
@@ -381,7 +562,7 @@ const SearchArea: React.FC = () => {
                       >
                         <RemoveIcon />
                       </IconButton>
-                      <Typography className="search-area__guest-item-counter-value">
+                      <Typography className="search-area__guest-item-counter-value" sx={{ fontFamily: "Lato !important" }}>
                         {searchState.guests[type] || 0}
                       </Typography>
                       <IconButton
@@ -412,7 +593,7 @@ const SearchArea: React.FC = () => {
                 ))}
                 {propertyConfig?.maxGuestPerRoom && (
                   <Typography
-                    sx={{ p: 1, fontSize: "0.75rem" }}
+                    sx={{ p: 1, fontSize: "0.75rem", fontFamily: "Lato !important" }}
                     color="text.secondary"
                   >
                     Maximum {propertyConfig.maxGuestPerRoom} guests per room
@@ -425,17 +606,26 @@ const SearchArea: React.FC = () => {
           {/* Show rooms selection only if showRoomNumber is true or not set yet */}
           {(propertyConfig?.showRoomNumber === undefined ||
             propertyConfig?.showRoomNumber) && (
-            <FormControl className="search-area__rooms-select">
-              <Typography>Rooms</Typography>
+            <FormControl sx={{ width: "4.8125rem" }}>
+              <Typography sx={{ fontFamily: "Lato !important",fontSize: "14px" }}>Rooms</Typography>
               <Select
                 value={searchState.rooms}
                 onChange={(e) => handleRoomChange(Number(e.target.value))}
                 className="search-area__select"
+                sx={{
+                  height: "3rem",
+                  width: "4.8125rem",
+                  fontFamily: "Lato !important",
+                  "& .MuiSelect-select": {
+                    fontFamily: "Lato !important"
+                  }
+                }}
               >
                 {generateRoomOptions().map((num) => (
                   <MenuItem
                     key={num}
                     value={num}
+                    sx={{ fontFamily: "Lato !important" }}
                     disabled={
                       num <
                       Math.ceil(
@@ -451,30 +641,51 @@ const SearchArea: React.FC = () => {
           )}
         </Box>
 
-        {/* Show wheelchair option only if wheelChairOption is true or not set yet */}
-        {(propertyConfig?.wheelChairOption === undefined ||
-          propertyConfig?.wheelChairOption) && (
-          <FormControlLabel
-            className="search-area__accessible-room-label"
-            control={
-              <Box display="flex" alignItems="center">
-                <Checkbox
-                  checked={searchState.needsAccessibleRoom}
-                  onChange={(e) =>
-                    dispatch(setNeedsAccessibleRoom(e.target.checked))
-                  }
-                />
-                <AccessibleIcon style={{ marginLeft: "-0.7rem" }} />
-              </Box>
-            }
-            label="I need an Accessible Room"
-          />
-        )}
+        <Box sx={{ width: "120%", display: "flex" }}>
+          {/* Show wheelchair option only if wheelChairOption is true or not set yet */}
+          {(propertyConfig?.wheelChairOption === undefined ||
+            propertyConfig?.wheelChairOption) && (
+            <FormControlLabel
+              className="search-area__accessible-room-label"
+              sx={{ 
+                fontFamily: "Lato !important",
+                fontWeight: 400,
+                fontSize: "0.875rem",
+                lineHeight: "140%",
+                letterSpacing: "0px",
+                '& .MuiFormControlLabel-label': {
+                  fontFamily: "Lato !important",
+                  fontWeight: 400,
+                  fontSize: "0.875rem",
+                  lineHeight: "140%",
+                  letterSpacing: "0px",
+                }
+              }}
+              control={
+                <Box display="flex" alignItems="center">
+                  <Checkbox
+                    checked={searchState.needsAccessibleRoom}
+                    onChange={(e) =>
+                      dispatch(setNeedsAccessibleRoom(e.target.checked))
+                    }
+                  />
+                  <img src={wheelChairIcon} alt="wheelchair" />
+                </Box>
+              }
+              label="I need an Accessible Room"
+            />
+          )}
+        </Box>
 
         <Button
           type="submit"
           variant="contained"
           className="search-area__search-button"
+          sx={{ 
+            fontFamily: "Lato !important",
+            width: "8.75rem",
+            height: "2.75rem"
+          }}
         >
           SEARCH
         </Button>
