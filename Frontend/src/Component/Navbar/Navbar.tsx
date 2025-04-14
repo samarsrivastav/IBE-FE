@@ -102,13 +102,9 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
 
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
-      console.log('Cognito User Details:', auth.user);
-      console.log('JWT Token:', auth.user.access_token);
-      console.log('ID Token:', auth.user.id_token);
       if (auth.user.expires_at) {
         console.log('Token Expiry:', new Date(auth.user.expires_at * 1000));
       }
-      console.log('User Claims:', auth.user.profile);
     }
   }, [auth.isAuthenticated, auth.user]);
 

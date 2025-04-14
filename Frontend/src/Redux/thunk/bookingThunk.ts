@@ -70,9 +70,9 @@ export const fetchMyBookings = createAsyncThunk(
         return rejectWithValue('Not authenticated');
       }
 
-      const baseURL = `${import.meta.env.VITE_MYBOOKING_API_URL}`;
+      // const baseURL = `${import.meta.env.VITE_MYBOOKING_API_URL}`;
 
-      const response = await axios.get(baseURL, {
+      const response = await axios.get("https://n1jrqlvri6.execute-api.ap-south-1.amazonaws.com/dev/api/v1/bookings/my-bookings", {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
