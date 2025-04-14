@@ -6,10 +6,6 @@ export const authService = {
   // Check if tokens are valid and user is authenticated
   isAuthenticated: () => {
     const userKeys = Object.keys(localStorage).filter(key => key.startsWith('oidc.'));
-    console.log('isAuthenticated check:', { 
-      userKeys,
-      hasUser: userKeys.length > 0
-    });
     return userKeys.length > 0;
   },
   
