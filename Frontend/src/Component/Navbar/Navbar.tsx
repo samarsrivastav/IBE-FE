@@ -148,6 +148,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
     
     // First, clear the local user data
     auth.removeUser();
+    localStorage.clear();
     
     // Then redirect to Cognito's logout endpoint with the correct parameters
     const clientId = `${import.meta.env.VITE_COGNITO_CLIENT_ID}`;
