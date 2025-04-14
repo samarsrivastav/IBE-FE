@@ -19,6 +19,10 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
   const selectedRoom = useSelector(selectSelectedRoom);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Check if this room is the currently selected room from Redux state
+  const isRoomSelected = selectedRoom?.room?.roomTypeId === room.room_type_id.toString();
+  
   const openModal = () => {
     if (localStorage.getItem("step") === "1" || localStorage.getItem("step") === null) {
       localStorage.setItem("step", "2");
@@ -69,7 +73,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
 
     return () => clearInterval(timer);
   }, [room.images.length]);
-
+  
   return (
     <div className={styles.card}>
       <div className={styles.imageCarousel}>
@@ -127,7 +131,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, setStep }) => {
             <span className={styles.perNight}>per night</span>
           </div>
           <button className={styles.selectButton} onClick={openModal}>
-            SELECT ROOM
+            {isRoomSelected ? 'EDIT ROOM' : 'SELECT ROOM'}
           </button>
         </div>
       </div>
