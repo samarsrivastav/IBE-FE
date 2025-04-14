@@ -13,6 +13,8 @@ import selectedRoomReducer from "./slice/selectRoomTypeSlice"
 import promoCodeReducer from './slice/promoCodeSlice'
 import stepReducer from "./slice/stepSlice"
 import financialReducer from './slice/financialSlice'
+import bookingReducer from './slice/bookingSlice'
+
 export const store = configureStore({
   reducer: combineReducers({
     tempSlice: tempSliceReducer,
@@ -29,6 +31,7 @@ export const store = configureStore({
     promoCode: promoCodeReducer,
     step:stepReducer,
     financial: financialReducer,
+    bookings: bookingReducer
   }),
 })
 

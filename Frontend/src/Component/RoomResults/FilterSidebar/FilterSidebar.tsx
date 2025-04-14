@@ -27,7 +27,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ expandedFilters, toggleFi
   ];
   const availableLocations = [...new Set(rooms.map((room) => room.location))];
   const availableStars = [1, 2, 3, 4, 5];
-
+  type FilterCategory = "bedTypes" | "locations" | "stars";
   const [selectedFilters, setSelectedFilters] = useState<{
     bedTypes: string[];
     locations: string[];
@@ -39,13 +39,14 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ expandedFilters, toggleFi
   });
 
   const handleCheckboxChange = (
-    category: "bedTypes" | "locations" | "stars",
+    category: FilterCategory,
     value: string | number
   ) => {
     setSelectedFilters((prev) => {
-      const updatedCategory = prev[category].includes(value)
-        ? prev[category].filter((item) => item !== value)
-        : [...prev[category], value];
+      const currentValues = prev[category] as (string | number)[];
+      const updatedCategory = currentValues.includes(value)
+      ? currentValues.filter((item) => item !== value)
+      : [...currentValues, value];
 
       const newFilters = { ...prev, [category]: updatedCategory };
 

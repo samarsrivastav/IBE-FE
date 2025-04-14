@@ -26,8 +26,10 @@ import styles from "./Navbar.module.scss";
 import { AppDispatch, RootState } from "../../Redux/store";
 import fetchTenantConfig from "../../Redux/thunk/tenantConfigThunk";
 import { LOGO_KICKDRUM_DEFAULT } from "../../Constant";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageWithFallback from "../Util/ImageWithFallback";
+import { useAuth } from "react-oidc-context";
+import { authService } from "../../Services/authServices.ts";
 
 const SUPPORTED_LANGUAGES = [
   { code: "en", name: "En" },
@@ -47,6 +49,10 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
   const { currency } = useSelector((state: RootState) => state.currency);
   const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
   
+  const navigate = useNavigate();
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const auth = useAuth();
+  
   const theme = useTheme();
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -61,6 +67,57 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
       localStorage.setItem("taxes", JSON.stringify(tenantConfig.configuration.taxes));
     }
   }, [tenantConfig.configuration?.taxes]);
+
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      // First check if auth context reports as authenticated
+      if (auth.isAuthenticated) {
+        setIsUserAuthenticated(true);
+        return;
+      }
+      
+      // If not, check localStorage as fallback
+      const isAuthenticatedFromStorage = authService.isAuthenticated();
+      setIsUserAuthenticated(isAuthenticatedFromStorage);
+      
+      // If authenticated in storage but not in context, try to load the user
+      if (isAuthenticatedFromStorage && !auth.isAuthenticated && !auth.isLoading) {
+        auth.signinSilent().catch(error => {
+          console.error("Silent sign-in failed:", error);
+          // If silent sign-in fails, user may need to login again
+          setIsUserAuthenticated(false);
+        });
+      }
+    };
+    
+    checkAuthStatus();
+    
+    // Add event listener for storage changes (in case of login/logout in another tab)
+    window.addEventListener('storage', checkAuthStatus);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuthStatus);
+    };
+  }, [auth.isAuthenticated, auth.isLoading, auth]);
+
+  useEffect(() => {
+    if (auth.isAuthenticated && auth.user) {
+      console.log('Cognito User Details:', auth.user);
+      console.log('JWT Token:', auth.user.access_token);
+      console.log('ID Token:', auth.user.id_token);
+      if (auth.user.expires_at) {
+        console.log('Token Expiry:', new Date(auth.user.expires_at * 1000));
+      }
+      console.log('User Claims:', auth.user.profile);
+    }
+  }, [auth.isAuthenticated, auth.user]);
+
+  const signOutRedirect = () => {
+    const clientId = `${import.meta.env.VITE_COGNITO_CLIENT_ID}`;
+    const logoutUri = `${import.meta.env.VITE_COGNITO_REDIRECT_URI}`;
+    const cognitoDomain = `${import.meta.env.VITE_COGNITO_DOMAIN}`;
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  };
   
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const newLanguage = event.target.value;
@@ -82,6 +139,26 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
     setMenuOpen(!menuOpen);
   };
 
+  const handleLogin = () => {
+    auth.signinRedirect();
+  };
+
+  const handleLogout = () => {
+    console.log("Signing out");
+    
+    // First, clear the local user data
+    auth.removeUser();
+    
+    // Then redirect to Cognito's logout endpoint with the correct parameters
+    const clientId = `${import.meta.env.VITE_COGNITO_CLIENT_ID}`;
+    const logoutUri = encodeURIComponent(`${import.meta.env.VITE_COGNITO_REDIRECT_URI}`);
+    const cognitoDomain = `${import.meta.env.VITE_COGNITO_DOMAIN}`;
+    
+    // Use logout_uri instead of post_logout_redirect_uri
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${logoutUri}`;
+    setIsUserAuthenticated(false);
+  };
+
   const drawerContent = (
     <Box
       sx={{ width: 250 }}
@@ -95,7 +172,23 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
       
       <List sx={{ padding: 1 }}>
         <ListItem disablePadding>
-          <ListItemButton component={Link} to="/my-bookings" onClick={handleDrawerToggle}>
+          <ListItemButton 
+            component={Link} 
+            to="/my-bookings" 
+            onClick={handleDrawerToggle}
+            sx={{
+              fontFamily: "'Lato', sans-serif !important",
+              fontWeight: "700",
+              lineHeight: "140%",
+              letterSpacing: "2%",
+              color: "#26266D",
+              textTransform: "none",
+              '&:hover': {
+                backgroundColor: 'transparent',
+                color: '#1A1A47'
+              }
+            }}
+          >
             <ListItemText primary={"MY BOOKINGS"} />
           </ListItemButton>
         </ListItem>
@@ -137,16 +230,16 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
             </Select>
          </ListItem>
 
-        <ListItem>
-          <Button
-            variant="contained"
-            fullWidth
-            className={styles.navbar__mobileMenu__loginButton}
-            onClick={handleDrawerToggle}
-          >
-             {"login"}
-          </Button>
-        </ListItem>
+         <ListItem>
+    <Button
+      variant="contained"
+      fullWidth
+      className={styles.navbar__mobileMenu__loginButton}
+      onClick={isUserAuthenticated ? handleLogout : handleLogin}
+    >
+      {isUserAuthenticated ? "Logout" : "Login"}
+    </Button>
+  </ListItem>
       </List>
     </Box>
   );
@@ -184,20 +277,27 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
             <Box
               className={styles.navbar__desktopMenu}
             >
-               <Typography
-                 variant="body2"
+               <Button
+                 component={Link}
+                 to="/my-bookings"
                  sx={{
                     fontFamily: "'Lato', sans-serif !important",
                     fontWeight:"700",
                     lineHeight:"140%",
                     width:"6.375rem",
                     height:"1.25rem",
-                    letterSpacing:"2%"
+                    letterSpacing:"2%",
+                    color: "#26266D",
+                    textTransform: "none",
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      color: '#1A1A47'
+                    }
                  }}
                  className={styles.navbar__desktopMenu__menuItem}
                 >
-                 {"MY BOOKINGS"}
-               </Typography>
+                 MY BOOKINGS
+               </Button>
                <div className={styles.navbar__desktopMenu__language}>
                  <Select
                     sx={{
@@ -273,12 +373,13 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
                     <MenuItem value="eur">{"€ EUR"}</MenuItem>
                     <MenuItem value="inr">{"₹ INR"}</MenuItem>
                 </Select>
-                 <Button
-                    variant="contained"
-                    className={styles.navbar__desktopMenu__loginButton}
-                >
-                    <p>{"login"}</p>
-                </Button>
+                <Button
+    variant="contained"
+    className={styles.navbar__desktopMenu__loginButton}
+    onClick={isUserAuthenticated ? handleLogout : handleLogin}
+  >
+    <p>{isUserAuthenticated ? "Logout" : "Login"}</p>
+  </Button>
             </Box>
           )}
         </Toolbar>
