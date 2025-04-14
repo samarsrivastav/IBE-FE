@@ -1,4 +1,7 @@
+
+
 import axios from "axios";
+import authService from "../../../../../Services/authServices";
 const getConfirmationData=()=>{
   const selectedRoom = JSON.parse(localStorage.getItem("selectedRoom") || "{}");
   const selectedPackage = JSON.parse(localStorage.getItem("package") || "{}");
@@ -86,5 +89,37 @@ export const verifyOtpAndCompletePayment = async (otp: string) => {
   return {
     bookingId:bookingId,
     messages:response.data.messages,
+  };
+};
+
+export const createAuthenticatedBooking = async () => {
+  const token = await authService.getValidToken();
+  if (!token) {
+    throw new Error('User not authenticated');
+  }
+  console.log(token);
+  const data = {
+    billingInfo: JSON.parse(localStorage.getItem("billingInfo") || "{}"),
+    travelerInfo: JSON.parse(localStorage.getItem("travelerInfo") || "{}"),
+    paymentInfo: JSON.parse(localStorage.getItem("paymentInfo") || "{}"),
+    confirmationDetails: getConfirmationData(),
+    currentIndex: 0,
+    imageUrl: `${getConfirmationData().imageUrl}`,
+    termsAndPolicies: true,
+    specialOffers: false
+  };
+  
+  const response = await axios.post(import.meta.env.VITE_AUTHENTICATED_BOOKING_API_URL, data, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  console.log(response.data);
+
+  const bookingId = response.data.message.split(":")[1].trim();
+  return {
+    bookingId: bookingId,
+    messages: response.data.messages
   };
 };

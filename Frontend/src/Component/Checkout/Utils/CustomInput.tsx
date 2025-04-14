@@ -13,6 +13,7 @@ interface CustomInputProps {
   validateOnBlur?: boolean;
   customValidation?: (value: string) => string | null;
   setError?: React.Dispatch<React.SetStateAction<string | null>>;
+  disabled?: boolean;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -27,6 +28,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   validateOnBlur = true,
   customValidation,
   setError,
+  disabled = false
 }) => {
   const [touched, setTouched] = useState(false);
   const [error, setLocalError] = useState<string | null>(null);
@@ -89,6 +91,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         helperText={error}
         placeholder={placeholder}
         onBlur={handleBlur}
+        disabled={disabled} 
         sx={{
           "& .MuiOutlinedInput-root": {
             height: error ? "auto" : "40px",

@@ -8,7 +8,8 @@ import { useDispatch } from "react-redux";
 import { setFinancialData } from "../../../../Redux/slice/financialSlice";
 import { calculateDueAtResort, calculateDueNow, calculateTaxes } from "../../Itinerary/utils";
 import { useEffect } from "react";
-
+import authService from "../../../../Services/authServices";
+import { useState } from "react";
 interface BillingInfoProp {
   setIsBillingOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isBillingOpen: boolean;
@@ -68,6 +69,22 @@ export const BillingInfo = ({
   }, [country]);
   
   const dispatch = useDispatch();
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const userInfo = authService.getUserInfo();
+    if (userInfo) {
+      setIsUserLoggedIn(true);
+
+      // Pre-fill and lock the email field
+      const emailFromLogin = userInfo.profile?.email || userInfo?.email;
+      if (emailFromLogin) {
+        updateField("email", emailFromLogin);
+      }
+    }
+  }, []);
+
+
   const handleFinancialDataChange=()=>{
     const financialData= JSON.parse(localStorage.getItem("financialData")??"{}")
     const selectedPackage = JSON.parse(localStorage.getItem("package") ?? "{}");
@@ -150,7 +167,7 @@ export const BillingInfo = ({
               <CustomInput label="Phone" type="tel" value={phoneNumber} onChange={e => updateField("phoneNumber", e.target.value)} setError={setError} />
             </div>
             <div className="input email">
-              <CustomInput label="Email" type="email" value={email} onChange={e => updateField("email", e.target.value)} setError={setError} />
+              <CustomInput label="Email" type="email" value={email} onChange={e => updateField("email", e.target.value)} setError={setError} disabled = {isUserLoggedIn} />
             </div>
           </div>
 

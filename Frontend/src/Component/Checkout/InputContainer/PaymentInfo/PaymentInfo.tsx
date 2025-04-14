@@ -5,12 +5,13 @@ import CustomCheckboxes from "../../Utils/CustomCheckBoxes";
 import OtpModal from "../../../Modal/OtpModal/OtpModal";
 import { usePaymentInfo } from "../../../../Config/CustomHooks/persistedState/usePaymentInfo";
 import { useState } from "react";
-import { initiatePayment, verifyOtpAndCompletePayment } from "./config/paymentApi";
+import { initiatePayment, verifyOtpAndCompletePayment, createAuthenticatedBooking } from "./config/paymentApi";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../Redux/store";
 import LoaderModal from "../../../Util/Loader";
 import { Alert, Snackbar } from "@mui/material";
+import authService from "../../../../Services/authServices";
 
 // UUID validation regex
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -44,6 +45,7 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
     severity: 'info'
   });
   const financialData = useSelector((state: RootState) => state.financial.data);
+
   const handleBack = () => {
     setIsBillingOpen(true);
     setIsPaymentOpen(false);
@@ -56,18 +58,38 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
   const handlePurchase = async () => {
     setIsLoading(true);
     try {
-      const response = await initiatePayment();
-      setPaymentRequestId(response.message);
-      setSnackbar({
-        open: true,
-        message: 'Payment initiated successfully. Please check your email for OTP.',
-        severity: 'success'
-      });
-      setIsOtpModalOpen(true);
+
+      authService.isAuthenticated();
+      const token = await authService.getValidToken();
+      
+      
+      if (token) {
+        // Authenticated flow
+        const response = await createAuthenticatedBooking();
+        setSnackbar({
+          open: true,
+          message: `Payment Successful! Booking ID: ${response.bookingId}`,
+          severity: 'success'
+        });
+        
+        // Navigate to confirmation page
+        navigate(`/confirmation-page/${response.bookingId}`);
+      } else {
+        console.log('User is not authenticated');
+        // Non-authenticated flow
+        const response = await initiatePayment();
+        setPaymentRequestId(response.message);
+        setSnackbar({
+          open: true,
+          message: 'Payment initiated successfully. Please check your email for OTP.',
+          severity: 'success'
+        });
+        setIsOtpModalOpen(true);
+      }
     } catch (err) {
       setSnackbar({
         open: true,
-        message: 'Failed to initiate payment. Please try again.',
+        message: 'Failed to process payment. Please try again.',
         severity: 'error'
       });
     } finally {
@@ -92,8 +114,8 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
         return;
       }
       
-      // Then check for valid booking ID
-      if (response && response.bookingId && typeof response.bookingId === 'string' && UUID_REGEX.test(response.bookingId)) {
+       // Then check for valid booking ID
+       if (response && response.bookingId && typeof response.bookingId === 'string' && UUID_REGEX.test(response.bookingId)) {
         setIsOtpModalOpen(false);
         setSnackbar({
           open: true,
@@ -135,6 +157,7 @@ export const PaymentInfo = ({ isOpen, setIsPaymentOpen, setIsBillingOpen }: Paym
       }
     }
   };
+
 
   return (
     <>

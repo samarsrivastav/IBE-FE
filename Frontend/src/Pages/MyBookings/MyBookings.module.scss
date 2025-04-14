@@ -1,0 +1,80 @@
+.bookingCard {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(38, 38, 109, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(38, 38, 109, 0.15);
+  }
+
+  .MuiCardContent-root {
+    padding: 24px;
+
+    @media (max-width: 600px) {
+      padding: 16px;
+    }
+  }
+
+  .MuiDivider-root {
+    margin: 16px 0;
+    background-color: rgba(38, 38, 109, 0.12);
+  }
+
+  .MuiChip-root {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Lato', sans-serif;
+  }
+
+  .MuiButton-root {
+    text-transform: none;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    font-family: 'Lato', sans-serif;
+  }
+
+  .detailsSection {
+    background-color: rgba(38, 38, 109, 0.02);
+    border-radius: 4px;
+    padding: 16px;
+    margin-top: 16px;
+
+    .MuiTypography-subtitle1 {
+      color: #26266D;
+      font-weight: 700;
+      margin-bottom: 16px;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .MuiTypography-body2 {
+      color: #666;
+      margin-bottom: 4px;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .MuiTypography-body1 {
+      color: #333;
+      font-weight: 500;
+      font-family: 'Lato', sans-serif;
+    }
+  }
+
+  .MuiCardMedia-root {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Add responsive styles
+@media (max-width: 600px) {
+  .bookingCard {
+    margin: 0 16px;
+  }
+} 

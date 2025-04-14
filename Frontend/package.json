@@ -15,6 +15,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^6.11.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.7",
@@ -22,11 +23,15 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@sentry/react": "^9.5.0",
     "@sentry/vite-plugin": "^3.2.2",
+    "aws-amplify": "^6.14.2",
     "axios-mock-adapter": "^2.1.0",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.484.0",
+    "oidc-client-ts": "^3.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-intl": "^7.1.6",
+    "react-oidc-context": "^3.3.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.3.0",
     "react-stepper-horizontal": "^1.0.11"

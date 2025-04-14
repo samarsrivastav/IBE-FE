@@ -11,6 +11,7 @@ import fetchPropertyConfig from "../../../Redux/thunk/propertyConfigThunk";
 import { GuestDropDown } from "./GuestDropDown/GuestDropDown";
 import { setBeds, setCheckIn, setCheckOut, setRooms } from "../../../Redux/slice/searchSlice";
 import { fetchRoomDetails } from "../../../Redux/thunk/roomDataThunk";
+import { AppDispatch } from "../../../Redux/store";
 
 interface SearchFiltersProps {
   searchParams: URLSearchParams;
@@ -21,7 +22,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   searchParams,
   setSearchParams,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const searchState = useSelector((state: RootState) => state.search);
   let { checkIn, checkOut } = searchState;
   const newParams = new URLSearchParams(searchParams);

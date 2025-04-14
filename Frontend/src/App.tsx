@@ -11,6 +11,7 @@ import RoomResults from "./Pages/Properties/RoomResults";
 import BookingSummaryPage from "./Pages/BookingSummaryPage/BookingSummaryPage";
 import UnsupportedScreenWidth from "./Component/UnsupportedScreenWidth/UnsupportedScreenWidth";
 import PageNotFound from "./Component/PageNotFound/PageNotFound";
+import MyBookings from "./Pages/MyBookings/MyBookings";
 
 function AppContent() {
   const [language, setLanguage] = useState<string>("en");
@@ -31,6 +32,7 @@ function AppContent() {
   }
 
   return (
+    
     <div className="app-container">
       <Navbar language={language} setLanguage={setLanguage} />
       {location.pathname === '/' && <DynamicBackground />}
@@ -40,6 +42,7 @@ function AppContent() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/property" element={<RoomResults />} />
           <Route path="/confirmation-page/:bookingId" element={<BookingSummaryPage/>}/>
+          <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </main>
