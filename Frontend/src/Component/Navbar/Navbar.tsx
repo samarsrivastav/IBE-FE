@@ -281,7 +281,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
                     fontFamily: "'Lato', sans-serif !important",
                     fontWeight:"700",
                     lineHeight:"140%",
-                    width:"6.375rem",
+                    width:"7.5rem",
                     height:"1.25rem",
                     letterSpacing:"2%",
                     color: "#26266D",
