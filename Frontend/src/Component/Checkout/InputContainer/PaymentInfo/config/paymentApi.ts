@@ -48,7 +48,7 @@ export const initiatePayment = async () => {
   const travelersInfo = localStorage.getItem("travelerInfo");
   const paymentInfo = localStorage.getItem("paymentInfo");
   
-
+  console.log(localStorage.getItem("setSelectedOffers"))
   const data = {
     billingInfo: JSON.parse(billingInfo || "{}"),
     travelerInfo: JSON.parse(travelersInfo || "{}"),
@@ -57,7 +57,7 @@ export const initiatePayment = async () => {
     currentIndex: 0,
     imageUrl: `${getConfirmationData().imageUrl}`,
     termsAndPolicies: true,
-    specialOffers: false
+    specialOffers: localStorage.getItem("setSelectedOffers") === "true"
   };
   const response = await axios.post(import.meta.env.VITE_PAYMENT_INITIATE_API_URL, data);
   return {
