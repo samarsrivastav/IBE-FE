@@ -127,6 +127,7 @@ const MyBookings: React.FC = () => {
                         }}
                       >
                         {booking.bookingDetails.confirmationDetails.roomName}
+                        
                       </Typography>
                       <Chip
                         label={
@@ -186,10 +187,11 @@ const MyBookings: React.FC = () => {
                       </Grid>
                     </Grid>
                   </Grid>
-
+                  <h1>{booking.active}</h1>
                   <Grid item xs={12} md={4}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center' }}>
-                      {booking.active && (
+                      
+                      { booking.active && new Date(booking.bookingDetails.confirmationDetails.endDate) > new Date() && (
                         <Button
                           variant="contained"
                           color="primary"

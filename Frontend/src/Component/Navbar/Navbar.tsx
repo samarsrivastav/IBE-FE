@@ -102,13 +102,9 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
 
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
-      console.log('Cognito User Details:', auth.user);
-      console.log('JWT Token:', auth.user.access_token);
-      console.log('ID Token:', auth.user.id_token);
       if (auth.user.expires_at) {
         console.log('Token Expiry:', new Date(auth.user.expires_at * 1000));
       }
-      console.log('User Claims:', auth.user.profile);
     }
   }, [auth.isAuthenticated, auth.user]);
 
@@ -148,6 +144,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
     
     // First, clear the local user data
     auth.removeUser();
+    localStorage.clear();
     
     // Then redirect to Cognito's logout endpoint with the correct parameters
     const clientId = `${import.meta.env.VITE_COGNITO_CLIENT_ID}`;
@@ -284,7 +281,7 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
                     fontFamily: "'Lato', sans-serif !important",
                     fontWeight:"700",
                     lineHeight:"140%",
-                    width:"6.375rem",
+                    width:"7.5rem",
                     height:"1.25rem",
                     letterSpacing:"2%",
                     color: "#26266D",
