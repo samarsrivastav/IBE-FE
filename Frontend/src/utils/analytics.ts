@@ -8,7 +8,7 @@ export const initGA = (trackingId: string): void => {
   // Only initialize in production or if explicitly enabled
   if (import.meta.env.VITE_GA_TRACKING_ID || import.meta.env.VITE_ENABLE_GA === 'true') {
     ReactGA.initialize(trackingId);
-    console.log('Google Analytics initialized');
+    console.log('Google Analytics has been initialized');
   } else {
     console.log('Google Analytics not initialized in development mode');
   }
