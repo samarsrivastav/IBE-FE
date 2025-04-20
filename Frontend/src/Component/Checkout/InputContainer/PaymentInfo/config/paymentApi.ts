@@ -81,7 +81,7 @@ export const verifyOtpAndCompletePayment = async (otp: string) => {
     currentIndex: 0,
     imageUrl: `${getConfirmationData().imageUrl}`,
     termsAndPolicies: true,
-    specialOffers: false
+    specialOffers: localStorage.getItem("setSelectedOffers") === "true"
   };
   const response = await axios.post(import.meta.env.VITE_OTP_VERIFY_API_URL, { otpRequest, bookingRequestDto });
   console.log(response.data)
@@ -106,7 +106,7 @@ export const createAuthenticatedBooking = async () => {
     currentIndex: 0,
     imageUrl: `${getConfirmationData().imageUrl}`,
     termsAndPolicies: true,
-    specialOffers: false
+    specialOffers: localStorage.getItem("setSelectedOffers") === "true"
   };
   
   const response = await axios.post(import.meta.env.VITE_AUTHENTICATED_BOOKING_API_URL, data, {

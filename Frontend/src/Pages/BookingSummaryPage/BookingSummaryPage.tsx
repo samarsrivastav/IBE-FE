@@ -1,4 +1,4 @@
-import { JSX, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./BookingSummaryPage.scss";
 import { ExpandableSection } from "../../Component/ExpandableSection/ExpandableSection";
 import axios from "axios";
@@ -8,8 +8,16 @@ import { sendConfirmationEmail } from "./utils";
 import { Loader, AlertCircle } from "lucide-react";
 import CancelRoomButton from "../../Component/ExpandableSection/CancelButton/CancelButton";
 import { Alert, Snackbar } from "@mui/material";
+import useAnalytics from "../../Hooks/useAnalytics";
 
-const DeletedBookingState = (): JSX.Element => {
+const DeletedBookingState = (): React.ReactElement => {
+  const analytics = useAnalytics();
+  
+  const handleHomeReturn = () => {
+    analytics.logEvent('BookingSummary', 'Click', 'ReturnToHome_DeletedBooking');
+    window.location.href = '/';
+  };
+  
   return (
     <div className="deleted-booking-state">
       <div className="deleted-booking-state__container">
@@ -19,7 +27,7 @@ const DeletedBookingState = (): JSX.Element => {
         <p>If you believe this is an error, please contact our support team.</p>
         <button 
           className="deleted-booking-state__button"
-          onClick={() => window.location.href = '/'}
+          onClick={handleHomeReturn}
         >
           Return to Home
         </button>
@@ -28,37 +36,60 @@ const DeletedBookingState = (): JSX.Element => {
   );
 };
 
-const BookingSummaryPage = (): JSX.Element => {
+const BookingSummaryPage = (): React.ReactElement => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const [isPrinting, setIsPrinting] = useState(false);
   const [bookingData, setBookingData] = useState<any>(null);
   const [isEmailSending, setIsEmailSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const analytics = useAnalytics();
+  const dataFetched = useRef(false);
 
   useEffect(() => {
-    const fetchBookingData = async () => {
-      try {
-        const response = await axios.get(import.meta.env.VITE_CONFIRMATION_PAGE_API+bookingId);
-        const data = response.data;
+    // Track booking summary page view with booking ID - this should only happen once
+    if (bookingId) {
+      analytics.logEvent('BookingSummary', 'View', `BookingID: ${bookingId}`);
+    }
 
-        if (data) {
-          // Check if the booking is active
-          if (data.confirmationDetails?.isActive === false) {
-            setBookingData({ ...data, isDeleted: true });
-          } else {
-            setBookingData(data);
+    // Only fetch if we haven't already fetched data and we have a booking ID
+    if (!dataFetched.current && bookingId) {
+      const fetchBookingData = async () => {
+        try {
+          const response = await axios.get(import.meta.env.VITE_CONFIRMATION_PAGE_API+bookingId);
+          const data = response.data;
+
+          if (data) {
+            // Check if the booking is active
+            if (data.confirmationDetails?.isActive === false) {
+              setBookingData({ ...data, isDeleted: true });
+              // Track deleted booking view
+              analytics.logEvent('BookingSummary', 'ViewDeletedBooking', `BookingID: ${bookingId}`);
+            } else {
+              setBookingData(data);
+              // Track successful booking data load
+              analytics.logEvent('BookingSummary', 'DataLoaded', `BookingID: ${bookingId}`);
+            }
           }
+          // Mark that we've fetched data
+          dataFetched.current = true;
+        } catch (error) {
+          console.error("Failed to fetch booking data:", error);
+          setError("Failed to fetch booking details. Please try again later.");
+          // Track error
+          analytics.logEvent('BookingSummary', 'Error', `Failed to fetch booking ${bookingId}`);
+          // Mark that we've attempted to fetch data
+          dataFetched.current = true;
         }
-      } catch (error) {
-        console.error("Failed to fetch booking data:", error);
-        setError("Failed to fetch booking details. Please try again later.");
-      }
-    };
+      };
 
-    fetchBookingData();
-  }, [bookingId]);
+      fetchBookingData();
+    }
+  }, [bookingId]); // Remove analytics from dependency array
 
   const handlePrint = () => {
+    // Track print button click
+    analytics.logEvent('BookingSummary', 'Click', `Print_BookingID: ${bookingId}`);
+    
     setIsPrinting(true);
     setTimeout(() => {
       window.print();
@@ -92,6 +123,9 @@ const BookingSummaryPage = (): JSX.Element => {
   } = bookingData;
 
   const handleEmail = async () => {
+    // Track email button click
+    analytics.logEvent('BookingSummary', 'Click', `Email_BookingID: ${bookingId}`);
+    
     setIsEmailSending(true);
     try {
       const response = await sendConfirmationEmail(
@@ -100,13 +134,22 @@ const BookingSummaryPage = (): JSX.Element => {
       );
       if (response.status === 200) {
         console.log("Confirmation email sent successfully!");
+        // Track successful email send
+        analytics.logEvent('BookingSummary', 'EmailSent', `Success_BookingID: ${bookingId}`);
       }
     } catch (error) {
       alert("Failed to send confirmation email. Please try again.");
       console.error("Failed to send confirmation email:", error);
+      // Track email error
+      analytics.logEvent('BookingSummary', 'Error', `EmailFailed_BookingID: ${bookingId}`);
     } finally {
       setIsEmailSending(false);
     }
+  };
+
+  // Create a tracking wrapper for the cancel button
+  const trackCancelClick = () => {
+    analytics.logEvent('BookingSummary', 'Click', `Cancel_BookingID: ${bookingId}`);
   };
 
   return (
@@ -136,10 +179,12 @@ const BookingSummaryPage = (): JSX.Element => {
                   {confirmationDetails.childCount} child
                 </span>
               </div>
-              <CancelRoomButton
-                email={travelerInfo.email}
-                confirmationId={bookingId}
-              />
+              <div onClick={trackCancelClick}>
+                <CancelRoomButton
+                  email={travelerInfo.email}
+                  confirmationId={bookingId}
+                />
+              </div>
             </div>
 
             <div className="confirmation-page__card-content">

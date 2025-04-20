@@ -12,11 +12,17 @@ import BookingSummaryPage from "./Pages/BookingSummaryPage/BookingSummaryPage";
 import UnsupportedScreenWidth from "./Component/UnsupportedScreenWidth/UnsupportedScreenWidth";
 import PageNotFound from "./Component/PageNotFound/PageNotFound";
 import MyBookings from "./Pages/MyBookings/MyBookings";
+import { initGA, trackPageView } from "./utils/analytics";
 
 function AppContent() {
   const [language, setLanguage] = useState<string>("en");
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const location = useLocation();
+
+  useEffect(() => {
+    // Track page view when location changes
+    trackPageView(location.pathname + location.search);
+  }, [location]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,6 +59,11 @@ function AppContent() {
 
 function App() {
   const [language, setLanguage] = useState<string>("en");
+
+  useEffect(() => {
+    // Initialize Google Analytics with your tracking ID
+    initGA(import.meta.env.VITE_GA_TRACKING_ID);
+  }, []);
 
   return (
     <GoogleTranslateProvider language={language} setLanguage={setLanguage}>

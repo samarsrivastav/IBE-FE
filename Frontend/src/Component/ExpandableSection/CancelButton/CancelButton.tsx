@@ -10,7 +10,6 @@ interface CancelRoomButtonProps {
 }
 
 const CancelRoomButton = ({ email, confirmationId }: CancelRoomButtonProps) => {
-    console.log(email, confirmationId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -41,7 +40,12 @@ const CancelRoomButton = ({ email, confirmationId }: CancelRoomButtonProps) => {
       });
 
       if (response.data?.verified) {
+        const userKey = 'oidc.user:https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_IGHZ9OObg:3f2gia86f7p8shj66jfok9p3co';
+        const userValue = localStorage.getItem(userKey);
         localStorage.clear();
+        if (userValue) {
+          localStorage.setItem(userKey, userValue);
+        }
         setIsModalOpen(false);
         navigate("/");
       } else {
