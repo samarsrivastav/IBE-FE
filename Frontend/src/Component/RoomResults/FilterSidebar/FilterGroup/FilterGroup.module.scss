@@ -29,6 +29,9 @@
   
     &__options {
       padding-left: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
   }
   
@@ -44,3 +47,50 @@
       }
     }
   }
+
+@media (max-width: 960px) {
+  .filter {
+    &__options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .filter {
+    margin-bottom: 8px;
+    
+    &__header {
+      padding: 8px 0;
+    }
+    
+    &__title {
+      font-size: 13px;
+    }
+    
+    &__icon {
+      font-size: 18px;
+    }
+    
+    &__options {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 4px;
+    }
+  }
+  
+  .checkbox {
+    &__label {
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .filter {
+    &__options {
+      grid-template-columns: 1fr;
+    }
+  }
+}

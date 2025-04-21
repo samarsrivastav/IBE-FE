@@ -1,4 +1,4 @@
-import { Box, Typography, Divider } from "@mui/material";
+import { Box, Typography, Divider, useMediaQuery, useTheme } from "@mui/material";
 import CircusPromotionModal from "../../Modal/CircusPromotion/CircusPromotionModal";
 import { useModal } from "../../../Config/CustomHooks/UseModal";
 import RateBreakdownModal from "../../Modal/RateBreakdown/RateBreakdownModal";
@@ -16,9 +16,47 @@ import { setStep } from "../../../Redux/slice/stepSlice";
 interface ItineraryProps{
   setSteps?:()=>void
 }
+
+interface PromotionData {
+  title: string;
+  description: string;
+  footer: {
+    title: string;
+    price: number;
+  };
+}
+
+interface DailyRate {
+  date: string;
+  amount: number;
+}
+
+interface TaxItem {
+  name: string;
+  amount: number;
+}
+
+interface ApiDataEntry {
+  date: string;
+  discountAmount: number;
+}
+
+interface RateBreakdownData {
+  roomType: string;
+  rateTitle: string;
+  promotionTitle: string;
+  dailyRates: DailyRate[];
+  roomTotal: number;
+  taxes: TaxItem[];
+  dueNow: number;
+  dueAtResort: number;
+}
+
 export const Itinerary = ({setSteps}:ItineraryProps) => {
   const dispatch = useDispatch();
-  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
   
   const promotionModal = useModal();
   const rateBreakdownModal = useModal();
@@ -32,8 +70,8 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
     ItineraryRoomTitle,
   } = useItinerary();
 
-  const [promotionData, setPromotionData] = useState(null);
-  const [rateBreakdownData, setRateBreakdownData] = useState(null);
+  const [promotionData, setPromotionData] = useState<PromotionData | null>(null);
+  const [rateBreakdownData, setRateBreakdownData] = useState<RateBreakdownData | null>(null);
   const navigate=useNavigate();
   const currentStep=useSelector((state: RootState) => state.step.step);
   const location = useLocation();
@@ -77,7 +115,7 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
     };
     setPromotionData(promotionData);
   
-    const dailyRates = apiData.map((entry: any) => ({
+    const dailyRates = apiData.map((entry: ApiDataEntry) => ({
       date: formatDate(entry.date),
       amount: entry.discountAmount,
     }));
@@ -112,73 +150,167 @@ export const Itinerary = ({setSteps}:ItineraryProps) => {
   
   
   return (
-    <Box sx={{ backgroundColor: "#EFF0F1", padding: "16px", borderRadius: "8px",
-      height: currentStep === 2 ? "30.875rem" : "31.25rem",
-      width: currentStep === 2 ? "20.625rem" : "25rem",
-      display:"flex",
-      flexDirection:"column",
-      justifyContent:"space-between",
+    <Box sx={{ 
+      backgroundColor: "#EFF0F1", 
+      padding: { xs: "0.75rem", sm: "1rem", md: "1rem" }, 
+      borderRadius: "8px",
+      height: { 
+        xs: "auto", 
+        sm: "auto",
+        md: currentStep === 2 ? "30.875rem" : "31.25rem" 
+      },
+      width: { 
+        xs: "100%", 
+        sm: "100%", 
+        md: currentStep === 2 ? "20.625rem" : "25rem" 
+      },
+      minWidth: { xs: "100%", sm: "18.75rem", md: currentStep === 2 ? "20.625rem" : "25rem" },
+      maxWidth: { xs: "100%", sm: "28.125rem", md: "none" },
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
       borderWidth: "0px",
       borderStyle: "solid",
       borderColor: "#5D5D5D",
-     }}>
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="h6" fontWeight="bold">
+      marginBottom: { xs: "1rem", sm: "1rem", md: 0 },
+    }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography 
+          variant="h6" 
+          fontWeight="bold" 
+          sx={{ 
+            fontSize: { xs: "1rem", sm: "1.25rem", md: "1.25rem" } 
+          }}
+        >
           Your Trip Itinerary
         </Typography>
-        <Typography color="blue" sx={{ cursor: "pointer" }} onClick={removeItinery}>
+        <Typography 
+          color="blue" 
+          sx={{ 
+            cursor: "pointer",
+            fontSize: { xs: "0.875rem", sm: "1rem", md: "1rem" } 
+          }} 
+          onClick={removeItinery}
+        >
           Remove
         </Typography>
       </Box>
 
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ marginTop: "8px" }}>
+      <Typography 
+        variant="subtitle1" 
+        fontWeight="bold" 
+        sx={{ 
+          marginTop: { xs: "0.5rem", sm: "0.625rem", md: "0.625rem" },
+          fontSize: { xs: "0.875rem", sm: "1rem", md: "1rem" }
+        }}
+      >
         {ItineraryRoomTitle}
       </Typography>
-      <Typography variant="body2" color="textSecondary">
+      <Typography 
+        variant="body2" 
+        color="textSecondary"
+        sx={{ 
+          fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+        }}
+      >
         {formatDateRange(checkIn,checkOut)} | {guests}
       </Typography>
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="body2">
+      <Box display="flex" justifyContent="space-between" marginTop="0.125rem">
+        <Typography 
+          variant="body2"
+          sx={{ 
+            fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+          }}
+        >
           Executive Room 
         </Typography>
-        <Typography variant="body2">{rooms} room{rooms && parseInt(rooms) > 1 ? "s" : ""}</Typography>
+        <Typography 
+          variant="body2"
+          sx={{ 
+            fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+          }}
+        >
+          {rooms} room{rooms && parseInt(rooms) > 1 ? "s" : ""}
+        </Typography>
       </Box>
       <Typography variant="body2"></Typography>
 
-      <Typography variant="body2">
+      <Typography 
+        variant="body2"
+        sx={{ 
+          fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" },
+          marginTop: "0.125rem"
+        }}
+      >
         Special Promoname, ${packagePrice}/ night{" "}
-        <sup onClick={() => promotionModal.openModal("LARGE")}>ⓘ</sup>
+        <sup 
+          onClick={() => promotionModal.openModal("LARGE")}
+          style={{ cursor: "pointer" }}
+        >ⓘ</sup>
       </Typography>
 
-      <Divider sx={{ marginY: "8px" }} />
+      <Divider sx={{ marginY: { xs: "0.5rem", sm: "0.5rem", md: "0.5rem" } }} />
 
       {[
         { label: "Subtotal", value: `$${financialData?.roomTotal}` },
         { label: "Taxes, Surcharges, Fees", value: `$${financialData?.taxes.toFixed(2)}` },
       ].map((item, index) => (
-        <Box key={index} display="flex" justifyContent="space-between">
-          <Typography variant="body2">
+        <Box key={index} display="flex" justifyContent="space-between" marginY="0.125rem">
+          <Typography 
+            variant="body2"
+            sx={{ 
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+            }}
+          >
             {item.label}{" "}
             {item.label.includes("Fees") && (
-              <sup onClick={() => rateBreakdownModal.openModal("LARGE")}>ⓘ</sup>
+              <sup 
+                onClick={() => rateBreakdownModal.openModal("LARGE")}
+                style={{ cursor: "pointer" }}
+              >ⓘ</sup>
             )}
           </Typography>
-          <Typography variant="body2">{item.value}</Typography>
+          <Typography 
+            variant="body2"
+            sx={{ 
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" }
+            }}
+          >
+            {item.value}
+          </Typography>
         </Box>
       ))}
 
-      <Divider sx={{ marginY: "8px" }} />
+      <Divider sx={{ marginY: { xs: "0.5rem", sm: "0.5rem", md: "0.5rem" } }} />
 
       {[
         { label: "Due Now", value: `$${financialData?.dueNow}` },
         { label: "Due at Resort", value: `$${financialData?.dueAtResort}` },
       ].map((item, index) => (
-        <Box key={index} display="flex" justifyContent="space-between">
-          <Typography variant="body2">{item.label}</Typography>
-          <Typography variant="body2">{item.value}</Typography>
+        <Box key={index} display="flex" justifyContent="space-between" marginY="0.125rem">
+          <Typography 
+            variant="body2"
+            sx={{ 
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" },
+              fontWeight: index === 0 ? "bold" : "normal"
+            }}
+          >
+            {item.label}
+          </Typography>
+          <Typography 
+            variant="body2"
+            sx={{ 
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.875rem" },
+              fontWeight: index === 0 ? "bold" : "normal"
+            }}
+          >
+            {item.value}
+          </Typography>
         </Box>
       ))}
-      <ItineraryButton />
+      <Box sx={{ marginTop: { xs: "1rem", sm: "1rem", md: "1rem" } }}>
+        <ItineraryButton />
+      </Box>
       {/* Circus Promotion Modal */}
       {promotionData && (
         <CircusPromotionModal

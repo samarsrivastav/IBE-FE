@@ -301,7 +301,11 @@ const SearchArea: React.FC = () => {
   };
 
   return (
-    <Paper className="search-area__paper" elevation={1}>
+    <Paper className="search-area__paper" elevation={1} 
+      sx={{ 
+        minWidth: { xs: "auto", sm: "21.25rem" },
+        width: { xs: "95%", sm: "21.25rem" } 
+      }}>
       <Box
         component="form"
         onSubmit={handleSearch}
@@ -310,20 +314,26 @@ const SearchArea: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "1.5rem",
+          gap: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
           width: "100%",
+          padding: { xs: "0.75rem", sm: "1rem", md: "1.5rem" },
           fontFamily: "Lato !important"
         }}
       >
-        <div >
-        <FormControl fullWidth sx={{ maxWidth: "292px", display: "flex", alignItems: "flex-start" }}>
+        <div style={{ width: "100%" }}>
+        <FormControl fullWidth sx={{ 
+          maxWidth: { xs: "100%", sm: "292px" }, 
+          display: "flex", 
+          alignItems: "flex-start",
+          width: "100%" 
+        }}>
           <Typography 
             sx={{ 
               width: "100%", 
               textAlign: "start", 
               fontFamily: "Lato !important", 
               fontWeight: 400, 
-              fontSize: "0.875rem", 
+              fontSize: { xs: "0.75rem", sm: "0.875rem" }, 
               lineHeight: "140%", 
               letterSpacing: "0px" 
             }}
@@ -335,17 +345,17 @@ const SearchArea: React.FC = () => {
             onChange={() => {}}
             displayEmpty
             sx={{
-              height: "48px", 
-              width:"292px",
+              height: { xs: "2.5rem", sm: "3rem" }, 
+              width: "100%",
               fontFamily: "Lato !important",
               fontWeight: 400, 
-              fontSize: "0.875rem", 
+              fontSize: { xs: "0.75rem", sm: "0.875rem" }, 
               lineHeight: "140%", 
               letterSpacing: "0px",
               "& .MuiSelect-select": {
                 fontFamily: "Lato !important",
                 fontWeight: 400, 
-                fontSize: "16px", 
+                fontSize: { xs: "0.875rem", sm: "1rem" }, 
                 lineHeight: "140%", 
                 letterSpacing: "0px"
               }
@@ -371,16 +381,17 @@ const SearchArea: React.FC = () => {
                 value={property.property_id}
                 sx={{ 
                   fontFamily: "Lato !important", 
-                  fontSize: "1rem" 
+                  fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" } 
                 }}
                 disabled={property.property_id !== 8 && property.property_id !== 20}
               >
                 <FormControlLabel
-                  sx={{ fontFamily: "Lato !important", fontSize: "1rem" }}
+                  sx={{ fontFamily: "Lato !important", fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" } }}
                   control={
                     <Checkbox
                       checked={selectedPropertyId === property.property_id}
                       onChange={() => handleSelect(property.property_id)}
+                      size={window.innerWidth < 480 ? "small" : "medium"}
                     />
                   }
                   label={property.property_name}
@@ -392,14 +403,31 @@ const SearchArea: React.FC = () => {
         </div>
 
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-          <Box>
-            <Typography sx={{ fontFamily: "Lato !important" ,fontSize: "14px"}}>Select dates</Typography>
+          <Box sx={{ width: "100%" }}>
+            <Typography sx={{ 
+              fontFamily: "Lato !important",
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              marginBottom: "0.25rem"
+            }}>Select dates</Typography>
             <Box
               className="search-area__date-selector"
               onClick={handleCalendarOpen}
-              sx={{ fontFamily: "Lato !important" }}
+              sx={{ 
+                fontFamily: "Lato !important",
+                width: "100%",
+                height: { xs: "2.5rem !important", sm: "3rem !important" },
+                padding: { xs: "0.5rem", sm: "0" }
+              }}
             >
-              <Box className="search-area__date-selector-text" sx={{ fontFamily: "Lato !important" }}>
+              <Box className="search-area__date-selector-text" sx={{ 
+                fontFamily: "Lato !important",
+                fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: { xs: "85%", sm: "90%" },
+                padding: { xs: "0", sm: "0" }
+              }}>
                 {checkIn && checkOut ? (
                   <>
                     {checkIn}
@@ -407,9 +435,9 @@ const SearchArea: React.FC = () => {
                       src={arrowIcon} 
                       alt="arrow" 
                       style={{ 
-                        margin: '0 16px',
-                        width: '16px',
-                        height: '16px',
+                        margin: '0 0.5rem',
+                        width: '1rem',
+                        height: '1rem',
                         objectFit: 'contain'
                       }} 
                     />
@@ -422,9 +450,9 @@ const SearchArea: React.FC = () => {
                       src={arrowIcon} 
                       alt="arrow" 
                       style={{ 
-                        margin: '0 16px',
-                        width: '16px',
-                        height: '16px',
+                        margin: '0 0.5rem',
+                        width: '1rem',
+                        height: '1rem',
                         objectFit: 'contain'
                       }} 
                     />
@@ -432,7 +460,14 @@ const SearchArea: React.FC = () => {
                   </>
                 )}
               </Box>
-              <img src={calendarIcon} alt="calendar" />
+              <img 
+                src={calendarIcon} 
+                alt="calendar" 
+                style={{
+                  width: window.innerWidth < 480 ? "1rem" : "1.25rem",
+                  height: window.innerWidth < 480 ? "1rem" : "1.25rem"
+                }}
+              />
             </Box>
 
             {/* Calendar dropdown */}
@@ -450,8 +485,16 @@ const SearchArea: React.FC = () => {
               }}
               PaperProps={{
                 sx: {
-                  width: "896px",
-                  padding: 2,
+                  width: { 
+                    xs: "95%", 
+                    sm: "90%", 
+                    md: "56rem" // 896px
+                  },
+                  maxWidth: "56rem", // 896px
+                  padding: { xs: "0.75rem", sm: "1rem", md: "1.25rem" }, // Responsive padding
+                  maxHeight: { xs: "90vh", sm: "80vh", md: "auto" },
+                  height: "auto",
+                  overflow: "auto"
                 },
               }}
               disableScrollLock={true}
@@ -462,18 +505,27 @@ const SearchArea: React.FC = () => {
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+        <Box sx={{ 
+          display: "flex", 
+          gap: { xs: "0.5rem", sm: "1rem" }, 
+          justifyContent: "center",
+          flexWrap: { xs: "wrap", sm: "nowrap" },
+          width: "100%"
+        }}>
           {/* Show guests section only if showGuest is true or not set yet */}
           {(propertyConfig?.showGuest === undefined ||
             propertyConfig?.showGuest) && (
-            <FormControl sx={{ width: "12.5rem" }}>
-              <Typography sx={{ fontFamily: "Lato !important",fontSize: "14px" }}>Guests</Typography>
+            <FormControl sx={{ 
+              width: { xs: "100%", sm: "12.5rem" },
+              minWidth: { xs: "auto", sm: "12.5rem" }
+            }}>
+              <Typography sx={{ fontFamily: "Lato !important", fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>Guests</Typography>
               <Box
                 onClick={handleGuestMenuClick}
                 className="search-area__guest-selector"
                 sx={{
-                  height: "3rem",
-                  width: "12.5rem",
+                  height: { xs: "2.5rem", sm: "3rem" },
+                  width: { xs: "100%", sm: "12.5rem" },
                   border: "1px solid rgba(24, 13, 13, 0.23)",
                   borderRadius: "4px",
                   cursor: "pointer",
@@ -481,7 +533,7 @@ const SearchArea: React.FC = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  padding: "0 8px",
+                  padding: { xs: "0 0.5rem", sm: "0 0.75rem" },
                   fontFamily: "Lato !important"
                 }}
               >
@@ -489,12 +541,13 @@ const SearchArea: React.FC = () => {
                   sx={{ 
                     fontFamily: "Lato !important", 
                     fontWeight: 400, 
-                    fontSize: "0.875rem", // 14px
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
                     lineHeight: "140%", 
                     letterSpacing: "0px",
                     whiteSpace: 'nowrap', // Prevent wrapping
                     overflow: 'hidden',   // Hide overflow
-                    textOverflow: 'ellipsis' // Add ellipsis if text is too long
+                    textOverflow: 'ellipsis', // Add ellipsis if text is too long
+                    maxWidth: { xs: "calc(100% - 24px)", sm: "calc(100% - 28px)" } // Account for dropdown icon
                   }}
                 >
                   {generateGuestDisplayString(searchState.guests, guestTypes)}
@@ -512,9 +565,17 @@ const SearchArea: React.FC = () => {
                   vertical: "top",
                   horizontal: "left",
                 }}
-                PaperProps={{
+                PaperProps={{ 
                   className: "search-area__guest-popover",
+                  sx: { 
+                    width: { xs: "95%", sm: "18.75rem" }, // 300px for SM and up
+                    padding: { xs: "0.75rem", sm: "1rem" },
+                    maxHeight: "25rem", // 400px
+                    overflow: "auto" 
+                  } 
                 }}
+                disableScrollLock={true}
+                container={document.body}
               >
                 {guestTypes.map(({ type, label, subLabel }) => (
                   <Box key={type} className="search-area__guest-item">
@@ -522,7 +583,7 @@ const SearchArea: React.FC = () => {
                       <Typography
                         sx={{
                           fontWeight: "700",
-                          fontSize: "1rem",
+                          fontSize: { xs: "0.875rem", sm: "1rem" },
                           lineHeight: "150%",
                           letterSpacing: "0px",
                           fontFamily: "Lato !important"
@@ -534,7 +595,7 @@ const SearchArea: React.FC = () => {
                       <Typography
                         sx={{
                           fontWeight: "400",
-                          fontSize: "0.875rem",
+                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
                           lineHeight: "140%",
                           letterSpacing: "0px",
                           fontFamily: "Lato !important"
@@ -562,7 +623,7 @@ const SearchArea: React.FC = () => {
                             : searchState.guests[type] === 0
                         }
                       >
-                        <RemoveIcon />
+                        <RemoveIcon fontSize={window.innerWidth < 480 ? "small" : "medium"} />
                       </IconButton>
                       <Typography className="search-area__guest-item-counter-value" sx={{ fontFamily: "Lato !important" }}>
                         {searchState.guests[type] || 0}
@@ -588,14 +649,14 @@ const SearchArea: React.FC = () => {
                         }}
                         disabled={isAddGuestDisabled(type)}
                       >
-                        <AddIcon />
+                        <AddIcon fontSize={window.innerWidth < 480 ? "small" : "medium"} />
                       </IconButton>
                     </Box>
                   </Box>
                 ))}
                 {propertyConfig?.maxGuestPerRoom && (
                   <Typography
-                    sx={{ p: 1, fontSize: "0.75rem", fontFamily: "Lato !important" }}
+                    sx={{ p: 1, fontSize: { xs: "0.7rem", sm: "0.75rem" }, fontFamily: "Lato !important" }}
                     color="text.secondary"
                   >
                     Maximum {propertyConfig.maxGuestPerRoom} guests per room
@@ -608,18 +669,22 @@ const SearchArea: React.FC = () => {
           {/* Show rooms selection only if showRoomNumber is true or not set yet */}
           {(propertyConfig?.showRoomNumber === undefined ||
             propertyConfig?.showRoomNumber) && (
-            <FormControl sx={{ width: "4.8125rem" }}>
-              <Typography sx={{ fontFamily: "Lato !important",fontSize: "14px" }}>Rooms</Typography>
+            <FormControl sx={{ 
+              width: { xs: "100%", sm: "4.8125rem" }, 
+              minWidth: { xs: "auto", sm: "4.8125rem" }
+            }}>
+              <Typography sx={{ fontFamily: "Lato !important", fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>Rooms</Typography>
               <Select
                 value={searchState.rooms}
                 onChange={(e) => handleRoomChange(Number(e.target.value))}
                 className="search-area__select"
                 sx={{
-                  height: "3rem",
-                  width: "4.8125rem",
+                  height: { xs: "2.5rem", sm: "3rem" },
+                  width: { xs: "100%", sm: "4.8125rem" },
                   fontFamily: "Lato !important",
                   "& .MuiSelect-select": {
-                    fontFamily: "Lato !important"
+                    fontFamily: "Lato !important",
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" }
                   }
                 }}
               >
@@ -627,7 +692,7 @@ const SearchArea: React.FC = () => {
                   <MenuItem
                     key={num}
                     value={num}
-                    sx={{ fontFamily: "Lato !important" }}
+                    sx={{ fontFamily: "Lato !important", fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                     disabled={
                       num <
                       Math.ceil(
@@ -643,7 +708,12 @@ const SearchArea: React.FC = () => {
           )}
         </Box>
 
-        <Box sx={{ width: "120%", display: "flex" }}>
+        <Box sx={{ 
+          width: "100%", 
+          display: "flex",
+          justifyContent: { xs: "flex-start", sm: "flex-start" },
+          marginTop: { xs: "0.5rem", sm: "1rem" }
+        }}>
           {/* Show wheelchair option only if wheelChairOption is true or not set yet */}
           {(propertyConfig?.wheelChairOption === undefined ||
             propertyConfig?.wheelChairOption) && (
@@ -652,13 +722,14 @@ const SearchArea: React.FC = () => {
               sx={{ 
                 fontFamily: "Lato !important",
                 fontWeight: 400,
-                fontSize: "0.875rem",
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
                 lineHeight: "140%",
                 letterSpacing: "0px",
+                margin: 0,
                 '& .MuiFormControlLabel-label': {
                   fontFamily: "Lato !important",
                   fontWeight: 400,
-                  fontSize: "0.875rem",
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
                   lineHeight: "140%",
                   letterSpacing: "0px",
                 }
@@ -670,8 +741,16 @@ const SearchArea: React.FC = () => {
                     onChange={(e) =>
                       dispatch(setNeedsAccessibleRoom(e.target.checked))
                     }
+                    size={window.innerWidth < 480 ? "small" : "medium"}
                   />
-                  <img src={wheelChairIcon} alt="wheelchair" />
+                  <img 
+                    src={wheelChairIcon} 
+                    alt="wheelchair" 
+                    style={{
+                      width: window.innerWidth < 480 ? "1rem" : "1.25rem",
+                      height: window.innerWidth < 480 ? "1rem" : "1.25rem"
+                    }}
+                  />
                 </Box>
               }
               label="I need an Accessible Room"
@@ -685,8 +764,10 @@ const SearchArea: React.FC = () => {
           className="search-area__search-button"
           sx={{ 
             fontFamily: "Lato !important",
-            width: "8.75rem",
-            height: "2.75rem"
+            width: { xs: "100%", sm: "8.75rem" },
+            height: { xs: "2.5rem", sm: "2.75rem" },
+            fontSize: { xs: "0.75rem", sm: "0.875rem" },
+            marginTop: { xs: "1.5rem", sm: "2.5rem", md: "3.5rem" } // Responsive top margin
           }}
         >
           SEARCH
