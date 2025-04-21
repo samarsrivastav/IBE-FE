@@ -18,7 +18,7 @@ function AppContent() {
   const [language, setLanguage] = useState<string>("en");
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const location = useLocation();
-
+  
   useEffect(() => {
     // Track page view when location changes
     trackPageView(location.pathname + location.search);
