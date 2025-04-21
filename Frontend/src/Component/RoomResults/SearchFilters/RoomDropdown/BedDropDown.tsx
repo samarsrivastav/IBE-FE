@@ -79,6 +79,8 @@ const BedDropDown: React.FC<SearchFiltersProps> = ({ searchParams, setSearchPara
         onClose={handleBedsClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
+        disableScrollLock={true}
+        container={document.body}
       >
         <div className={styles.filters__dropdown}>
           {[...Array(5).keys()].map((num) => (

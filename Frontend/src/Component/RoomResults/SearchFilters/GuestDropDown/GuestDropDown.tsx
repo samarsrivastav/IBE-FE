@@ -134,6 +134,8 @@ export const GuestDropDown = () => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         PaperProps={{ className: "search-area__guest-popover" }}
+        disableScrollLock={true}
+        container={document.body}
       >
         {guestTypes.map(({ type, label, subLabel }) => (
           <Box key={type} className="search-area__guest-item">

@@ -454,6 +454,8 @@ const SearchArea: React.FC = () => {
                   padding: 2,
                 },
               }}
+              disableScrollLock={true}
+              container={document.body}
             >
               <CalendarComponent onClose={handleCalendarClose} />
             </Popover>

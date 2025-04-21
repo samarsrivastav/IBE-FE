@@ -93,6 +93,8 @@ const RoomDropDown: React.FC<SearchFiltersProps> = ({ searchParams, setSearchPar
         onClose={handleRoomsClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
+        disableScrollLock={true}
+        container={document.body}
       >
         <div className={styles.filters__dropdown}>
           {[...Array(propertyConfig.maxRooms).keys()].map((num) => (
