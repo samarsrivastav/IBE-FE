@@ -5,9 +5,11 @@ import { RootState } from "../../../Redux/store";
 import FilterGroup from "./FilterGroup/FilterGroup";
 import styles from "./FilterSidebar.module.scss";
 
+type FilterKeys = "bedType" | "location" | "stars";
+
 interface FilterSidebarProps {
-  expandedFilters: { [key: string]: boolean };
-  toggleFilter: (filter: string) => void;
+  expandedFilters: { [key in FilterKeys]: boolean };
+  toggleFilter: (filter: FilterKeys) => void;
   applyFilters: (filters: { bedTypes: string[]; locations: string[]; stars: number[] }) => void;
 }
 

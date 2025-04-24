@@ -154,7 +154,22 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         onClose={handleCalendarClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
-        PaperProps={{ sx: { width: "896px", padding: 2 } }}
+        PaperProps={{ 
+          sx: { 
+            width: { 
+              xs: "95%", 
+              sm: "90%", 
+              md: "56rem" // 896px
+            },
+            maxWidth: "56rem", // 896px
+            padding: { xs: "0.75rem", sm: "1rem", md: "1.25rem" }, // Responsive padding
+            maxHeight: { xs: "90vh", sm: "80vh", md: "auto" },
+            height: "auto",
+            overflow: "auto"
+          } 
+        }}
+        disableScrollLock={true}
+        container={document.body}
       >
         <CalendarComponent onClose={handleCalendarClose} />
       </Popover>

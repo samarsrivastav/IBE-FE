@@ -3,6 +3,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import styles from "./FilterGroup.module.scss";
 
+type FilterKeys = "bedType" | "location" | "stars";
+
 interface FilterGroupProps {
   title: string;
   expanded: boolean;

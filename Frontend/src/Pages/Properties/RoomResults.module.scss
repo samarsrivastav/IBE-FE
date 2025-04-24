@@ -7,15 +7,50 @@
 
 .container {
   padding: 2rem 5.3125rem;
+  
+  @media (max-width: 1200px) {
+    padding: 1.75rem 4rem;
+  }
+  
+  @media (max-width: 960px) {
+    padding: 1.5rem 3rem;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.25rem 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 1.25rem;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 0.75rem 1rem;
+  }
 }
 
 .content {
   display: flex;
   gap: 20px;
+  max-width: 100%;
+  
+  @media (max-width: 1200px) {
+    gap: 16px;
+  }
+  
+  @media (max-width: 960px) {
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 16px;
+  }
 }
 
 @media (max-width: 960px) {
-  .content {
-    flex-direction: column;
+  .filter {
+    width: 100%;
+    max-width: 100%;
   }
 }

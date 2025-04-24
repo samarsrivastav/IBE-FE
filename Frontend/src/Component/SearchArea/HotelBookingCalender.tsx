@@ -24,22 +24,53 @@ interface Promotion {
 
 const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   const dispatch: AppDispatch = useDispatch();
+  const searchState = useSelector((state: RootState) => state.search);
+  
   // State for tracking selected dates
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string | null>(searchState.checkIn);
+  const [endDate, setEndDate] = useState<string | null>(searchState.checkOut);
   const [priceData, setPriceData] = useState<PriceData[]>([]);
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
-  const [selectionComplete, setSelectionComplete] = useState<boolean>(false);
+  const [selectionComplete, setSelectionComplete] = useState<boolean>(!!searchState.checkIn && !!searchState.checkOut);
   const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
   const { convertedPrices, currency } = useCurrencyConverter(priceData);
 
+  // Determine initial months to display based on selection or current date
+  const getInitialFirstMonth = (): number => {
+    if (searchState.checkIn) {
+      const checkInDate = new Date(searchState.checkIn);
+      const month = checkInDate.getMonth() + 1; // +1 because getMonth() returns 0-11
+      
+      // Ensure month is within allowed range (March-May)
+      if (month >= 3 && month <= 5) {
+        return month;
+      } else if (month < 3) {
+        return 3; // Default to March if before March
+      } else {
+        return 5; // Default to May if after May
+      }
+    } else {
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      
+      // Ensure current month is within allowed range (March-May)
+      if (currentMonth >= 3 && currentMonth <= 5) {
+        return currentMonth;
+      } else if (currentMonth < 3) {
+        return 3; // Default to March if before March
+      } else {
+        return 5; // Default to May if after May
+      }
+    }
+  };
+
   // Track the two displayed months separately
-  const [firstMonth, setFirstMonth] = useState<number>(5); // May
-  const [secondMonth, setSecondMonth] = useState<number>(6); // June
+  const [firstMonth, setFirstMonth] = useState<number>(getInitialFirstMonth());
+  const [secondMonth, setSecondMonth] = useState<number>(getInitialFirstMonth() === 5 ? 6 : getInitialFirstMonth() + 1);
+  
   const [searchParams, setSearchParams] = useSearchParams();
   const propertyIdState = useSelector((state: RootState) => state.search.PropertyId);
   const propertyId=searchParams.get("propertyId")??propertyIdState;
-  
   
   
   useEffect(() => {
@@ -80,37 +111,76 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
   const navigateFirstMonthPrev = () => {
     if (firstMonth > 3) { // Don't go below March (3)
       setFirstMonth(prev => prev - 1);
+      // Adjust second month to maintain relationship if needed
+      if (secondMonth === firstMonth + 1) {
+        setSecondMonth(prev => prev - 1);
+      }
     }
   };
 
   const navigateFirstMonthNext = () => {
-    if (firstMonth < 5) { // Don't go above June (6)
+    if (firstMonth < 5) { // Don't go above May (5) since June (6) is max for second month
       setFirstMonth(prev => prev + 1);
+      // Always move the second month together with first month
+      if (secondMonth === firstMonth + 1) {
+        setSecondMonth(prev => prev + 1);
+      }
     }
   };
 
   const navigateSecondMonthPrev = () => {
-    if (secondMonth > firstMonth + 1) { // Don't overlap with first month
-      setSecondMonth(prev => prev - 1);
+    // Don't allow second month to go below April (4) or be less than firstMonth + 1
+    if (secondMonth > 4) {
+      // Always move both calendars together
+      if (secondMonth === firstMonth + 1) {
+        if (firstMonth > 3) {
+          setFirstMonth(prev => prev - 1);
+          setSecondMonth(prev => prev - 1);
+        }
+      } else {
+        setSecondMonth(prev => prev - 1);
+      }
     }
   };
 
   const navigateSecondMonthNext = () => {
     if (secondMonth < 6) { // Don't go above June (6)
-      navigateFirstMonthNext(); // Ensure first month is always before second month
-      setSecondMonth(prev => prev + 1);
+      // Always move both calendars together
+      if (secondMonth === firstMonth + 1 && firstMonth < 5) {
+        setFirstMonth(prev => prev + 1);
+        setSecondMonth(prev => prev + 1);
+      } else {
+        setSecondMonth(prev => prev + 1);
+      }
     }
   };
 
-  // Effect to always keep second month one ahead of first month
+  // Effect to always keep proper month relationship
   useEffect(() => {
-    setSecondMonth(firstMonth + 1);
+    // Ensure second month is always at least one ahead of first month
+    if (secondMonth <= firstMonth) {
+      setSecondMonth(firstMonth + 1);
+    }
     
     // Ensure we don't exceed the limits
     if (firstMonth + 1 > 6) {
       setSecondMonth(6);
     }
-  }, [firstMonth]);
+    
+    // Make sure first month isn't pushed beyond its limits
+    if (firstMonth > 5) {
+      setFirstMonth(5);
+    } else if (firstMonth < 3) {
+      setFirstMonth(3);
+    }
+    
+    // Make sure second month isn't pushed beyond its limits
+    if (secondMonth > 6) {
+      setSecondMonth(6);
+    } else if (secondMonth < 4) {
+      setSecondMonth(4);
+    }
+  }, [firstMonth, secondMonth]);
 
   // Check if a date falls within any promotion period
   const getPromotion = (dateStr: string): Promotion | null => {
@@ -275,6 +345,11 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
     return false;
   };
 
+  // Get the current year (for rendering calendars)
+  const getCurrentYear = (): number => {
+    return new Date().getFullYear();
+  };
+
   // Render a month calendar
   const renderMonth = (year: number, month: number, position: 'left' | 'right'): React.ReactElement => {
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
@@ -428,7 +503,7 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
     return (
       <div className="month-calendar">
         <div className="month-header">
-          <div className="month-title">{monthNames[month - 1]}</div>
+          <div className="month-title">{monthNames[month - 1]} {year}</div>
           {prevButton}
           {nextButton}
         </div>
@@ -483,11 +558,14 @@ const HotelBookingCalendar = ({onClose}: {onClose: () => void}) => {
     }
   };
 
+  // Get current year for rendering
+  const currentYear = getCurrentYear();
+
   return (
     <div className="hotel-booking-calendar">
       <div className="calendar-container">
-        {renderMonth(2025, firstMonth, 'left')}
-        {renderMonth(2025, secondMonth, 'right')}
+        {renderMonth(currentYear, firstMonth, 'left')}
+        {renderMonth(currentYear, secondMonth, 'right')}
       </div>
       <div className="booking-actions">
       <hr className="separator" />

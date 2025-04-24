@@ -23,9 +23,35 @@
     }
 }
 
+@media (max-width: 1200px) {
+    .sidebar {
+        flex: 0 0 220px;
+        width: 220px;
+    }
+}
+
 @media (max-width: 960px) {
     .sidebar {
         flex: 0 0 auto;
         width: 100%;
+        max-height: none;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        padding: 12px;
+        
+        &__title {
+            font-size: 14px;
+            margin: 0 0 12px 0;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .sidebar {
+        padding: 10px;
     }
 }

@@ -48,6 +48,8 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { currency } = useSelector((state: RootState) => state.currency);
   const tenantConfig = useSelector((state: RootState) => state.tenantConfig);
+  const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined);
+  const [logoLoaded, setLogoLoaded] = useState(false);
   
   const navigate = useNavigate();
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
@@ -56,11 +58,39 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery('(max-width:768px)');
 
+  // Dispatch for tenant config
   useEffect(() => {
     dispatch(fetchTenantConfig());
     const storedCurrency = localStorage.getItem("selectedCurrency") || "usd";
     dispatch(setCurrency(storedCurrency));
   }, [dispatch]);
+  
+  // Handle logo loading
+  useEffect(() => {
+    if (tenantConfig?.configuration?.headerLogo) {
+      console.log("Tenant logo URL found:", tenantConfig.configuration.headerLogo);
+      
+      // Validate the logo URL
+      const img = new Image();
+      img.src = tenantConfig.configuration.headerLogo;
+      
+      img.onload = () => {
+        console.log("Logo loaded successfully:", tenantConfig.configuration.headerLogo);
+        setLogoUrl(tenantConfig.configuration.headerLogo);
+        setLogoLoaded(true);
+      };
+      
+      img.onerror = () => {
+        console.error("Logo failed to load, using default:", LOGO_KICKDRUM_DEFAULT);
+        setLogoUrl(LOGO_KICKDRUM_DEFAULT);
+        setLogoLoaded(true);
+      };
+    } else {
+      console.log("No tenant logo URL found, using default");
+      setLogoUrl(LOGO_KICKDRUM_DEFAULT);
+      setLogoLoaded(true);
+    }
+  }, [tenantConfig?.configuration?.headerLogo]);
 
   useEffect(() => {
     if (tenantConfig.configuration?.taxes) {
@@ -228,19 +258,19 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
          </ListItem>
 
          <ListItem>
-    <Button
-      variant="contained"
-      fullWidth
-      className={styles.navbar__mobileMenu__loginButton}
-      onClick={isUserAuthenticated ? handleLogout : handleLogin}
-    >
-      {isUserAuthenticated ? "Logout" : "Login"}
-    </Button>
-  </ListItem>
+          <Button
+            variant="contained"
+            fullWidth
+            className={styles.navbar__mobileMenu__loginButton}
+            onClick={isUserAuthenticated ? handleLogout : handleLogin}
+          >
+            {isUserAuthenticated ? "Logout" : "Login"}
+          </Button>
+        </ListItem>
       </List>
     </Box>
   );
-
+  console.log(tenantConfig.configuration?.LogoText)
   return (
     <>
       <AppBar position="static" className={styles.navbar}>
@@ -248,13 +278,13 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
           <Link to="/" className={styles.navbar__logo}>
             <Typography variant="h6" className={styles.navbar__logo}>
               <ImageWithFallback
-                src={tenantConfig.configuration?.headerLogo}
+                src={logoUrl}
                 fallback={LOGO_KICKDRUM_DEFAULT}
                 alt="logo"
                 className={styles.navbar_logo_img}
               />
               <div className={styles.navbar__logo__subtitle}>
-                Internet Booking Engine
+              {tenantConfig.configuration?.LogoText??"Internet Booking Engine"}
               </div>
             </Typography>
           </Link>
@@ -371,12 +401,12 @@ export const Navbar = ({ language, setLanguage }: NavbarProps) => {
                     <MenuItem value="inr">{"₹ INR"}</MenuItem>
                 </Select>
                 <Button
-    variant="contained"
-    className={styles.navbar__desktopMenu__loginButton}
-    onClick={isUserAuthenticated ? handleLogout : handleLogin}
-  >
-    <p>{isUserAuthenticated ? "Logout" : "Login"}</p>
-  </Button>
+                  variant="contained"
+                  className={styles.navbar__desktopMenu__loginButton}
+                  onClick={isUserAuthenticated ? handleLogout : handleLogin}
+                >
+                  <p>{isUserAuthenticated ? "Logout" : "Login"}</p>
+                </Button>
             </Box>
           )}
         </Toolbar>

@@ -133,7 +133,17 @@ export const GuestDropDown = () => {
         onClose={handleGuestMenuClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
-        PaperProps={{ className: "search-area__guest-popover" }}
+        PaperProps={{ 
+          className: "search-area__guest-popover",
+          sx: { 
+            width: { xs: "95%", sm: "18.75rem" }, // 300px for SM and up
+            padding: { xs: "0.75rem", sm: "1rem" },
+            maxHeight: "25rem", // 400px
+            overflow: "auto" 
+          } 
+        }}
+        disableScrollLock={true}
+        container={document.body}
       >
         {guestTypes.map(({ type, label, subLabel }) => (
           <Box key={type} className="search-area__guest-item">
