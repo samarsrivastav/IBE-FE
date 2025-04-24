@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Luxury Suite",
+    "rating": 0,
+    "reviews": 0,
+    "location": "Dubai, UAE",
+    "size": "80 sqm",
+    "maxOccupancy": "2-4",
+    "bedType": "King Bed",
+    "price": 500,
+    "images": [
+      "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_3_1.jpg",
+      "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_3_2.jpg"
+    ],
+    "description": "A luxurious suite with a scenic view, modern amenities, and premium service.",
+    "amenities": [
+      { "icon": "checkbox", "text": "75-inch Smart TV" },
+      { "icon": "checkbox", "text": "Mini Bar" },
+      { "icon": "checkbox", "text": "Private Balcony" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Standard Room",
+    "rating": 4.5,
+    "reviews": 180,
+    "location": "London, UK",
+    "size": "40 sqm",
+    "maxOccupancy": "1-2",
+    "bedType": "Queen Bed",
+    "price": 200,
+    "images": [
+      "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_3_2.jpg",
+      "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_3_1.jpg"
+    ],
+    "description": "A luxurious suite with a scenic view, modern amenities, and premium service.",
+    "amenities": [
+      { "icon": "checkbox", "text": "75-inch Smart TV" },
+      { "icon": "checkbox", "text": "Mini Bar" },
+      { "icon": "checkbox", "text": "Private Balcony" }
+    ]
+  }
+]

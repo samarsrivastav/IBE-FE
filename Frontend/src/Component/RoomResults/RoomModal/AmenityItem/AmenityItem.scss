@@ -1,0 +1,26 @@
+.amenity-item {
+    display: flex;
+    align-items: center;
+    
+    &__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background-color: #f5f5f5;
+      margin-right: 0.5rem;
+      color: #32369d;
+      font-size: 0.875rem;
+    }
+    
+    &__text {
+      font-size: 0.875rem;
+      color: #000000;
+      font-weight: 400;
+      line-height: 140%;
+      letter-spacing: 0px;
+
+    }
+  }

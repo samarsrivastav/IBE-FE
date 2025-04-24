@@ -1,0 +1,21 @@
+[
+    { "date": [2025, 4, 3], "day": "THURSDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 4], "day": "FRIDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 5], "day": "SATURDAY", "originalRate": 120.0, "discountAmount": 108.0 },
+    { "date": [2025, 4, 6], "day": "SUNDAY", "originalRate": 120.0, "discountAmount": 108.0 },
+    { "date": [2025, 4, 7], "day": "MONDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 8], "day": "TUESDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 9], "day": "WEDNESDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 10], "day": "THURSDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 11], "day": "FRIDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 12], "day": "SATURDAY", "originalRate": 120.0, "discountAmount": 108.0 },
+    { "date": [2025, 4, 13], "day": "SUNDAY", "originalRate": 120.0, "discountAmount": 108.0 },
+    { "date": [2025, 4, 14], "day": "MONDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 15], "day": "TUESDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 16], "day": "WEDNESDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 17], "day": "THURSDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 18], "day": "FRIDAY", "originalRate": 50.0, "discountAmount": 45.0 },
+    { "date": [2025, 4, 19], "day": "SATURDAY", "originalRate": 120.0, "discountAmount": 108.0 },
+    { "date": [2025, 4, 20], "day": "SUNDAY", "originalRate": 120.0, "discountAmount": 108.0 }
+]
+  

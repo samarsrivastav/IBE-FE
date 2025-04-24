@@ -1,0 +1,254 @@
+// General Navbar styles
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+.navbar { 
+  font-family: 'Lato', sans-serif !important;
+  color: #10072C;
+  background-color: white !important;
+  box-shadow: none !important;
+  width: 100%;
+  height:5.25rem;
+  padding-left: 3rem;
+  
+  &__toolbar {
+    a{
+      text-decoration: none;
+    }
+    color: #10072C;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0;
+  }
+  .navbar_logo_img{
+    width: 6.44rem;
+    height: 1.875rem;
+    margin-right: 0.5rem;
+    padding-left: 0 !important;
+  }
+
+  // Logo and Title styles
+  &__logo {
+    display: flex;
+    align-items: center;
+    color: #10072c;
+    padding:0 !important;
+    margin:0 ;
+
+
+    &__title {
+      font-size: 1.35rem;
+      font-weight: bold;
+      width:6.438rem;
+      height:1.875rem !important;
+    }
+
+    &__subtitle {
+      font-family: 'Lato', sans-serif !important;
+      font-weight:700;
+      font-size: 20px;
+      line-height: 130%;
+      width: 13.563rem !important;
+      height:1.625rem !important;
+      letter-spacing: 0px;
+    }
+  }
+
+  // Desktop menu styles
+  &__desktopMenu {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 40%;
+    gap: 16px;
+    font-family: 'Lato', sans-serif !important;
+    &__menuItem {
+      font-weight: bold;
+      color: #10072c;
+    }
+
+    &__language {
+      height: 1.1875rem;
+      width: 2.8125rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &__icon {
+        color: #10072c;
+      }
+
+      &__select {
+        border: none;
+        background: none;
+        box-shadow: none;
+        font-weight: bold;
+        color: #271a4d;
+        min-width: 50px;
+        padding: 0;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    &__select {
+      border: none;
+      background: none;
+      box-shadow: none;
+      font-weight: bold;
+      color: #271a4d;
+      min-width: 3.125rem;
+      padding: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &__loginButton {
+      background-color: #2a1e4f !important;
+      color: white;
+      width: 5.3125rem;
+      height: 2.1875rem;
+      p{
+        width: 2.8125rem;
+        height: 1.25rem;
+        font-family: 'Lato', sans-serif ;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 140%;
+        letter-spacing: 2%;
+      }
+      &:hover {
+        background-color: #8b7cf3;
+      }
+    }
+  }
+
+  // Mobile menu styles
+  &__mobileMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+
+    &__menuItem {
+      font-weight: bold;
+      color: #10072c;
+    }
+
+    &__select {
+      border: none;
+      background: none;
+      box-shadow: none;
+      font-weight: bold;
+      color: #271a4d;
+      min-width: 50px;
+      padding: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &__loginButton {
+      background-color: #2a1e4f !important;
+      padding:0 !important;
+      width: 5.313rem !important;
+      color: white;
+
+      &:hover {
+        background-color: #8b7cf3;
+      }
+    }
+  }
+
+  &__menuIcon {
+    color: #10072c;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .navbar {
+    padding: 0.8rem 1.5rem;
+
+    &__desktopMenu {
+      width: 50%;
+      gap: 12px;
+    }
+
+    .navbar_logo_img {
+      width: 5.5rem;
+      height: 1.6rem;
+    }
+
+    &__logo {
+      &__title {
+        font-size: 1.2rem;
+        width: 5.5rem;
+        height: 1.6rem;
+      }
+
+      &__subtitle {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+
+    &__desktopMenu {
+      display: none;
+    }
+
+    &__toolbar {
+      justify-content: space-between;
+    }
+
+    .navbar_logo_img {
+      width: 5rem;
+      height: 1.5rem;
+    }
+
+    &__menuIcon {
+      display: block;
+    }
+
+    &__mobileMenu {
+      display: flex;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem 0.8rem;
+    
+
+    .navbar_logo_img {
+      width: 4rem;
+      height: 1.2rem;
+    }
+
+    &__logo {
+      &__title {
+        font-size: 1rem;
+        width: 4rem;
+        height: 1.2rem;
+      }
+
+      &__subtitle {
+        font-size: 12px;
+      }
+    }
+
+    &__mobileMenu {
+      padding: 12px 0;
+      gap: 12px;
+    }
+  }
+}

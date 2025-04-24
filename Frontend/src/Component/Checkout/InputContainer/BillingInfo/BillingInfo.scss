@@ -1,0 +1,80 @@
+.billing__container {
+    padding-bottom: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+    
+    &.collapsed {
+      display: none;
+    }
+  
+    .billing__inputs {
+      margin: 1rem auto;
+  
+      .input {
+        width: 21.625rem;
+        height: 4.3125rem;
+        margin: 1.5rem 0;
+      }
+  
+      .full__name, .address, .city-details {
+        display: flex;
+        justify-content: space-between;
+        width: 100% !important;
+      }
+  
+      .pin {
+        width: 21.875rem;
+        display: flex;
+        justify-content: space-around;
+      }
+    }
+  
+    .disable__button {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+  
+      .edit-link {
+        margin-right: 1rem;
+        color: #26266D;
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        text-align: center;
+        cursor: pointer;
+      }
+  
+      .close-button {
+        background-color: transparent;
+        border: none;
+        color: #26266D;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+  
+      button {
+        padding: 0;
+        background-color: #26266D;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 10.9375rem;
+        height: 2.75rem;
+        cursor: pointer;
+  
+        p {
+          margin: 0;
+          color: white;
+          font-family: "Lato", sans-serif;
+          font-weight: 700;
+          font-size: 14px;
+          line-height: 140%;
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
+  

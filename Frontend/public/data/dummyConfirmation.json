@@ -1,0 +1,144 @@
+{
+    "e17a098b-5d22-4dce-94a4-0fdb67e03cb6": {
+      "imageUrl": "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_1_1.jpg",
+      "billingInfo": {
+        "city": "New York",
+        "email": "john.doe@example.com",
+        "state": "NY",
+        "country": "USA",
+        "zipCode": "10001",
+        "lastName": "Doe",
+        "firstName": "John",
+        "phoneNumber": "+1234567890",
+        "mailingAddress1": "123 Main Street",
+        "mailingAddress2": "Apt 4B"
+      },
+      "paymentInfo": {
+        "cardNumber": "4111111111111111",
+        "expiryYear": 2026,
+        "expiryMonth": 11
+      },
+      "currentIndex": 0,
+      "travelerInfo": {
+        "email": "john.doe@example.com",
+        "lastName": "Doe",
+        "firstName": "John",
+        "phoneNumber": "+1234567890"
+      },
+      "specialOffers": false,
+      "termsAndPolicies": true,
+      "confirmationDetails": {
+        "vat": 150.0,
+        "taxes": 100.0,
+        "endDate": "2025-06-15",
+        "roomName": "Ocean View Suite",
+        "subTotal": 1299.99,
+        "roomCount": 2,
+        "startDate": "2025-06-10",
+        "totalCost": 1549.99,
+        "adultCount": 3,
+        "childCount": 2,
+        "guestCount": [3, 2],
+        "propertyId": 5,
+        "roomTypeId": 21,
+        "nightlyRate": 259.99,
+        "promotionTitle": "Summer Discount",
+        "amountDueAtResort": 0.0
+      }
+    },
+    "a8c2fcbe-3c8f-497e-9a1e-84b83a2dc456": {
+      "imageUrl": "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_2_1.jpg",
+      "billingInfo": {
+        "city": "Los Angeles",
+        "email": "alice.smith@example.com",
+        "state": "CA",
+        "country": "USA",
+        "zipCode": "90001",
+        "lastName": "Smith",
+        "firstName": "Alice",
+        "phoneNumber": "+1987654321",
+        "mailingAddress1": "456 Sunset Blvd",
+        "mailingAddress2": null
+      },
+      "paymentInfo": {
+        "cardNumber": "4242424242424242",
+        "expiryYear": 2027,
+        "expiryMonth": 7
+      },
+      "currentIndex": 0,
+      "travelerInfo": {
+        "email": "alice.smith@example.com",
+        "lastName": "Smith",
+        "firstName": "Alice",
+        "phoneNumber": "+1987654321"
+      },
+      "specialOffers": true,
+      "termsAndPolicies": true,
+      "confirmationDetails": {
+        "vat": 90.0,
+        "taxes": 60.0,
+        "endDate": "2025-07-20",
+        "roomName": "Luxury Double Room",
+        "subTotal": 899.99,
+        "roomCount": 1,
+        "startDate": "2025-07-17",
+        "totalCost": 1049.99,
+        "adultCount": 2,
+        "childCount": 0,
+        "guestCount": [2, 0],
+        "propertyId": 6,
+        "roomTypeId": 34,
+        "nightlyRate": 299.99,
+        "promotionTitle": "Exclusive Deal",
+        "amountDueAtResort": 0.0
+      }
+    },
+    "f98b1e1f-2f7c-4e6d-8413-d0e4a9be7890": {
+      "imageUrl": "https://d32gc6ga88q4t5.cloudfront.net/RoomTypesImages/image_2_1.jpg",
+      "billingInfo": {
+        "city": "Chicago",
+        "email": "bob.jones@example.com",
+        "state": "IL",
+        "country": "USA",
+        "zipCode": "60601",
+        "lastName": "Jones",
+        "firstName": "Bob",
+        "phoneNumber": "+1123456789",
+        "mailingAddress1": "789 Lake Shore Drive",
+        "mailingAddress2": "Suite 101"
+      },
+      "paymentInfo": {
+        "cardNumber": "4000056655665556",
+        "expiryYear": 2028,
+        "expiryMonth": 3
+      },
+      "currentIndex": 0,
+      "travelerInfo": {
+        "email": "bob.jones@example.com",
+        "lastName": "Jones",
+        "firstName": "Bob",
+        "phoneNumber": "+1123456789"
+      },
+      "specialOffers": false,
+      "termsAndPolicies": true,
+      "confirmationDetails": {
+        "vat": 70.0,
+        "taxes": 50.0,
+        "endDate": "2025-08-12",
+        "roomName": "Standard Queen Room",
+        "subTotal": 599.99,
+        "roomCount": 1,
+        "startDate": "2025-08-10",
+        "totalCost": 719.99,
+        "adultCount": 1,
+        "childCount": 0,
+        "guestCount": [1, 0],
+        "propertyId": 3,
+        "roomTypeId": 12,
+        "nightlyRate": 199.99,
+        "promotionTitle": null,
+        "amountDueAtResort": 0.0
+      }
+    }
+  }
+  

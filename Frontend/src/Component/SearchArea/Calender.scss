@@ -1,0 +1,395 @@
+// HotelBookingCalendar.scss
+.hotel-booking-calendar {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  
+  .calendar-container {
+    border-bottom: 0.0625rem solid #C1C2C2; // 1px
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    
+    @media (max-width: 56rem) { // 896px
+      flex-direction: column;
+    }
+  }
+  
+  .month-calendar {
+    width: 50%;
+    
+    @media (max-width: 56rem) { // 896px
+      width: 100%;
+    }
+  }
+  
+  .month-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    margin-left: 1rem;
+    
+    .month-title {
+      font-size: 1rem; // 16px
+      font-weight: 700; // Bold text for month names
+    }
+    
+    .month-nav {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #999;
+      font-size: 1.125rem; // 18px
+      padding: 0 0.625rem; // 10px
+      
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+  
+  .calendar-grid {
+    width: 100%;
+  }
+  
+  .week {
+    display: flex;
+    width: 100%;
+    
+    &.header-row {
+      margin-bottom: 0.3125rem; // 5px
+    }
+  }
+  
+  .day-name {
+    width: 14.28%;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700; // Bold text for day names
+  }
+  
+  .day {
+    width: 14.28%;
+    height: 100%;
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    
+    &.empty {
+      cursor: default;
+    }
+    
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .day-content {
+      display: flex;
+      flex-direction: column;
+      margin-left: 0.2rem;
+      margin-right: 0.2rem;
+      justify-content: center;
+      align-items: center;
+      padding: 0.3rem 0;
+    }
+    
+    .day-number {
+      font-size: 0.875rem; // 14px
+      font-weight: 500;
+    }
+    
+    .price {
+      font-size: 0.75rem; // 12px
+      margin-top: 0.25rem; // 4px
+      font-weight: 700; // Bold text for prices
+    }
+    
+    .price-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.125rem; // 2px
+    }
+    
+    .original-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 0.6875rem; // 11px
+    }
+    
+    .discounted-price {
+      color: #000000;
+      font-weight: 700;
+    }
+    
+    &.selected-start,
+    &.selected-end {
+      .day-content {
+        background-color: #142862; // deep blue
+        color: white;
+        font-weight: 700; // Bold text for selected dates
+
+        .day-number {
+          color: white;
+        }
+
+        .price {
+          color: white;
+        }
+
+        .original-price {
+          color: #ccc;
+        }
+
+        .discounted-price {
+          color: white;
+        }
+      }
+    }
+    
+    &.in-range {
+      .day-content {
+        background-color: #afafaf; // Grey color for in-range dates
+        color: #000000;
+        font-weight: 600;
+
+        .day-number {
+          color: #000000;
+        }
+
+        .price {
+          color: #000000;
+        }
+
+        .original-price {
+          color: #666;
+        }
+
+        .discounted-price {
+          color: #000000;
+        }
+      }
+    }
+  }
+  
+  .booking-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem; // 20px
+    
+    .spacer {
+      flex: 1;
+    }
+    .separator {
+      border: none;
+      border-top: 0.0625rem solid #ddd; // 1px
+      margin: 1rem 0; // 16px
+    }
+    
+    .right-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      
+      .apply-dates-btn {
+        width: 8.062rem;
+        height: 2.5rem;
+        background-color: #26266D; // Deep blue color for button
+        border: none;
+        color: white; 
+        font-size: 0.8rem;
+        font-weight: 700;
+        border-radius: 0.2rem;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+        
+        &:disabled {
+          background-color: #ccc;
+          color: #666;
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      }
+      
+      .booking-message {
+        width: 70%;
+        margin-top: 1rem;
+        color: #e53e3e;
+        font-size: 1rem;
+        font-weight: 700; // Bold text for message
+        text-align: left;
+      }
+    }
+  }
+}
+
+.selected-total-price{
+  color: black !important;
+  display: block;
+  width: 100%;
+}
+
+// Popover dimensions
+.css-comesa-MuiPaper-root-MuiPopover-paper{
+  width: 54rem !important; // 864px
+  height: 29.375rem !important; // 470px
+  
+  @media (max-width: 56rem) { // 896px
+    width: 90% !important;
+    max-width: 54rem !important;
+    height: auto !important;
+    max-height: 80vh !important;
+  }
+}
+
+// Media queries for responsive design
+@media (max-width: 56rem) { // 896px
+  .calendar-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 48rem) { // 768px
+  .day {
+    width: 14.28%;
+    min-width: 2.1875rem; // 35px
+  }
+  
+  .booking-actions {
+    flex-direction: column;
+    align-items: center;
+    
+    .right-content {
+      align-items: center;
+      width: 100%;
+      
+      .apply-dates-btn {
+        width: 100%;
+        max-width: 12rem;
+      }
+      
+      .booking-message {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+  
+  .day-name {
+    font-size: 0.875rem; // 14px
+  }
+}
+
+@media (max-width: 31.25rem) { // 500px
+  .day {
+    width: 14.28%;
+    min-width: 2.1875rem; // 35px
+    
+    .day-content {
+      margin-left: 0.1rem;
+      margin-right: 0.1rem;
+      padding: 0.2rem 0;
+    }
+    
+    .day-number {
+      font-size: 0.75rem; // 12px
+    }
+    
+    .price {
+      font-size: 0.625rem; // 10px
+    }
+  }
+
+  .apply-dates-btn {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .right-content {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .month-header {
+    margin-left: 0.5rem;
+    
+    .month-title {
+      font-size: 0.875rem; // 14px
+    }
+  }
+  
+  .day-name {
+    font-size: 0.75rem; // 12px
+  }
+}
+
+// Extra small screens (below 352px)
+@media (max-width: 22rem) { // 352px
+  .hotel-booking-calendar {
+    font-size: 0.875rem;
+  }
+  
+  .day {
+    min-width: auto;
+    width: 14.28%;
+    
+    .day-content {
+      margin-left: 0.05rem;
+      margin-right: 0.05rem;
+      padding: 0.1rem 0;
+    }
+    
+    .day-number {
+      font-size: 0.625rem; // 10px
+    }
+    
+    .price {
+      font-size: 0.5625rem; // 9px
+      margin-top: 0.125rem; // 2px
+    }
+    
+    .original-price {
+      font-size: 0.5rem; // 8px
+    }
+  }
+  
+  .month-header {
+    margin-left: 0.25rem;
+    margin-bottom: 0.25rem;
+    
+    .month-title {
+      font-size: 0.75rem; // 12px
+    }
+    
+    .month-nav {
+      font-size: 1rem; // 16px
+      padding: 0 0.3125rem; // 5px
+    }
+  }
+  
+  .day-name {
+    font-size: 0.625rem; // 10px
+  }
+  
+  .booking-actions {
+    margin-top: 0.625rem; // 10px
+    
+    .right-content {
+      .apply-dates-btn {
+        height: 2rem;
+        font-size: 0.6875rem; // 11px
+      }
+      
+      .booking-message {
+        font-size: 0.75rem; // 12px
+        margin-top: 0.5rem; // 8px
+      }
+    }
+  }
+}

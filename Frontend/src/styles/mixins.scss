@@ -1,0 +1,10 @@
+@use "./variables.scss" as *;
+@mixin lato-text($weight: 400, $size: 0.875rem, $line-height: 140%, $letter-spacing: 0px, $margin-bottom: 0.5rem, $color: $text-primary) {
+    font-family: $font-primary !important;
+    font-weight: $weight !important;
+    font-size: $size !important;
+    line-height: $line-height !important;
+    letter-spacing: $letter-spacing !important;
+    color: $color !important;
+    margin-bottom: $margin-bottom !important;
+}
