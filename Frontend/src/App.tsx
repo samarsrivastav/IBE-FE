@@ -13,6 +13,9 @@ import UnsupportedScreenWidth from "./Component/UnsupportedScreenWidth/Unsupport
 import PageNotFound from "./Component/PageNotFound/PageNotFound";
 import MyBookings from "./Pages/MyBookings/MyBookings";
 import { initGA, trackPageView } from "./utils/analytics";
+import ServiceUnavailable from "./Component/ServiceUnavailable/ServiceUnavailable";
+import HealthCheckWrapper from "./Component/HealthCheckWrapper/HealthCheckWrapper";
+import { startHealthCheck, stopHealthCheck } from "./Services/healthCheckService";
 
 function AppContent() {
   const [language, setLanguage] = useState<string>("en");
@@ -37,23 +40,30 @@ function AppContent() {
     return <UnsupportedScreenWidth />;
   }
 
+  // Service unavailable page doesn't need health check wrapper or navbar/footer
+  if (location.pathname === '/service-unavailable') {
+    return <ServiceUnavailable />;
+  }
+
   return (
-    
-    <div className="app-container">
-      <Navbar language={language} setLanguage={setLanguage} />
-      {location.pathname === '/' && <DynamicBackground />}
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/property" element={<RoomResults />} />
-          <Route path="/confirmation-page/:bookingId" element={<BookingSummaryPage/>}/>
-          <Route path="/my-bookings" element={<MyBookings />} />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <HealthCheckWrapper>
+      <div className="app-container">
+        <Navbar language={language} setLanguage={setLanguage} />
+        {location.pathname === '/' && <DynamicBackground />}
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/property" element={<RoomResults />} />
+            <Route path="/confirmation-page/:bookingId" element={<BookingSummaryPage/>}/>
+            <Route path="/my-bookings" element={<MyBookings />} />
+            <Route path="/service-unavailable" element={<ServiceUnavailable />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </HealthCheckWrapper>
   );
 }
 
@@ -63,6 +73,14 @@ function App() {
   useEffect(() => {
     // Initialize Google Analytics with your tracking ID
     initGA(import.meta.env.VITE_GA_TRACKING_ID);
+    
+    // Start periodic health checks
+    startHealthCheck();
+    
+    // Cleanup on component unmount
+    return () => {
+      stopHealthCheck();
+    };
   }, []);
 
   return (
